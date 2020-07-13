@@ -21,7 +21,6 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: pageList[_currentIndex],
       ),
