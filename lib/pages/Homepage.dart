@@ -1,4 +1,5 @@
 import 'package:afromuse/pages/Homepagebody.dart';
+import 'package:afromuse/pages/InLive.dart';
 import 'package:afromuse/pages/Mepage.dart';
 import 'package:afromuse/pages/Music.dart';
 import 'package:afromuse/pages/Video.dart';
@@ -14,7 +15,7 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
 
 
-  List<Widget> pageList=[Homepagebody(),Music(),
+  List<Widget> pageList=[Homepagebody(),Music(),LiveStream(),
    Video(),Mepage()];
 
 
@@ -33,6 +34,10 @@ class _HomepageState extends State<Homepage> {
             new BottomNavigationBarItem(
               icon: Icon(Icons.library_music),
               title: Text("Music"),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.live_tv),
+              title: Text("Direct"),
             ),
             new BottomNavigationBarItem(
               icon: Icon(Icons.video_library),
