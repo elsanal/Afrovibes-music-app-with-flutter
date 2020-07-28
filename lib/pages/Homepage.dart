@@ -1,8 +1,8 @@
-import 'package:afromuse/pages/Homepagebody.dart';
-import 'package:afromuse/pages/InLive.dart';
-import 'package:afromuse/pages/Mepage.dart';
-import 'package:afromuse/pages/Music.dart';
-import 'package:afromuse/pages/Video.dart';
+import 'package:afromuse/pages/Homebody/Homepagebody.dart';
+import 'package:afromuse/pages/music/Music.dart';
+import 'package:afromuse/pages/myInfo/Mepage.dart';
+import 'package:afromuse/pages/streaming/InLive.dart';
+import 'package:afromuse/pages/video/Video.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
