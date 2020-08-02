@@ -1,3 +1,4 @@
+import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:flutter/material.dart';
 
 class Mepage extends StatefulWidget {
@@ -13,13 +14,17 @@ class _MepageState extends State<Mepage> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         body: Container(
-          color: Colors.grey[500],
+          color: Colors.grey[400],
           child: ListView(
+            physics: ClampingScrollPhysics(),
+            shrinkWrap: true,
             children: <Widget>[
               Center(
                 child: new Container(
-                  color: Colors.black,
-                  height: mediaquery*(1/3),
+                  decoration: BoxDecoration(
+                    gradient: gradient
+                  ),
+                  height: mediaquery*(3/5),
                   width: mediaquery,
                   margin: EdgeInsets.all(8),
                   padding: EdgeInsets.all(8),
@@ -31,12 +36,12 @@ class _MepageState extends State<Mepage> {
                 ),
               ),
               new ListView(
+                physics: ClampingScrollPhysics(),
                 shrinkWrap: true,
-                //physics: ClampingScrollPhysics(),
                 children: <Widget>[
                     Card(
                       child: new ListTile(
-                        leading: Icon(Icons.view_comfy),
+                        leading: Icon(Icons.view_comfy, color: Colors.black,),
                         title: Text("My posts"),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: (){},
@@ -45,7 +50,7 @@ class _MepageState extends State<Mepage> {
                     ),
                   Card(
                     child: new ListTile(
-                      leading: Icon(Icons.library_add),
+                      leading: Icon(Icons.library_add, color: Colors.black,),
                       title: Text("Library"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: (){},
@@ -54,7 +59,7 @@ class _MepageState extends State<Mepage> {
                   ),
                   Card(
                     child: new ListTile(
-                      leading: Icon(Icons.person_outline),
+                      leading: Icon(Icons.person_outline, color: Colors.black,),
                       title: Text("Followers"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: (){},
@@ -63,7 +68,7 @@ class _MepageState extends State<Mepage> {
                   ),
                   Card(
                     child: new ListTile(
-                      leading: Icon(Icons.settings),
+                      leading: Icon(Icons.settings, color: Colors.black,),
                       title: Text("Settings"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: (){},
@@ -73,7 +78,7 @@ class _MepageState extends State<Mepage> {
 
                   Card(
                     child: new ListTile(
-                      leading: Icon(Icons.power_settings_new),
+                      leading: Icon(Icons.power_settings_new, color: Colors.black,),
                       title: Text("Log out"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: (){},
@@ -82,7 +87,7 @@ class _MepageState extends State<Mepage> {
                   ),
                   Card(
                     child: new ListTile(
-                      leading: Icon(Icons.delete),
+                      leading: Icon(Icons.delete, color: Colors.black,),
                       title: Text("Delete account"),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: (){},
