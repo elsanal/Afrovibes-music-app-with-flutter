@@ -44,7 +44,9 @@ class _MepageState extends State<Mepage> {
                         leading: Icon(Icons.view_comfy, color: Colors.black,),
                         title: Text("My posts"),
                         trailing: Icon(Icons.arrow_forward_ios),
-                        onTap: (){},
+                        onTap: (){
+                            Navigator.pushNamed(context, '/myPost');
+                        },
                       ),
                       color: Colors.white,
                     ),

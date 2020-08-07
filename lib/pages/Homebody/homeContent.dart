@@ -21,10 +21,14 @@ class _HomeContentState extends State<HomeContent> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                mainAxisSpacing: ScreenUtil().setSp(10),
               childAspectRatio: 0.7,
-              crossAxisCount:(orientation == Orientation.portrait)?2:3),
+              crossAxisCount:(orientation == Orientation.portrait)?1:2),
           itemBuilder: (BuildContext context, index){
          return Card(
            elevation: 10.0,
+           shape: RoundedRectangleBorder(
+             side: BorderSide(color: Colors.black, width: 1),
+             borderRadius: BorderRadius.circular(ScreenUtil().setHeight(30)),
+           ),
            child: Container(
                decoration: BoxDecoration(
                  gradient: gradient,
@@ -33,7 +37,7 @@ class _HomeContentState extends State<HomeContent> {
                        color: Colors.black
                    ),
                    borderRadius: BorderRadius.circular(
-                       ScreenUtil().setHeight(50)
+                       ScreenUtil().setHeight(30)
                    )
                ),
                child: Column(
