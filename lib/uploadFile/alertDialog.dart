@@ -1,11 +1,13 @@
 import 'package:afromuse/sharedPage/gradients.dart';
-import 'package:afromuse/sharedPage/uploadPhotos.dart';
+import 'package:afromuse/uploadFile/filePicker.dart';
+import 'package:afromuse/uploadFile/uploadPhotos.dart';
+import 'package:afromuse/uploadFile/uploadVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-void uploadFileAlert(BuildContext context){
-  ScreenUtil.init(width: 1080, height: 1920);
+ uploadFileAlert(BuildContext context){
+  ScreenUtil.init(context);
   Alert(
       context: context,
       title: "Multimedia",
@@ -13,6 +15,10 @@ void uploadFileAlert(BuildContext context){
       children: <Widget>[
         SizedBox(height: ScreenUtil().setWidth(50),),
         GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+            Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadPhoto(isCamera: true,)));
+          },
           child: Container(
             decoration: BoxDecoration(
               gradient: gradient
@@ -21,7 +27,7 @@ void uploadFileAlert(BuildContext context){
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                new Text("Photos from camera", style: TextStyle(
+                new Text("Photo", style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.white
@@ -36,6 +42,10 @@ void uploadFileAlert(BuildContext context){
         ),
         SizedBox(height: ScreenUtil().setWidth(50),),
         GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+            Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(isCamera: true,)));
+          },
           child: Container(
             decoration: BoxDecoration(
                 gradient: gradient
@@ -43,7 +53,7 @@ void uploadFileAlert(BuildContext context){
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                new Text("Videos from camera", style: TextStyle(
+                new Text("Video", style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.white
@@ -58,6 +68,10 @@ void uploadFileAlert(BuildContext context){
         ),
         SizedBox(height: ScreenUtil().setWidth(50),),
         GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+            Navigator.push(context, new MaterialPageRoute(builder: (context)=>PickFile()));
+          },
           child: Container(
             decoration: BoxDecoration(
                 gradient: gradient
@@ -65,7 +79,7 @@ void uploadFileAlert(BuildContext context){
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                new Text("Music from Gallery", style: TextStyle(
+                new Text("Gallery", style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.white
@@ -79,56 +93,6 @@ void uploadFileAlert(BuildContext context){
           ),
         ),
         SizedBox(height: ScreenUtil().setWidth(50),),
-        GestureDetector(
-          onTap: (){
-            print("Photos");
-            Navigator.pop(context);
-            Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadPhoto()));
-
-          },
-          child: Container(
-            decoration: BoxDecoration(
-                gradient: gradient
-            ),
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                new Text("Photos from Gallery", style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white
-                ),),
-                new Icon(Icons.photo_library,
-                  size: ScreenUtil().setWidth(100),
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: ScreenUtil().setWidth(50),),
-        GestureDetector(
-          child: Container(
-            decoration: BoxDecoration(
-                gradient: gradient
-            ),
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                new Text("Videos from Gallery", style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white
-                ),),
-                new Icon(Icons.video_library,
-                  size: ScreenUtil().setWidth(100),
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-
       ],
   ),
     buttons: [
@@ -143,3 +107,4 @@ void uploadFileAlert(BuildContext context){
     ]
   )..show();
 }
+

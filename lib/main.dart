@@ -9,6 +9,7 @@ import 'package:afromuse/pages/video/Video.dart';
 import 'package:afromuse/services/auth.dart';
 import 'package:afromuse/services/settings.dart';
 import 'package:afromuse/services/userModel.dart';
+import 'package:afromuse/uploadFile/filePicker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
           '/radio' : (context)=>RadioFm(),
           '/account' : (context)=>Mepage(),
           '/setting' : (context)=>Settings(),
-          '/myPost' : (context)=>MyPosts()
+          '/myPost' : (context)=>MyPosts(),
+          '/pickFile':(context)=>PickFile()
         },
       ),
     );

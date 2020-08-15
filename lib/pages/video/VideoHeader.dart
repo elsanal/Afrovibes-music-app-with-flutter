@@ -23,7 +23,7 @@ class _VideoHeaderState extends State<VideoHeader> {
   Widget build(BuildContext context) {
     final Width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    ScreenUtil.init(width: 1080, height: 1920);
+//    ScreenUtil.init(width: 1080, height: 1920);
     return  Container(
       padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(50),

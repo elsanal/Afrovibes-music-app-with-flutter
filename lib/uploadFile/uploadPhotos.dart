@@ -1,56 +1,62 @@
 import 'dart:io';
 
-import 'package:afromuse/services/database.dart';
+import 'package:afromuse/services/uploadToDatabase.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/staticPage/TextFieldDeco.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
 
 class UploadPhoto extends StatefulWidget {
+  bool isCamera;File file;
+  UploadPhoto({this.isCamera, this.file});
   @override
   _UploadPhotoState createState() => _UploadPhotoState();
 }
 
 class _UploadPhotoState extends State<UploadPhoto> {
 
-  File imageFile;
+  File mediaFile;
   File selectedImage;
   String title;
   String description;
   String album = 'single';
   String type = 'photo';
-  TextEditingController _editingController = TextEditingController();
+
 
   @override
   void initState() {
     // TODO: implement initState
+
+  if(widget.file == null){
     selectImage();
+  }else{
+    setState(() {
+      selectedImage = widget.file;
+    });
+    cropImage(selectedImage);
+  }
     super.initState();
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
 
   void selectImage()async{
-    PickedFile image = await ImagePicker().getImage(source: ImageSource.gallery);
+    PickedFile image;
+    if(widget.isCamera){
+      image = await ImagePicker().getImage(source: ImageSource.camera);
+    }else{
+      image = await ImagePicker().getImage(source: ImageSource.gallery);
+
+    }
      selectedImage = File(image.path);
     if(selectedImage != null){
-      print("selecting image");
       cropImage(selectedImage);
     }
   }
 
    cropImage(File image)async{
-    print("Cropping image");
     File croppedImage = await ImageCropper.cropImage(
         sourcePath: image.path,
         maxHeight: 1920,
@@ -58,40 +64,23 @@ class _UploadPhotoState extends State<UploadPhoto> {
     );
     if(croppedImage != null){
       setState(() {
-        imageFile = croppedImage;
+        mediaFile = croppedImage;
       });
     }
   }
 
-   _uploadImage()async{
-    final StorageReference imageRef = FirebaseStorage.instance.ref().child('contentRef');
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    final StorageUploadTask uploadTask = imageRef.child(user.uid.toString()).putFile(imageFile);
-    var imageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
-    var mediaUrl = imageUrl.toString();
-    var userUid = user.uid.toString();
-    print(userUid);
-    saveToDataBase(mediaUrl, userUid);
-  }
-
-  void saveToDataBase(String mediaUrl, String userUid)async{
-     var databaseTimeKey = new DateTime.now();
-     var formaTime = new DateFormat("EEEE, hh:mm aaa");
-     var formaDate = new DateFormat("MMM d, yyyy");
-     String date = formaDate.format(databaseTimeKey);
-     String time = formaTime.format(databaseTimeKey);
-     await Database(userUid: userUid).Post(title, description, mediaUrl, album, type, date, time);
-   }
 
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(width: 1080, height: 1920);
+   ScreenUtil.init(context);
     return Container(
       child: Scaffold(
         body: ListView(
+          shrinkWrap: true,
+          physics: ClampingScrollPhysics(),
           children: <Widget>[
-            imageFile!=null?Container(
+            mediaFile!=null?Container(
               decoration: BoxDecoration(
                   gradient: gradient
               ),
@@ -103,10 +92,12 @@ class _UploadPhotoState extends State<UploadPhoto> {
                         right: ScreenUtil().setWidth(20),
                         top: ScreenUtil().setWidth(20),
                       ),
-                      child: new Image.file(imageFile)),
+                      child: new Image.file(mediaFile)),
                   new SizedBox(height: 1,),
                   GestureDetector(
-                    onTap: selectImage,
+                    onTap: (){
+                      selectImage();
+                    },
                     child: Container(
                       margin: EdgeInsets.only(
                         left: ScreenUtil().setWidth(20),
@@ -166,7 +157,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
                     ),
                     ),
                   onPressed: ()async{
-                     await _uploadImage();
+                     await uploadImage(title, description, mediaFile, album, type);
                      Navigator.pop(context);
                   },
                   color: Colors.redAccent,
@@ -175,24 +166,29 @@ class _UploadPhotoState extends State<UploadPhoto> {
                 ],
               ),
             ):GestureDetector(
-              onTap: selectImage,
-              child: Column(
-                children: <Widget>[
-                  selectedImage!=null?Container(
-                      padding: EdgeInsets.only(
-                        left: ScreenUtil().setWidth(20),
-                        right: ScreenUtil().setWidth(20),
-                        top: ScreenUtil().setWidth(20),
-                      ),
-                      child: new Image.file(selectedImage)):Container(),
-                  new Icon(Icons.add_to_photos, size: 100, color: Colors.indigo,),
-                  new SizedBox(height: 15,),
-                  new Text("Choose a photo", style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black
-                  ),)
-                ],
+              onTap: (){
+                selectImage();
+                },
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        padding: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(20),
+                          right: ScreenUtil().setWidth(20),
+                          top: ScreenUtil().setWidth(20),
+                        ),
+                        height: MediaQuery.of(context).size.width,
+                        width: MediaQuery.of(context).size.width,
+                        child: FittedBox(child: new Icon(Icons.photo_library))),
+                    new SizedBox(height: 15,),
+                    new Text("Click here to choose a picture", style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black
+                    ),)
+                  ],
+                ),
               ),
             )
           ],

@@ -2,7 +2,6 @@ import 'package:afromuse/pages/video/VideoHeader.dart';
 import 'package:afromuse/pages/video/VideoList.dart';
 import 'package:afromuse/staticPage/content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil.dart';
 
 class Video extends StatefulWidget {
   @override
@@ -12,7 +11,7 @@ class Video extends StatefulWidget {
 class _VideoState extends State<Video> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(height: 1920,width: 1080);
+//    ScreenUtil.init(height: 1920,width: 1080);
     final mediaquery = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(

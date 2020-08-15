@@ -13,7 +13,7 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     final orientation =  MediaQuery.of(context).orientation;
-    ScreenUtil.init(height: 1920,width: 1080);
+    ScreenUtil.init(context);
     return Container(
       color: Colors.white,
       child: GridView.builder(

@@ -29,7 +29,7 @@ class _HomeHeaderState extends State<HomeHeader> {
   Widget build(BuildContext context) {
     final Width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    ScreenUtil.init(width: 1080, height: 1920);
+    ScreenUtil.init(context);
     return
 //    return isMenu?Container(
 //      padding: EdgeInsets.only(

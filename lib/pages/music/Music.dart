@@ -16,7 +16,7 @@ class _MusicState extends State<Music> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(height: 1920,width: 1080);
+    ScreenUtil.init(context);
     return SafeArea(
       child: Scaffold(
         body: Center(

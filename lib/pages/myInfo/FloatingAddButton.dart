@@ -1,4 +1,4 @@
-import 'package:afromuse/sharedPage/alertDialog.dart';
+import 'package:afromuse/uploadFile/alertDialog.dart';
 import 'package:flutter/material.dart';
 
 class FloatingAddButton extends StatefulWidget {

@@ -12,7 +12,7 @@ class ListOfMusic extends StatefulWidget {
 class _ListOfMusicState extends State<ListOfMusic> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(height: 1920,width: 1080);
+    ScreenUtil.init(context);
     final mediaquery = MediaQuery.of(context).size;
     return  Scaffold(
       body: Container(

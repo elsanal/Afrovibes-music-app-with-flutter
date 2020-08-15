@@ -13,7 +13,7 @@ class _HomepagebodyState extends State<Homepagebody> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(width: 1080, height: 1920);
+    ScreenUtil.init(context);
     final mediaquery = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(

@@ -25,7 +25,7 @@ class _MusicHeaderState extends State<MusicHeader> {
   Widget build(BuildContext context) {
     final Width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    ScreenUtil.init(width: 1080, height: 1920);
+    ScreenUtil.init(context);
     return widget.isPlaying?Container(
       padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(20),
