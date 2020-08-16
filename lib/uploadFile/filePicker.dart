@@ -29,11 +29,11 @@ class PickFile extends StatelessWidget {
         filePath = path;
 
         if(fileType == "audio"){
-          return Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadMusic(file: filePath,)));
+          return Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadMusic(file: filePath,)));
         }else if(fileType == "image"){
-          return Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadPhoto(file: pickedFile,isCamera: false,)));
+          return Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadPhoto(file: pickedFile,isCamera: false,)));
         }else if(fileType == "video"){
-          return  Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(file: pickedFile,isCamera: false,)));
+          return  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadVideo(file: pickedFile,isCamera: false,)));
         }else{
           return uploadFileAlert(context);
         }

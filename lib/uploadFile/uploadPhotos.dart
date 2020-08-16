@@ -30,13 +30,13 @@ class _UploadPhotoState extends State<UploadPhoto> {
   void initState() {
     // TODO: implement initState
 
-  if(widget.file == null){
-    selectImage();
-  }else{
+  if(widget.file != null){
     setState(() {
       selectedImage = widget.file;
     });
     cropImage(selectedImage);
+  }else{
+    selectImage();
   }
     super.initState();
   }
