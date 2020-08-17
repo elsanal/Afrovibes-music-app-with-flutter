@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:afromuse/pages/myInfo/MyPosts.dart';
 import 'package:afromuse/services/uploadToDatabase.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
+import 'package:afromuse/sharedPage/laoding.dart';
 import 'package:afromuse/staticPage/TextFieldDeco.dart';
-import 'package:afromuse/uploadFile/filePicker.dart';
 import 'package:afromuse/uploadFile/videoPlayer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -29,15 +30,16 @@ class _UploadVideoState extends State<UploadVideo> {
   String type = 'video';
   int FILESIZE = 50000000;
   int ConvertToMega = 1000000;
+  bool loading = false;
 
   Subscription _subscription;
   String isProgress = '0';
-  final _flutterVideoCompressed = VideoCompress();
   MediaInfo _compressedVideoInfo = MediaInfo(path: '');
   String originSize;
   String compressSize;
   int duration;
 
+  final _formKey = GlobalKey<FormState>();
   final _streamController = StreamController<bool>.broadcast();
 
   void selectVideo()async {
@@ -51,7 +53,7 @@ class _UploadVideoState extends State<UploadVideo> {
     File _selectedVideo = File(video.path);
 
     if (_selectedVideo != null) {
-      mediaFile = widget.file;
+      mediaFile = _selectedVideo;
       compressVideoSize(_selectedVideo);
       _subscription = VideoCompress.compressProgress$.subscribe((progress) {
         setState(() {
@@ -63,8 +65,6 @@ class _UploadVideoState extends State<UploadVideo> {
 
   Future<void> compressVideoSize(File file)async{
     print("#######################************************************##################");
-    String fileSizeString;
-
     _streamController.sink.add(true);
     final compressVideoInfo = await VideoCompress.compressVideo(
       file.path,
@@ -75,20 +75,16 @@ class _UploadVideoState extends State<UploadVideo> {
     );
     setState(() {
       _compressedVideoInfo = compressVideoInfo;
-      originSize = (file.lengthSync()/ConvertToMega).toStringAsFixed(0);
-      compressSize = (_compressedVideoInfo.filesize/ConvertToMega).toStringAsFixed(0);
-      duration = (_compressedVideoInfo.duration/1000).round();
+//      originSize = (file.lengthSync()/ConvertToMega).toStringAsFixed(0);
+//      compressSize = (_compressedVideoInfo.filesize/ConvertToMega).toStringAsFixed(0);
+//      duration = (_compressedVideoInfo.duration/1000).round();
     });
 
     int fileSize = (_compressedVideoInfo.filesize~/ConvertToMega).toInt();
-//    String fileSizeString = (_compressedVideoInfo.filesize/ConvertToMega).toStringAsFixed(0);
-//    String originSize = (file.lengthSync()/ConvertToMega).toStringAsFixed(0);
-//    print('Origin video size = '+ originSize);
-//    print('Compressed video size = ' +fileSizeString);
-    _streamController.sink.add(false);
     if(fileSize > FILESIZE){
       return fileSizeAlert(context);
     }
+    _streamController.sink.add(false);
     print("2#######################************************************##################2");
   }
 
@@ -122,7 +118,7 @@ class _UploadVideoState extends State<UploadVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return loading?Loading():Container(
       child: Scaffold(
         body: ListView(
           children: <Widget>[
@@ -189,126 +185,105 @@ class _UploadVideoState extends State<UploadVideo> {
               decoration: BoxDecoration(
                   gradient: gradient
               ),
-              child: new Column(
-                children: <Widget>[
-                  Container(
-                      padding: EdgeInsets.only(
-                        left: ScreenUtil().setWidth(20),
-                        right: ScreenUtil().setWidth(20),
-                        top: ScreenUtil().setWidth(20),
-                      ),
-                      child: _compressedVideoInfo.file!=null?VideoFromPhone(videoFile: _compressedVideoInfo.file,):Container()),
+              child: Form(
+                key: _formKey,
+                child: new Column(
+                  children: <Widget>[
+                    Container(
+                        padding: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(20),
+                          right: ScreenUtil().setWidth(20),
+                          top: ScreenUtil().setWidth(20),
+                        ),
+                        child: _compressedVideoInfo.file!=null?VideoFromPhone(videoFile: _compressedVideoInfo.file,):Container()),
 //                  new SizedBox(height: 1,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
+                   GestureDetector(
+                     onTap: selectVideo,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(20),
+                          right: ScreenUtil().setWidth(20),
+                        ),
+                        padding: EdgeInsets.all(5),
+                        color: Colors.black,
+                        child: new Text("Click here to change the video",
+                          style: TextStyle(
+                              color: Colors.white
+                          ),),
+                      ),
                     ),
-                    padding: EdgeInsets.all(5),
-                    color: Colors.black,
-                    child: new Text('Origin size = ' + originSize + ' MB',
-                      style: TextStyle(
-                          color: Colors.white
-                      ),),
-                  ),
-                  new SizedBox(height: 10,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
-                    ),
-                    padding: EdgeInsets.all(5),
-                    color: Colors.black,
-                    child: new Text('Compressed size = ' + compressSize + ' MB',
-                      style: TextStyle(
-                          color: Colors.white
-                      ),),
-                  ),
-                  new SizedBox(height: 10,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
-                    ),
-                    padding: EdgeInsets.all(5),
-                    color: Colors.black,
-                    child: new Text('Compression duration : $duration sec',
-                      style: TextStyle(
-                          color: Colors.white
-                      ),),
-                  ),
-                  new SizedBox(height: 10,),
-                  GestureDetector(
-                    onTap: (){
-                      mediaFile = null;
-                      selectVideo();
-                    },
-                    child: Container(
+                    new SizedBox(height: 15,),
+                    Container(
                       margin: EdgeInsets.only(
                         left: ScreenUtil().setWidth(20),
                         right: ScreenUtil().setWidth(20),
                       ),
-                      padding: EdgeInsets.all(5),
-                      color: Colors.black,
-                      child: new Text("Click here to change the video",
-                        style: TextStyle(
-                            color: Colors.white
-                        ),),
-                    ),
-                  ),
-                  new SizedBox(height: 15,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
-                    ),
-                    child: new TextFormField(
-                      onChanged: (val){
-                        setState(() {
-                          title = val;
-                        });
-                      },
-                      validator: (val)=>val.isEmpty?"Please enter a title":null,
-                      decoration: decorationUpload.copyWith(hintText: "Please enter the title"),
+                      child: new TextFormField(
+                        onChanged: (val){
+                          setState(() {
+                            title = val;
+                          });
+                        },
+                        validator: (val)=>val.isEmpty?"Please enter a title":null,
+                        decoration: decorationUpload.copyWith(hintText: "Please enter the title"),
 
+                      ),
                     ),
-                  ),
-                  new SizedBox(height: 15,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
+                    new SizedBox(height: 15,),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(20),
+                        right: ScreenUtil().setWidth(20),
+                      ),
+                      child: new TextFormField(
+                        onChanged: (val){
+                          setState(() {
+                            description = val;
+                          });
+                        },
+                        validator: (val)=>val.isEmpty?"Please describe the picture":null,
+                        decoration: decorationUpload.copyWith(hintText: "Please describe the picture"),
+                        maxLines: null,
+                        maxLength: 1000,
+                        minLines: 10,
+                      ),
                     ),
-                    child: new TextFormField(
-                      onChanged: (val){
-                        setState(() {
-                          description = val;
-                        });
+                    new SizedBox(height: 15,),
+                    RaisedButton(
+                      child: Text("Submit", style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25
+                      ),
+                      ),
+                      onPressed: ()async{
+                        if(_formKey.currentState.validate()) {
+                          setState(() {
+                            loading = true;
+                          });
+
+                          dynamic result = await uploadImage(
+                              title, description, _compressedVideoInfo.file,
+                              album, type);
+                          VideoCompress.deleteAllCache();
+
+                          if (result == null) {
+                            return  Navigator.pushReplacement(
+                                context, new MaterialPageRoute(
+                                builder: (context) => MyPosts()));
+                          } else {
+
+                            setState(() {
+                              loading = false;
+                            });
+                          }
+                        }
                       },
-                      validator: (val)=>val.isEmpty?"Please describe the picture":null,
-                      decoration: decorationUpload.copyWith(hintText: "Please describe the picture"),
-                      maxLines: null,
-                      maxLength: 1000,
-                      minLines: 10,
+                      color: Colors.redAccent,
                     ),
-                  ),
-                  new SizedBox(height: 15,),
-                  RaisedButton(
-                    child: Text("Submit", style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25
-                    ),
-                    ),
-                    onPressed: ()async{
-                      await uploadImage(title, description, _compressedVideoInfo.file, album, type);
-                      VideoCompress.deleteAllCache();
-                      Navigator.pop(context);
-                    },
-                    color: Colors.redAccent,
-                  ),
-                  new SizedBox(height: 100,),
-                ],
+                    new SizedBox(height: 100,),
+                  ],
+                ),
               ),
             )
           ],
@@ -318,10 +293,10 @@ class _UploadVideoState extends State<UploadVideo> {
   }
 
   void fileSizeAlert(BuildContext context){
-//    ScreenUtil.init(width: 1080, height: 1920);
+    ScreenUtil.init(context);
     Alert(
         context: context,
-        title: "The video's size should be less or equal to 100 MB",
+        title: "The video's size should be less or equal to 50 MB",
         buttons: [
           DialogButton(
             child: Text("Choose another video", style: TextStyle(
@@ -329,8 +304,7 @@ class _UploadVideoState extends State<UploadVideo> {
                 color: Colors.white
             ),),
             onPressed: (){
-//              selectVideo();
-              Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>PickFile()));
+              selectVideo();
               Navigator.pop(context);
             },
             color: Colors.black,
@@ -346,40 +320,6 @@ class _UploadVideoState extends State<UploadVideo> {
         ]
     )..show();
   }
-//
-//  loadingState(){
-//    Alert(
-//        context: context,
-//        title: '',
-//        content: new StreamBuilder<bool>(
-//            stream: _streamController.stream,
-//            builder:(context, AsyncSnapshot<bool> snapshot){
-//              if(snapshot.data == true){
-//                return Card(
-//                    child: Container(
-//                      decoration: BoxDecoration(
-//                          gradient: gradient
-//                      ),
-//                      child: Column(
-//                        children: [
-//                          new CircularProgressIndicator(),
-//                          new Text("Loading", style: TextStyle(color: Colors.black),),
-//                          new Padding(padding: EdgeInsets.all(10),
-//                            child: Text('$isProgress %', style: TextStyle(color: Colors.black),),
-//                          ),
-//
-//                        ],
-//                      ),
-//                  ),
-//                );
-//
-//              }else{
-//                return Container();
-//              }
-//            }
-//        )
-//    )..show();
-//  }
 
 }
 

@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:afromuse/pages/myInfo/MyPosts.dart';
 import 'package:afromuse/services/uploadToDatabase.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
+import 'package:afromuse/sharedPage/laoding.dart';
 import 'package:afromuse/staticPage/TextFieldDeco.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +27,8 @@ class _UploadPhotoState extends State<UploadPhoto> {
   String album = 'single';
   String type = 'photo';
 
+  final _formKey = GlobalKey<FormState>();
+  bool loading = false;
 
   @override
   void initState() {
@@ -74,7 +78,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
   @override
   Widget build(BuildContext context) {
    ScreenUtil.init(context);
-    return Container(
+    return loading?Loading():Container(
       child: Scaffold(
         body: ListView(
           shrinkWrap: true,
@@ -84,86 +88,104 @@ class _UploadPhotoState extends State<UploadPhoto> {
               decoration: BoxDecoration(
                   gradient: gradient
               ),
-              child: new Column(
-                children: <Widget>[
-                  Container(
-                      padding: EdgeInsets.only(
-                        left: ScreenUtil().setWidth(20),
-                        right: ScreenUtil().setWidth(20),
-                        top: ScreenUtil().setWidth(20),
+              child: Form(
+                key: _formKey,
+                child: new Column(
+                  children: <Widget>[
+                    Container(
+                        padding: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(20),
+                          right: ScreenUtil().setWidth(20),
+                          top: ScreenUtil().setWidth(20),
+                        ),
+                        child: new Image.file(mediaFile)),
+                    new SizedBox(height: 1,),
+                    GestureDetector(
+                      onTap: (){
+                        selectImage();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(20),
+                          right: ScreenUtil().setWidth(20),
+                        ),
+                        color: Colors.black,
+                        child: new Text("Click here to change the picture",
+                          style: TextStyle(
+                              color: Colors.white
+                          ),),
                       ),
-                      child: new Image.file(mediaFile)),
-                  new SizedBox(height: 1,),
-                  GestureDetector(
-                    onTap: (){
-                      selectImage();
-                    },
-                    child: Container(
+                    ),
+                    new SizedBox(height: 15,),
+                    Container(
                       margin: EdgeInsets.only(
                         left: ScreenUtil().setWidth(20),
                         right: ScreenUtil().setWidth(20),
                       ),
-                      color: Colors.black,
-                      child: new Text("Click here to change the picture",
-                        style: TextStyle(
-                            color: Colors.white
-                        ),),
-                    ),
-                  ),
-                  new SizedBox(height: 15,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
-                    ),
-                    child: new TextFormField(
-                      onChanged: (val){
-                        setState(() {
-                          title = val;
-                        });
-                      },
-                      textCapitalization: TextCapitalization.characters,
-                      validator: (val)=>val.isEmpty?"Please enter a title":null,
-                      decoration: decorationUpload.copyWith(hintText: "Please enter the title"),
+                      child: new TextFormField(
+                        onChanged: (val){
+                          setState(() {
+                            title = val;
+                          });
+                        },
+                        textCapitalization: TextCapitalization.characters,
+                        validator: (val)=>val.isEmpty?"Please enter a title":null,
+                        decoration: decorationUpload.copyWith(hintText: "Please enter the title"),
 
+                      ),
                     ),
-                  ),
-                  new SizedBox(height: 15,),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(20),
-                      right: ScreenUtil().setWidth(20),
+                    new SizedBox(height: 15,),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(20),
+                        right: ScreenUtil().setWidth(20),
+                      ),
+                      child: new TextFormField(
+                        onChanged: (val){
+                          setState(() {
+                            description = val;
+                          });
+                        },
+                        textCapitalization: TextCapitalization.sentences,
+                        validator: (val)=>val.isEmpty?"Please describe the picture":null,
+                        decoration: decorationUpload.copyWith(hintText: "Please describe the picture"),
+                        maxLines: null,
+                        maxLength: 1000,
+                        minLines: 10,
+                      ),
                     ),
-                    child: new TextFormField(
-                      onChanged: (val){
-                        setState(() {
-                          description = val;
-                        });
-                      },
-                      textCapitalization: TextCapitalization.sentences,
-                      validator: (val)=>val.isEmpty?"Please describe the picture":null,
-                      decoration: decorationUpload.copyWith(hintText: "Please describe the picture"),
-                      maxLines: null,
-                      maxLength: 1000,
-                      minLines: 10,
+                    new SizedBox(height: 15,),
+                    RaisedButton(
+                      child: Text("Submit", style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25
+                      ),
+                      ),
+                    onPressed: ()async{
+                        if(_formKey.currentState.validate()) {
+                          setState(() {
+                            loading = true;
+                          });
+
+                          dynamic result = await uploadImage(
+                              title, description, mediaFile, album, type);
+                          if (result == null) {
+                            return  Navigator.pushReplacement(
+                                context, new MaterialPageRoute(
+                                builder: (context) => MyPosts()));
+                          } else {
+                            setState(() {
+                              loading = false;
+                            });
+                          }
+                        }
+                    },
+                    color: Colors.redAccent,
                     ),
-                  ),
-                  new SizedBox(height: 15,),
-                  RaisedButton(
-                    child: Text("Submit", style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25
-                    ),
-                    ),
-                  onPressed: ()async{
-                     await uploadImage(title, description, mediaFile, album, type);
-                     Navigator.pop(context);
-                  },
-                  color: Colors.redAccent,
-                  ),
-                  new SizedBox(height: 100,),
-                ],
+                    new SizedBox(height: 100,),
+                  ],
+                ),
               ),
             ):GestureDetector(
               onTap: (){

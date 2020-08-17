@@ -16,11 +16,14 @@ class UploadMusic extends StatefulWidget {
 
 class _UploadMusicState extends State<UploadMusic> {
   String musicPath;
-  AudioPlayer _audioPlayer;
+  AudioPlayer _audioPlayer = new AudioPlayer();
+
   final schoffoldKey = GlobalKey<ScaffoldState>();
   var  fileExtension ;
   String filename;
   bool isPlaying = false;
+  int _duration ;
+  int _position ;
 
 
 //   selectMusic()async{
@@ -69,7 +72,7 @@ class _UploadMusicState extends State<UploadMusic> {
       isPlaying = false;
     });
   }
-  void resumeMusic(){
+   resumeMusic(){
     _audioPlayer.pause();
   }
   void pauseMusic(){
@@ -78,8 +81,11 @@ class _UploadMusicState extends State<UploadMusic> {
       isPlaying = false;
     });
   }
-  void forwardMusic(){
-    _audioPlayer.seek(Duration(seconds: 10));
+   forwardMusic(final audioPosition){
+    seekToSecond(audioPosition + 10);
+  }
+   reverseMusic(final audioPosition){
+     seekToSecond(audioPosition - 10);
   }
 
 //  void getMime()async{
@@ -92,10 +98,15 @@ class _UploadMusicState extends State<UploadMusic> {
 //    });
 //  }
 
+  void seekToSecond(int second){
+    Duration newDuration = Duration(seconds: second);
+    _audioPlayer.seek(newDuration);
+  }
+
    @override
   void initState() {
     // TODO: implement initState
-     _audioPlayer = AudioPlayer();
+
      setState(() {
        musicPath = widget.file;
      });
@@ -124,8 +135,8 @@ class _UploadMusicState extends State<UploadMusic> {
                     right: ScreenUtil().setWidth(20),
                   ),
                   padding: EdgeInsets.all(ScreenUtil().setWidth(150)),
-                  height: MediaQuery.of(context).size.width,
-                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width/2,
+                  width: MediaQuery.of(context).size.width/2,
                   child: FittedBox(child: new Icon(Icons.music_video, color: Colors.indigo,))),
               new SizedBox(height: 1,),
               new Container(
@@ -135,6 +146,10 @@ class _UploadMusicState extends State<UploadMusic> {
               widget.file!=null?Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.replay_10, size: 50,color: Colors.red,),
+                      onPressed: ()=>reverseMusic(_position)
+                  ),
                   isPlaying?IconButton(
                     icon: Icon(Icons.pause,size: 50,color: Colors.red,),
                     onPressed: pauseMusic,
@@ -148,11 +163,44 @@ class _UploadMusicState extends State<UploadMusic> {
                   ),
                   IconButton(
                       icon: Icon(Icons.forward_10, size: 50,color: Colors.red,),
-                      onPressed: forwardMusic
+                      onPressed: ()=>forwardMusic(_position)
                   ),
 
                 ],
               ):Container(),
+              FutureBuilder<int>(
+                  future: _audioPlayer.getDuration(),
+                  builder: (context , AsyncSnapshot<int> snapshot){
+                    if(snapshot.hasData){
+                      _duration = (snapshot.data/1000).round();
+                      return Container(child: Text('Duration : $_duration'),);
+                    }else{
+                     return Container(child: Text('No data'),);
+                    }
+                  }
+              ),
+              FutureBuilder<int>(
+                  future: _audioPlayer.getCurrentPosition(),
+                  builder: (context , AsyncSnapshot<int> snapshot){
+                    if(snapshot.hasData){
+                      _position = (snapshot.data/1000).round();
+                      return Container(child: Text('Position : $_position'),);
+                    }else{
+                      return Container(child: Text('No data'),);
+                    }
+                  }
+              ),
+             _position!=null? new Slider(
+                  value: _position.toDouble(),
+                  min: 0.0,
+                  max: _duration.toDouble(),
+                  onChanged: (double value){
+                    setState(() {
+                      seekToSecond(value.toInt());
+                      value = value;
+                    });
+                  }
+              ):Container(child: Text('No data'),),
               SizedBox(height: 50,),
               RaisedButton(
                 onPressed: (){
@@ -231,4 +279,5 @@ class _PlaySongState extends State<PlaySong> {
     );
   }
 }
+
 
