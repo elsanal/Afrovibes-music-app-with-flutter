@@ -168,8 +168,8 @@ class _UploadPhotoState extends State<UploadPhoto> {
                             loading = true;
                           });
 
-                          dynamic result = await uploadImage(
-                              title, description, mediaFile, album, type);
+                          dynamic result = await uploadFile(
+                              title, description, mediaFile, album, type, '.mp3');
                           if (result == null) {
                             return  Navigator.pushReplacement(
                                 context, new MaterialPageRoute(

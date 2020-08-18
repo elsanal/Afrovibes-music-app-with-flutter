@@ -6,7 +6,9 @@ import 'package:video_player/video_player.dart';
 
 class VideoFromPhone extends StatefulWidget {
   File videoFile;
-  VideoFromPhone({this.videoFile});
+  final videoHigh;
+  final videoWidth;
+  VideoFromPhone({this.videoFile, this.videoHigh, this.videoWidth});
   @override
   _VideoFromPhoneState createState() => _VideoFromPhoneState();
 }
@@ -52,10 +54,11 @@ class _VideoFromPhoneState extends State<VideoFromPhone> {
   Widget build(BuildContext context) {
     final boxSize = MediaQuery.of(context).size.width;
     return Container(
-      height: boxSize*(2/3),
-      width: boxSize,
+      color: Colors.indigo,
+//      height: widget.videoHigh,
+//      width: widget.videoWidth,
       child: FittedBox(
-        fit: BoxFit.contain,
+        fit: BoxFit.scaleDown,
         child: Chewie(
           controller: _chewieController,
         ),

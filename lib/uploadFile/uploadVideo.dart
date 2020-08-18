@@ -53,13 +53,17 @@ class _UploadVideoState extends State<UploadVideo> {
     File _selectedVideo = File(video.path);
 
     if (_selectedVideo != null) {
-      mediaFile = _selectedVideo;
-      compressVideoSize(_selectedVideo);
+      setState(() {
+        mediaFile = _selectedVideo;
+      });
+
       _subscription = VideoCompress.compressProgress$.subscribe((progress) {
         setState(() {
           isProgress = progress.toStringAsFixed(0);
+          print('progress: $progress');
         });
       });
+      compressVideoSize(mediaFile);
     }
   }
 
@@ -71,15 +75,10 @@ class _UploadVideoState extends State<UploadVideo> {
       quality: VideoQuality.MediumQuality,
       deleteOrigin: false,
       frameRate: 24,
-      includeAudio: true,
     );
     setState(() {
       _compressedVideoInfo = compressVideoInfo;
-//      originSize = (file.lengthSync()/ConvertToMega).toStringAsFixed(0);
-//      compressSize = (_compressedVideoInfo.filesize/ConvertToMega).toStringAsFixed(0);
-//      duration = (_compressedVideoInfo.duration/1000).round();
     });
-
     int fileSize = (_compressedVideoInfo.filesize~/ConvertToMega).toInt();
     if(fileSize > FILESIZE){
       return fileSizeAlert(context);
@@ -92,20 +91,23 @@ class _UploadVideoState extends State<UploadVideo> {
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
   if(widget.file != null){
-    mediaFile = widget.file;
-    compressVideoSize(widget.file);
+    setState(() {
+      mediaFile = widget.file;
+    });
+
     _subscription = VideoCompress.compressProgress$.subscribe((progress) {
       setState(() {
         isProgress = progress.toStringAsFixed(0);
+        print('progress: $progress');
       });
     });
+    compressVideoSize(mediaFile);
   }else{
-    setState(() {
-      selectVideo();
-    });
+    selectVideo();
   }
-    super.initState();
+
   }
   @override
   void dispose() {
@@ -113,7 +115,6 @@ class _UploadVideoState extends State<UploadVideo> {
     super.dispose();
     _subscription.unsubscribe();
     _streamController.close();
-    VideoCompress.deleteAllCache();
   }
 
   @override
@@ -195,10 +196,20 @@ class _UploadVideoState extends State<UploadVideo> {
                           right: ScreenUtil().setWidth(20),
                           top: ScreenUtil().setWidth(20),
                         ),
-                        child: _compressedVideoInfo.file!=null?VideoFromPhone(videoFile: _compressedVideoInfo.file,):Container()),
-//                  new SizedBox(height: 1,),
+                        child: _compressedVideoInfo.file!=null?VideoFromPhone(
+                          videoFile: _compressedVideoInfo.file,
+                          videoHigh: _compressedVideoInfo.height.toDouble(),
+                          videoWidth: _compressedVideoInfo.width.toDouble(),
+                        ):Container()),
+                  new SizedBox(height: 1,),
                    GestureDetector(
-                     onTap: selectVideo,
+                     onTap: (){
+                       setState(() {
+                         mediaFile = null;
+                       });
+                       selectVideo();
+
+                     },
                       child: Container(
                         margin: EdgeInsets.only(
                           left: ScreenUtil().setWidth(20),
@@ -262,9 +273,9 @@ class _UploadVideoState extends State<UploadVideo> {
                             loading = true;
                           });
 
-                          dynamic result = await uploadImage(
+                          dynamic result = await uploadFile(
                               title, description, _compressedVideoInfo.file,
-                              album, type);
+                              album, type, '.mp4');
                           VideoCompress.deleteAllCache();
 
                           if (result == null) {

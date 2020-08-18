@@ -49,7 +49,8 @@ dependencies:
   flutter_visualizers: ^0.0.2
   #uuid: 2.2.0
   video_compress: ^2.0.0
-  flutter_spinkit: "^4.1.2"
+  flutter_spinkit: ^4.1.2
+  marquee: ^1.5.2
 
 
   # The following adds the Cupertino Icons font to your application.

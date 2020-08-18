@@ -6,10 +6,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 
-  uploadImage(String title, String description, File mediaFile, String album, String type,)async{
+  uploadFile(String title, String description, File mediaFile, String album, String type, String extension)async{
   final StorageReference imageRef = FirebaseStorage.instance.ref().child('contentRef');
   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  final StorageUploadTask uploadTask = imageRef.child(user.uid.toString()).putFile(mediaFile);
+  var databaseTimeKey = new DateTime.now();
+  final StorageUploadTask uploadTask = imageRef.child(title.toLowerCase()+ databaseTimeKey.toString() + extension).putFile(mediaFile);
   var imageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
   var mediaUrl = imageUrl.toString();
   var userUid = user.uid.toString();
