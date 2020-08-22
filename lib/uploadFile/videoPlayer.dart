@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -17,13 +17,14 @@ class _VideoFromPhoneState extends State<VideoFromPhone> {
 
    ChewieController _chewieController;
    VideoPlayerController _videoPlayerController;
+
   @override
   void initState() {
     // TODO: implement initState
-    _videoPlayerController = VideoPlayerController.file(this.widget.videoFile);
+    _videoPlayerController = VideoPlayerController.file(this.widget.videoFile)..initialize();
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: 3/2,
+        aspectRatio: widget.videoHigh/widget.videoWidth,
         autoPlay: false,
         looping: false,
         autoInitialize: true,
@@ -52,17 +53,19 @@ class _VideoFromPhoneState extends State<VideoFromPhone> {
 
   @override
   Widget build(BuildContext context) {
-    final boxSize = MediaQuery.of(context).size.width;
     return Container(
-      color: Colors.indigo,
-//      height: widget.videoHigh,
-//      width: widget.videoWidth,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Chewie(
-          controller: _chewieController,
-        ),
+      color: Colors.black,
+      margin: EdgeInsets.only(
+        left: 5,
+        right: 5,
+        top: 5,
+      ),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width*(2/3),
+      child: Chewie(
+        controller: _chewieController,
       ),
     );
+
   }
 }

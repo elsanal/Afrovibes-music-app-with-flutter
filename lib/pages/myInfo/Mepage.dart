@@ -10,10 +10,12 @@ class _MepageState extends State<Mepage> {
   @override
   Widget build(BuildContext context) {
     final mediaquery  = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         body: Container(
+          height: height,
           color: Colors.grey[400],
           child: ListView(
             physics: ClampingScrollPhysics(),

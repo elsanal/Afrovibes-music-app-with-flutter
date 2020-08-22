@@ -8,6 +8,7 @@ import 'package:afromuse/sharedPage/methoCalls.dart';
 import 'package:afromuse/staticPage/TextFieldDeco.dart';
 import 'package:afromuse/uploadFile/filePicker.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_visualizers/Visualizers/LineBarVisualizer.dart';
@@ -43,16 +44,16 @@ class _UploadMusicState extends State<UploadMusic> {
   int _second;
 
 
-//   selectMusic()async{
-////    onLoading(context);
-////    var path = await AudioPicker.pickAudio();
-//    String file = await FilePicker.getFilePath();
-////    dismissLoading(context);
-//    setState(() {
-//      musicPath = file;
-//    });
-//    _audioPlayer.stop();
-//  }
+   selectMusic()async{
+//    var path = await AudioPicker.pickAudio();
+    stopMusic();
+    String file = await FilePicker.getFilePath(type: FileType.audio);
+    setState(() {
+      musicPath = file.toString();
+    });
+   filename =  basename(musicPath);
+
+  }
 
   void playMusic(){
     _audioPlayer.play(musicPath, isLocal: true);
@@ -64,6 +65,10 @@ class _UploadMusicState extends State<UploadMusic> {
     _audioPlayer.stop();
     setState(() {
       isPlaying = false;
+      _duration = new Duration(seconds: 0);
+      _position = new Duration(seconds: 0);
+      _minute = 0;
+      _second = 0;
     });
   }
   void pauseMusic(){
@@ -118,11 +123,16 @@ class _UploadMusicState extends State<UploadMusic> {
    @override
   void initState() {
     // TODO: implement initState
-     setState(() {
-       musicPath = widget.file;
-       mediaFile = File(widget.file);
-     });
-     filename =  basename(musicPath);//file complet name
+     if(widget.file!=null){
+       setState(() {
+         musicPath = widget.file;
+         mediaFile = File(widget.file);
+       });
+       filename =  basename(musicPath);//file complet name
+     }else{
+       selectMusic();
+     }
+
     super.initState();
   }
   @override
@@ -265,8 +275,7 @@ class _UploadMusicState extends State<UploadMusic> {
                   setState(() {
                     musicPath = null;
                   });
-                  Navigator.of(context).pushReplacement(
-                      new MaterialPageRoute(builder: (context)=>PickFile()));
+                 selectMusic();
                 },
                 child: Container(
                   margin: EdgeInsets.only(

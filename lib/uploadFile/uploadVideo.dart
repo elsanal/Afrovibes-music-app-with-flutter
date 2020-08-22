@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:afromuse/pages/myInfo/MyPosts.dart';
 import 'package:afromuse/services/uploadToDatabase.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
@@ -10,8 +9,11 @@ import 'package:afromuse/uploadFile/videoPlayer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+//import 'package:media_info/media_info.dart' as FileInfo;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:video_compress/video_compress.dart';
+
 
 
 class UploadVideo extends StatefulWidget {
@@ -31,16 +33,17 @@ class _UploadVideoState extends State<UploadVideo> {
   int FILESIZE = 50000000;
   int ConvertToMega = 1000000;
   bool loading = false;
-
-  Subscription _subscription;
   String isProgress = '0';
+//  MediaInfo _originFile = MediaInfo(path: '');
   MediaInfo _compressedVideoInfo = MediaInfo(path: '');
   String originSize;
   String compressSize;
   int duration;
-
+//  Map<String, dynamic> mediaInfo;
   final _formKey = GlobalKey<FormState>();
-  final _streamController = StreamController<bool>.broadcast();
+  StreamController<bool> _streamController = new BehaviorSubject();
+  Subscription _subscription;
+
 
   void selectVideo()async {
     PickedFile video;
@@ -51,25 +54,29 @@ class _UploadVideoState extends State<UploadVideo> {
     }
 
     File _selectedVideo = File(video.path);
-
     if (_selectedVideo != null) {
-      setState(() {
+      setState((){
         mediaFile = _selectedVideo;
-      });
 
-      _subscription = VideoCompress.compressProgress$.subscribe((progress) {
-        setState(() {
-          isProgress = progress.toStringAsFixed(0);
-          print('progress: $progress');
+      });
+      print('We are progessing toward #############################################: select1');
+      compressVideoSize(_selectedVideo);
+      print('We are progessing toward #############################################: select2');
+      _subscription = VideoCompress.compressProgress$.subscribe((event) {
+        setState((){
+          isProgress = event.toStringAsFixed(0);
+          print('We are progessing toward #############################################: $event');
         });
       });
-      compressVideoSize(mediaFile);
+
+      print('We are progessing toward #############################################: select3');
     }
+
   }
 
   Future<void> compressVideoSize(File file)async{
     print("#######################************************************##################");
-    _streamController.sink.add(true);
+    _streamController.add(true);
     final compressVideoInfo = await VideoCompress.compressVideo(
       file.path,
       quality: VideoQuality.MediumQuality,
@@ -79,11 +86,11 @@ class _UploadVideoState extends State<UploadVideo> {
     setState(() {
       _compressedVideoInfo = compressVideoInfo;
     });
-    int fileSize = (_compressedVideoInfo.filesize~/ConvertToMega).toInt();
+    int fileSize = (_compressedVideoInfo.filesize).toInt();
     if(fileSize > FILESIZE){
       return fileSizeAlert(context);
     }
-    _streamController.sink.add(false);
+    _streamController.add(false);
     print("2#######################************************************##################2");
   }
 
@@ -91,30 +98,34 @@ class _UploadVideoState extends State<UploadVideo> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
+
   if(widget.file != null){
     setState(() {
       mediaFile = widget.file;
     });
-
-    _subscription = VideoCompress.compressProgress$.subscribe((progress) {
+//    _originFile = MediaInfo(path: mediaFile.path);
+    print('We are progessing toward #############################################: Init1');
+    compressVideoSize(mediaFile);
+    print('We are progessing toward #############################################: Init2');
+    _subscription = VideoCompress.compressProgress$.subscribe((event) {
       setState(() {
-        isProgress = progress.toStringAsFixed(0);
-        print('progress: $progress');
+        isProgress = event.toStringAsFixed(0);
+        print('We are progessing toward #############################################: $event');
       });
     });
-    compressVideoSize(mediaFile);
+
   }else{
     selectVideo();
   }
-
+  super.initState();
   }
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
-    _subscription.unsubscribe();
     _streamController.close();
+    _subscription.unsubscribe();
+    VideoCompress.deleteAllCache();
+    super.dispose();
   }
 
   @override
@@ -125,6 +136,8 @@ class _UploadVideoState extends State<UploadVideo> {
           children: <Widget>[
             mediaFile==null?GestureDetector(
               onTap: (){
+                _streamController.close();
+                _subscription.unsubscribe();
                 selectVideo();
               },
               child: Center(
@@ -148,41 +161,42 @@ class _UploadVideoState extends State<UploadVideo> {
                   ],
                 ),
               ),
-            ):VideoCompress.isCompressing?Container(
+            )
+                :VideoCompress.isCompressing?Container(
               child: new StreamBuilder<bool>(
-                  stream: _streamController.stream,
-                  builder:(context, AsyncSnapshot<bool> snapshot){
-                    if(snapshot.data == false){
-                      return Container(child: Text('Waiting...', style: TextStyle(color: Colors.black),),);
-                    }else{
-                      return Center(
-                        child: Card(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.only(bottom: 10),
-                            padding: EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(
-                                gradient: gradient
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                new CircularProgressIndicator(backgroundColor: Colors.redAccent,),
-                                SizedBox(height: 10,),
-                                new Text("Loading", style: TextStyle(color: Colors.black),),
-                                new Padding(padding: EdgeInsets.all(10),
-                                  child: Text(isProgress + ' %', style: TextStyle(color: Colors.black),),
-                                ),
-                              ],
+                    stream: _streamController.stream,
+                    builder:(context, AsyncSnapshot<bool>  snapshot){
+                      if(snapshot.data == false){
+                        return Container(child: Text('Waiting...', style: TextStyle(color: Colors.black),),);
+                      }else{
+                        return Center(
+                          child: Card(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.only(bottom: 10),
+                              padding: EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                  gradient: gradient
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  new CircularProgressIndicator(backgroundColor: Colors.redAccent,),
+                                  SizedBox(height: 10,),
+                                  new Text("Loading", style: TextStyle(color: Colors.black),),
+                                  new Padding(padding: EdgeInsets.all(10),
+                                    child: Text(isProgress + ' %', style: TextStyle(color: Colors.black),),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     }
-                  }
-              ),
-            ):Container(
+                ),
+            ): Container(
               decoration: BoxDecoration(
                   gradient: gradient
               ),
@@ -190,25 +204,18 @@ class _UploadVideoState extends State<UploadVideo> {
                 key: _formKey,
                 child: new Column(
                   children: <Widget>[
-                    Container(
-                        padding: EdgeInsets.only(
-                          left: ScreenUtil().setWidth(20),
-                          right: ScreenUtil().setWidth(20),
-                          top: ScreenUtil().setWidth(20),
-                        ),
-                        child: _compressedVideoInfo.file!=null?VideoFromPhone(
-                          videoFile: _compressedVideoInfo.file,
-                          videoHigh: _compressedVideoInfo.height.toDouble(),
-                          videoWidth: _compressedVideoInfo.width.toDouble(),
-                        ):Container()),
-                  new SizedBox(height: 1,),
+                    mediaFile!=null?VideoFromPhone(
+                      videoFile: _compressedVideoInfo.file,
+                      videoHigh: _compressedVideoInfo.height.toDouble(),
+                      videoWidth: _compressedVideoInfo.width.toDouble(),
+                    ):Container(),
+                  new SizedBox(height: 3,),
                    GestureDetector(
                      onTap: (){
                        setState(() {
                          mediaFile = null;
                        });
                        selectVideo();
-
                      },
                       child: Container(
                         margin: EdgeInsets.only(
