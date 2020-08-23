@@ -6,7 +6,6 @@ import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/sharedPage/laoding.dart';
 import 'package:afromuse/sharedPage/methoCalls.dart';
 import 'package:afromuse/staticPage/TextFieldDeco.dart';
-import 'package:afromuse/uploadFile/filePicker.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -457,7 +456,6 @@ class _PlaySongState extends State<PlaySong> {
       ),
     );
   }
-
 }
 
 

@@ -10,19 +10,19 @@ import 'package:intl/intl.dart';
   final StorageReference imageRef = FirebaseStorage.instance.ref().child('contentRef');
   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
   var databaseTimeKey = new DateTime.now();
-  final StorageUploadTask uploadTask = imageRef.child(title.toLowerCase()+ databaseTimeKey.toString() + extension).putFile(mediaFile);
+  final StorageUploadTask uploadTask = imageRef.child(title.toLowerCase()+'/'+ databaseTimeKey.toString() + extension).putFile(mediaFile);
   var imageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
   var mediaUrl = imageUrl.toString();
   var userUid = user.uid.toString();
-  print(userUid);
-  saveToDataBase(title, description, mediaUrl, userUid, album,type);
+  final order = databaseTimeKey.toString();
+  saveToDataBase(title, description, mediaUrl, userUid, album,type, order);
 }
 
-void saveToDataBase(String title, String description, String mediaUrl, String userUid, String album, String type)async{
+void saveToDataBase(String title, String description, String mediaUrl, String userUid, String album, String type, String order)async{
   var databaseTimeKey = new DateTime.now();
   var formaTime = new DateFormat("EEEE, hh:mm aaa");
   var formaDate = new DateFormat("MMM d, yyyy");
   String date = formaDate.format(databaseTimeKey);
   String time = formaTime.format(databaseTimeKey);
-  await Database(userUid: userUid).Post(title, description, mediaUrl, album, type, date, time);
+  await Database(userUid: userUid).Post(title, description, mediaUrl, album, type, date, time, order);
 }

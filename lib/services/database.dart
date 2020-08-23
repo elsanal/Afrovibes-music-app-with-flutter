@@ -8,7 +8,7 @@ class Database{
 
   final CollectionReference Content = Firestore.instance.collection("Content");
   Future Post(String title, String description, String mediaUrl,
-      String album, String type, String date, String time, )async{
+      String album, String type, String date, String time, String order)async{
     return await Content.add(
       {
         "author" : userUid,
@@ -19,6 +19,7 @@ class Database{
         "contentUrl" : mediaUrl,
         "date" : date,
         "time" : time,
+        "order": order,
       }
     );
   }
