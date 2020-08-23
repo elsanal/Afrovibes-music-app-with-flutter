@@ -1,91 +1,77 @@
-import 'package:afromuse/sharedPage/gradients.dart';
+import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ListOfMusic extends StatefulWidget {
-  List<String> musicList;
-  ListOfMusic({this.musicList});
+  DocumentSnapshot document;
+  ListOfMusic({this.document});
   @override
   _ListOfMusicState createState() => _ListOfMusicState();
 }
 
 class _ListOfMusicState extends State<ListOfMusic> {
+
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     final mediaquery = MediaQuery.of(context).size;
-    return  Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: gradient
-        ),
-        child: new ListView.builder(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            itemCount: widget.musicList.length,
-            itemBuilder:(context, index){
-              return  new Container(
-                margin: EdgeInsets.only(
-                  left: ScreenUtil().setSp(20),
-                  right: ScreenUtil().setSp(20),
-                  bottom: ScreenUtil().setSp(20),
+    return  new Container(
+      margin: EdgeInsets.only(
+        bottom: ScreenUtil().setSp(20),
+      ),
+      padding: EdgeInsets.only(
+        left: ScreenUtil().setSp(20),
+        right: ScreenUtil().setSp(20),
+        top: ScreenUtil().setSp(20),
+        bottom: ScreenUtil().setSp(20),
+      ),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(
+              ScreenUtil().setHeight(50)
+          )
+      ),
+
+      width: mediaquery.width,
+      child: new Row(
+        children: <Widget>[
+          new Row(
+            children: <Widget>[
+              new Container(
+                child: CircleAvatar(
+                  backgroundImage: new AssetImage(
+                      'assets/profile.jpeg'),
                 ),
-                padding:EdgeInsets.only(
-                  left: ScreenUtil().setSp(20),
-                  right: ScreenUtil().setSp(20),
-                  top: ScreenUtil().setSp(20),
-                  bottom: ScreenUtil().setSp(20),
-                ) ,
-//                decoration: BoxDecoration(
-//                  gradient: gradient
-//                ),
-                color: Colors.white,
-                width: mediaquery.width,
-                child: new Row(
+              ),
+              new SizedBox(
+                width: 5,
+              ),
+              Container(
+                width: ScreenUtil().setWidth(300),
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment
+                      .start,
                   children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        new Container(
-                          child: CircleAvatar(
-                            backgroundImage: new AssetImage('assets/profile.jpeg'),
-                          ),
-                        ),
-                        new SizedBox(
-                          width: 5,
-                        ),
-                        Container(
-                          width : ScreenUtil().setWidth(300),
-                          child: new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new Text(widget.musicList[index],
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              new Text('album',)
-                            ],
-                          ),
-                        ),
-                      ],
+                    new Text('artiste',
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Expanded(
-                      child: new Container(
-                        child: Center(
-                          child: Text("Music title, this should be moving "
-                            "from right to left",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                        icon: Icon(Icons.play_arrow),
-                        onPressed: null),
+                    new Text(widget.document['Album'],)
                   ],
                 ),
-              );
-            }
-        ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: new Container(
+                height: ScreenUtil().setWidth(100),
+                child: Marques(widget.document['title'])
+            ),
+          ),
+          SizedBox(width: 1,),
+          SizedBox(width: 1,)
+        ],
       ),
     );
   }

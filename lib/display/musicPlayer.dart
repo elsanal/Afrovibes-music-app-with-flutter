@@ -114,7 +114,7 @@ class _MusicPlayerShowState extends State<MusicPlayerShow> {
           decoration: BoxDecoration(
               gradient: gradient
           ),
-          child: ListView(
+          child: Column(
             children: <Widget>[
               StreamBuilder(
                   stream: _audioPlayer.onAudioPositionChanged,

@@ -1,11 +1,14 @@
-import 'package:afromuse/sharedPage/gradients.dart';
+import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/searchBar.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MusicHeader extends StatefulWidget {
   bool isPlaying;
-  MusicHeader(this.isPlaying);
+  DocumentSnapshot document;
+  MusicHeader(this.isPlaying, this.document);
   @override
   _MusicHeaderState createState() => _MusicHeaderState();
 }
@@ -13,36 +16,35 @@ class MusicHeader extends StatefulWidget {
 class _MusicHeaderState extends State<MusicHeader> {
 
   bool isSearchField = false;
+  AudioPlayer _audioPlayer = new AudioPlayer();
 
   void searchToggle(){
     setState(() {
       isSearchField = !isSearchField;
     });
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _audioPlayer.play(widget.document['contentUrl'], isLocal: false);
+  }
 
   @override
   Widget build(BuildContext context) {
     final Width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     ScreenUtil.init(context);
-    return widget.isPlaying?Container(
+    return (widget.isPlaying)&(widget.document!=null)?Container(
+      margin: EdgeInsets.only(
+        top: ScreenUtil().setWidth(40),
+      ),
       padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(20),
         right: ScreenUtil().setWidth(20),
       ),
       width: Width,
       height: ScreenUtil().setHeight(height*(9/10)),
-      decoration: BoxDecoration(
-          gradient: gradient,
-          border: Border.all(
-              width: 1,
-              color: Colors.redAccent
-          ),
-          borderRadius: BorderRadius.circular(
-              ScreenUtil().setHeight(20),
-          )
-      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -85,7 +87,6 @@ class _MusicHeaderState extends State<MusicHeader> {
               Container(
                 child: Text("Author + music title + album name"),
               ),
-
             ],
           ),
           Row(
@@ -97,16 +98,35 @@ class _MusicHeaderState extends State<MusicHeader> {
                 ),
               ),
               new GestureDetector(
+                onTap: (){
+                  //MusicPlayerClass(document: widget.document).playMusic(widget.isPlaying);
+                },
                 child: Container(
                   child: Icon(Icons.fast_rewind),
                 ),
               ),
               new GestureDetector(
+                onTap: (){
+                  MusicPlayerClass(document: widget.document, audioPlayer: _audioPlayer).playMusic();
+                  print(widget.document);
+                  print(widget.isPlaying);
+                },
                 child: Container(
                   child: Icon(Icons.play_circle_outline),
                 ),
               ),
               new GestureDetector(
+                onTap: (){
+                  MusicPlayerClass(document: widget.document, audioPlayer: _audioPlayer).stopMusic();
+                },
+                child: Container(
+                  child: Icon(Icons.stop),
+                ),
+              ),
+              new GestureDetector(
+                onTap: (){
+//                  MusicPlayerClass(document: widget.document).fMusic(widget.isPlaying);
+                },
                 child: Container(
                   child: Icon(Icons.fast_forward),
                 ),
@@ -121,6 +141,9 @@ class _MusicHeaderState extends State<MusicHeader> {
         ],
       ),
     ):Container(
+      margin: EdgeInsets.only(
+        top: ScreenUtil().setWidth(20),
+      ),
       padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(50),
         right: ScreenUtil().setWidth(50),
@@ -128,16 +151,6 @@ class _MusicHeaderState extends State<MusicHeader> {
         bottom: ScreenUtil().setWidth(50),
       ),
       width: Width,
-      decoration: BoxDecoration(
-          gradient: gradient,
-          border: Border.all(
-              width: 1,
-              color: Colors.redAccent
-          ),
-          borderRadius: BorderRadius.circular(
-            ScreenUtil().setHeight(20),
-          )
-      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
