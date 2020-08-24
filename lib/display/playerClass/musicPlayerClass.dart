@@ -2,14 +2,15 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MusicPlayerClass{
-  DocumentSnapshot document;
+  List<DocumentSnapshot> document;
   AudioPlayer audioPlayer ;
-  MusicPlayerClass({this.document, this.audioPlayer});
+  int index;
+  MusicPlayerClass({this.document, this.audioPlayer, this.index});
 
 
   void playMusic(){
     print("play called");
-    audioPlayer.play(document['contentUrl'], isLocal: false);
+    audioPlayer.play(document[index]['contentUrl'], isLocal: false);
   }
   void stopMusic(){
     print("stop called");

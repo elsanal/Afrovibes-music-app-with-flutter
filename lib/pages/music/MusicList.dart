@@ -70,7 +70,6 @@ class _ListOfMusicState extends State<ListOfMusic> {
             ),
           ),
           SizedBox(width: 1,),
-          SizedBox(width: 1,)
         ],
       ),
     );

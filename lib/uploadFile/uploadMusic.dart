@@ -44,7 +44,6 @@ class _UploadMusicState extends State<UploadMusic> {
 
 
    selectMusic()async{
-//    var path = await AudioPicker.pickAudio();
     stopMusic();
     String file = await FilePicker.getFilePath(type: FileType.audio);
     setState(() {
@@ -162,7 +161,7 @@ class _UploadMusicState extends State<UploadMusic> {
               new SizedBox(height: ScreenUtil().setWidth(5),),
               Container(
                 height: ScreenUtil().setWidth(100),
-                  child: _Marques(filename)
+                  child: Marquee(text: filename)
               ),
               widget.file!=null?Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -373,29 +372,6 @@ class _UploadMusicState extends State<UploadMusic> {
       ),
     );
   }
-}
-
-Widget _Marques(String filename){
-  return new Container(
-    padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-    child: Marquee(
-      text: filename!=null?filename:'',
-      style: TextStyle(fontWeight: FontWeight.bold),
-      blankSpace: 10,
-      velocity: 20,
-      pauseAfterRound: Duration(seconds: 1),
-      scrollAxis: Axis.horizontal,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      showFadingOnlyWhenScrolling: true,
-      fadingEdgeStartFraction: 0.1,
-      fadingEdgeEndFraction: 0.1,
-      startPadding: 10.0,
-      accelerationCurve: Curves.linear,
-      accelerationDuration: Duration(seconds: 1),
-      decelerationDuration: Duration(milliseconds: 500),
-      decelerationCurve: Curves.easeOut,
-    ),
-  );
 }
 
 
