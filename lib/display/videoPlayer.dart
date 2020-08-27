@@ -1,12 +1,12 @@
-import 'dart:io';
-import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoFromWeb extends StatefulWidget {
   String videoFile;
-  VideoFromWeb({this.videoFile,});
+  double width;
+  double height;
+  VideoFromWeb({this.videoFile, this.width, this.height});
   @override
   _VideoFromWebState createState() => _VideoFromWebState();
 }
@@ -22,7 +22,7 @@ class _VideoFromWebState extends State<VideoFromWeb> {
     _videoPlayerController = VideoPlayerController.network(this.widget.videoFile)..initialize();
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: 3/2,
+        aspectRatio: widget.height!=null?(widget.height!=null?widget.height/widget.width:3/2):3/2,
         autoPlay: false,
         looping: false,
         autoInitialize: true,

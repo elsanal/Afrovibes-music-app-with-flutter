@@ -1,6 +1,7 @@
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/music/Music.dart';
 import 'package:afromuse/pages/myInfo/Mepage.dart';
+import 'package:afromuse/pages/radio/Radio.dart';
 import 'package:afromuse/pages/streaming/InLive.dart';
 import 'package:afromuse/pages/video/Video.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
@@ -16,8 +17,8 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
 
 
-  List<Widget> pageList=[Homepagebody(),Music(),LiveStream(),
-   Video(),Mepage()];
+  List<Widget> pageList=[Homepagebody(),Music(),
+   Video(),LiveStream(),RadioFm(),Mepage()];
 
 
   @override

@@ -30,6 +30,9 @@ class _UploadVideoState extends State<UploadVideo> {
   String description;
   String album = 'single';
   String type = 'video';
+  double _height;
+  double _width;
+  String extension = '.mp4';
   int FILESIZE = 50000000;
   int ConvertToMega = 1000000;
   bool loading = false;
@@ -86,6 +89,8 @@ class _UploadVideoState extends State<UploadVideo> {
     setState(() {
       _compressedVideoInfo = compressVideoInfo;
     });
+    _height = _compressedVideoInfo.height.toDouble();
+    _width = _compressedVideoInfo.width.toDouble();
     int fileSize = (_compressedVideoInfo.filesize).toInt();
     if(fileSize > FILESIZE){
       return fileSizeAlert(context);
@@ -206,8 +211,8 @@ class _UploadVideoState extends State<UploadVideo> {
                   children: <Widget>[
                     mediaFile!=null?VideoFromPhone(
                       videoFile: _compressedVideoInfo.file,
-                      videoHigh: _compressedVideoInfo.height.toDouble(),
-                      videoWidth: _compressedVideoInfo.width.toDouble(),
+                      videoHigh: _height,
+                      videoWidth: _width,
                     ):Container(),
                   new SizedBox(height: 3,),
                    GestureDetector(
@@ -279,10 +284,10 @@ class _UploadVideoState extends State<UploadVideo> {
                           setState(() {
                             loading = true;
                           });
-
-                          dynamic result = await uploadFile(
-                              title, description, _compressedVideoInfo.file,
-                              album, type, '.mp4');
+                           print("this is the height $_height");
+                           print("this is the width $_width");
+                          dynamic result = await uploadVideo(title, description, mediaFile,
+                              album, type, extension, _height, _width);
                           VideoCompress.deleteAllCache();
 
                           if (result == null) {

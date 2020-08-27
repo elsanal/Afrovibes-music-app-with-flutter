@@ -1,5 +1,4 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
-import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/sharedPage/searchBar.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,7 +49,7 @@ class _MusicHeaderState extends State<MusicHeader> {
     }else {
       if(isClicked != widget.isClicked){
         setState(() {
-          isClicked = true;
+          playNow = true;
         });
       }
     }
@@ -128,7 +127,7 @@ class _MusicHeaderState extends State<MusicHeader> {
                     });
                   }
               ),
-              playNow||isClicked?IconButton(
+              playNow?IconButton(
                 icon: Icon(Icons.pause,),
                 onPressed: (){
                   MusicPlayerClass(document: widget.document, audioPlayer: widget.audioPlayer).pauseMusic();

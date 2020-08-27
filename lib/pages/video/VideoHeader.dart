@@ -78,37 +78,6 @@ class _VideoHeaderState extends State<VideoHeader> {
               )
             ],
           ),
-
-//          Row(
-//            mainAxisAlignment: MainAxisAlignment.spaceAround,
-//            children: <Widget>[
-//              new GestureDetector(
-//                child: Container(
-//                  child: Icon(Icons.skip_previous),
-//                ),
-//              ),
-//              new GestureDetector(
-//                child: Container(
-//                  child: Icon(Icons.fast_rewind),
-//                ),
-//              ),
-//              new GestureDetector(
-//                child: Container(
-//                  child: Icon(Icons.play_circle_outline),
-//                ),
-//              ),
-//              new GestureDetector(
-//                child: Container(
-//                  child: Icon(Icons.fast_forward),
-//                ),
-//              ),
-//              new GestureDetector(
-//                child: Container(
-//                  child: Icon(Icons.skip_next),
-//                ),
-//              ),
-//            ],
-//          ),
         ],
       ),
     );

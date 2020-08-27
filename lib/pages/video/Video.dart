@@ -1,6 +1,5 @@
 import 'package:afromuse/pages/video/VideoHeader.dart';
 import 'package:afromuse/pages/video/VideoList.dart';
-import 'package:afromuse/staticPage/content.dart';
 import 'package:flutter/material.dart';
 
 class Video extends StatefulWidget {
@@ -19,7 +18,7 @@ class _VideoState extends State<Video> {
             child: Column(
               children: <Widget>[
                 new VideoHeader(),
-                Expanded(child: Center(child: new VideoList(Artists: Artists,)))
+                Expanded(child: Center(child: new VideoList()))
               ],
             ),
           )
