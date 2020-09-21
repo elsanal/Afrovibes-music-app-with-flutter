@@ -22,7 +22,8 @@ class _VideoFromWebState extends State<VideoFromWeb> {
     _videoPlayerController = VideoPlayerController.network(this.widget.videoFile)..initialize();
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: widget.height!=null?(widget.height!=null?widget.height/widget.width:3/2):3/2,
+        aspectRatio: widget.height!=null?(widget.width!=null?
+                      widget.height.toDouble()/widget.width.toDouble():3/2):3/2,
         autoPlay: false,
         looping: false,
         autoInitialize: true,
@@ -53,11 +54,6 @@ class _VideoFromWebState extends State<VideoFromWeb> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-//      margin: EdgeInsets.only(
-//        left: 5,
-//        right: 5,
-//        top: 5,
-//      ),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width*(2/3),
       child: Chewie(

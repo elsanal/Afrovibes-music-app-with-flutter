@@ -33,7 +33,7 @@ class _UploadVideoState extends State<UploadVideo> {
   double _height;
   double _width;
   String extension = '.mp4';
-  int FILESIZE = 50000000;
+  int FILESIZE = 100000000;
   int ConvertToMega = 1000000;
   bool loading = false;
   String isProgress = '0';
@@ -60,21 +60,23 @@ class _UploadVideoState extends State<UploadVideo> {
     if (_selectedVideo != null) {
       setState((){
         mediaFile = _selectedVideo;
-
       });
-      print('We are progessing toward #############################################: select1');
-      compressVideoSize(_selectedVideo);
-      print('We are progessing toward #############################################: select2');
-      _subscription = VideoCompress.compressProgress$.subscribe((event) {
-        setState((){
-          isProgress = event.toStringAsFixed(0);
-          print('We are progessing toward #############################################: $event');
+      int OriginSize = mediaFile.lengthSync();
+      if(OriginSize>FILESIZE){
+        return fileSizeAlert(context);
+      }else{
+        print('We are progessing toward #############################################: select1');
+        compressVideoSize(_selectedVideo);
+        print('We are progessing toward #############################################: select2');
+        _subscription = VideoCompress.compressProgress$.subscribe((event) {
+          setState((){
+            isProgress = event.toStringAsFixed(0);
+            print('We are progessing toward #############################################: $event');
+          });
         });
-      });
-
-      print('We are progessing toward #############################################: select3');
-    }
-
+        print('We are progessing toward #############################################: select3');
+      }
+      }
   }
 
   Future<void> compressVideoSize(File file)async{
@@ -103,21 +105,26 @@ class _UploadVideoState extends State<UploadVideo> {
   @override
   void initState() {
     // TODO: implement initState
-
   if(widget.file != null){
     setState(() {
       mediaFile = widget.file;
     });
 //    _originFile = MediaInfo(path: mediaFile.path);
-    print('We are progessing toward #############################################: Init1');
-    compressVideoSize(mediaFile);
-    print('We are progessing toward #############################################: Init2');
-    _subscription = VideoCompress.compressProgress$.subscribe((event) {
-      setState(() {
-        isProgress = event.toStringAsFixed(0);
-        print('We are progessing toward #############################################: $event');
+    int OriginSize = mediaFile.lengthSync();
+    if(OriginSize>FILESIZE){
+      return fileSizeAlert(context);
+    }else{
+      print('We are progessing toward #############################################: select1');
+      compressVideoSize(mediaFile);
+      print('We are progessing toward #############################################: select2');
+      _subscription = VideoCompress.compressProgress$.subscribe((event) {
+        setState((){
+          isProgress = event.toStringAsFixed(0);
+          print('We are progessing toward #############################################: $event');
+        });
       });
-    });
+      print('We are progessing toward #############################################: select3');
+    }
 
   }else{
     selectVideo();
@@ -286,7 +293,7 @@ class _UploadVideoState extends State<UploadVideo> {
                           });
                            print("this is the height $_height");
                            print("this is the width $_width");
-                          dynamic result = await uploadVideo(title, description, mediaFile,
+                          dynamic result = await uploadVideo(title, description, _compressedVideoInfo.file,
                               album, type, extension, _height, _width);
                           VideoCompress.deleteAllCache();
 
@@ -319,7 +326,7 @@ class _UploadVideoState extends State<UploadVideo> {
     ScreenUtil.init(context);
     Alert(
         context: context,
-        title: "The video's size should be less or equal to 50 MB",
+        title: "The video's size should be less or equal to 100 MB",
         buttons: [
           DialogButton(
             child: Text("Choose another video", style: TextStyle(

@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1054378167422:android:f1326f51a4490a1d24dc2f",
+        "android_client_info": {
+          "package_name": "com.bigfaso.afrobeat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054378167422-8u0ejvcdvm7erkclm01h22jeeckgvqio.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ5kPuyLvCBLlQhWwDTFmJ9UIynr5rPT8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054378167422-8u0ejvcdvm7erkclm01h22jeeckgvqio.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1054378167422:android:2fdc4005c7258e9124dc2f",
         "android_client_info": {
           "package_name": "com.bigfaso.afromuse"

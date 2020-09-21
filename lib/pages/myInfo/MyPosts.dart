@@ -84,7 +84,7 @@ class _MyPostsState extends State<MyPosts> {
                                        color: Colors.green,
                                        height: ScreenUtil().setWidth(500),
                                        width: width,
-                                       child: MusicPlayerShow(file: document['contentUrl'],)
+                                       child: MusicPlayerShow(file: document['contentUrl'].toString(),)
                                      ),
                                      //// the Like, Comment and Share
                                      articleBottom(document, width),
@@ -105,7 +105,9 @@ class _MyPostsState extends State<MyPosts> {
                                    decoration: containerDeco,
                                    child: Column(children: [
                                     articleHead(document),
-                                    new VideoFromWeb(videoFile: document['contentUrl'],),
+                                    new VideoFromWeb(videoFile: document['contentUrl'],
+                                        width: document['width'],height: document['height']
+                                    ),
                                     articleBottom(document, width),
                                     ],
                                    ),

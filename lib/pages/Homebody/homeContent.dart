@@ -84,7 +84,9 @@ class _HomeContentState extends State<HomeContent> {
                                       decoration: containerDeco,
                                       child: Column(children: [
                                         articleHead(document),
-                                        new VideoFromWeb(videoFile: document['contentUrl'],),
+                                        new VideoFromWeb(videoFile: document['contentUrl'].toString(),
+                                            width: document['width'],height: document['height'],
+                                        ),
                                         articleBottom(document, width),
                                       ],
                                       ),
