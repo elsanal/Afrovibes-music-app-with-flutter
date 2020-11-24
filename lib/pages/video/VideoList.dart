@@ -20,8 +20,8 @@ class _VideoListState extends State<VideoList> {
     ScreenUtil.init(context);
     return Container(
       color: Colors.white,
-      child: StreamBuilder(
-          stream: getData().dataFromDB(),
+      child: FutureBuilder(
+          future: getData().dataFutureDB(),
           builder: (context, AsyncSnapshot snapshot){
             if(!snapshot.hasData){
               return Container();

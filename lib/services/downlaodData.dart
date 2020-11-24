@@ -9,4 +9,10 @@ class getData{
                                       .orderBy('order',descending: true).snapshots();
     return snapshot;
   }
+
+  dataFutureDB()async{
+    var snapshot = await Firestore.instance.collection('Content')
+                                      .orderBy('order',descending: true).getDocuments();
+    return snapshot;
+  }
 }

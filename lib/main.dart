@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       child:MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'AfroVibes',
-        home: Authentify(),
+        home: Homepage(),
         routes: {
           '/home' : (context)=>Homepage(),
           '/music' : (context)=>Music(),

@@ -33,7 +33,7 @@ class PickFile extends StatelessWidget {
         }else if(fileType == "image"){
           return Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadPhoto(file: pickedFile,isCamera: false,)));
         }else if(fileType == "video"){
-          return  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadVideo(file: pickedFile,isCamera: false,)));
+          //return  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>UploadVideo(file: pickedFile,isCamera: false,)));
         }else{
           return uploadFileAlert(context);
         }
@@ -83,7 +83,7 @@ class PickFile extends StatelessWidget {
            SizedBox(height: ScreenUtil().setWidth(50),),
            GestureDetector(
              onTap: (){
-               Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(isCamera: true,)));
+               //Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(isCamera: true,)));
              },
              child: Container(
                decoration: BoxDecoration(

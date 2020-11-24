@@ -44,7 +44,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
         GestureDetector(
           onTap: (){
             Navigator.pop(context);
-            Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(isCamera: true,)));
+            //Navigator.push(context, new MaterialPageRoute(builder: (context)=>UploadVideo(isCamera: true,)));
           },
           child: Container(
             decoration: BoxDecoration(

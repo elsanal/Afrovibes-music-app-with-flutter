@@ -39,7 +39,7 @@ dependencies:
   image_cropper: ^1.2.3
   video_trimmer: ^0.2.7
   chewie: ^0.9.10
-  video_player: ^0.10.11+2
+  video_player: ^0.10.12+4
   flutter_ffmpeg: ^0.2.10
 #  audio_picker: ^1.0.0
   audioplayers: ^0.13.7
@@ -48,7 +48,7 @@ dependencies:
   path: ^1.6.4
   flutter_visualizers: ^0.0.2
   #uuid: 2.2.0
-  video_compress: ^2.0.0
+  #video_compress: ^2.0.0
   flutter_spinkit: ^4.1.2
   rxdart: ^0.24.1
   marquee: ^1.5.2

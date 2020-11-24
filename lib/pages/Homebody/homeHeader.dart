@@ -249,29 +249,6 @@ class HoriListview extends StatelessWidget {
           ),
           GestureDetector(
             onTap :(){
-              Navigator.pushNamed(context, '/direct');
-            },
-            child: new Container(
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: ScreenUtil().setWidth(120),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      new Icon(Icons.live_tv, color: Colors.black,
-                        size: ScreenUtil().setWidth(100),),
-                      new Text("Direct", style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500
-                      ),)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap :(){
               Navigator.pushNamed(context, '/radio');
             },
             child: new Container(

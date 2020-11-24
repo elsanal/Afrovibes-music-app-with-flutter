@@ -15,15 +15,22 @@ class _VideoFromWebState extends State<VideoFromWeb> {
 
   ChewieController _chewieController;
   VideoPlayerController _videoPlayerController;
+  bool isInitialized = false;
 
   @override
   void initState() {
     // TODO: implement initState
-    _videoPlayerController = VideoPlayerController.network(this.widget.videoFile)..initialize();
+    _videoPlayerController = VideoPlayerController.network(this.widget.videoFile)..initialize()
+    .then((_){
+      setState(() {
+        isInitialized = true;
+      });
+    })
+    ;
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
         aspectRatio: widget.height!=null?(widget.width!=null?
-                      widget.height.toDouble()/widget.width.toDouble():3/2):3/2,
+        widget.height.toDouble()/widget.width.toDouble():3/2):3/2,
         autoPlay: false,
         looping: false,
         autoInitialize: true,
@@ -34,13 +41,13 @@ class _VideoFromWebState extends State<VideoFromWeb> {
         materialProgressColors: ChewieProgressColors(
             playedColor: Colors.red,
             backgroundColor: Colors.black,
-            bufferedColor: Colors.lightGreen,
+            bufferedColor: Colors.redAccent,
             handleColor: Colors.blue
         )
     );
-    _chewieController.pause();
     super.initState();
   }
+
 
   @override
   void dispose() {
@@ -52,13 +59,22 @@ class _VideoFromWebState extends State<VideoFromWeb> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return isInitialized?Container(
       color: Colors.black,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width*(2/3),
       child: Chewie(
         controller: _chewieController,
       ),
+    ):Container(
+      color: Colors.black,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width*(2/3),
+      child: Container(
+        height: 50,
+        width: 50,
+          child: FittedBox(
+              child: CircularProgressIndicator(backgroundColor: Colors.redAccent,strokeWidth: 1,))),
     );
   }
 }

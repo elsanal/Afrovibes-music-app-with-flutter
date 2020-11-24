@@ -108,9 +108,9 @@ class _VideoTrimmerState extends State<VideoTrimmer> {
                   final File file = await _saveVideo();
                   if(file!=null){
                     
-                    Navigator.push(context, new MaterialPageRoute(
-                        builder: (context)=>UploadVideo())
-                    );
+                    // Navigator.push(context, new MaterialPageRoute(
+                    //     builder: (context)=>UploadVideo())
+                    // );
                   }
                 },
                 child: Text('validate'),
