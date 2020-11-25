@@ -8,7 +8,7 @@ import 'package:afromuse/display/videoPlayer.dart';
 import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/sharedPage/containerDeco.dart';
-import 'package:afromuse/uploadFile/alertDialog.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeContent extends StatefulWidget {

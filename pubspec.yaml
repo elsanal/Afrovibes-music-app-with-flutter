@@ -33,22 +33,12 @@ dependencies:
   firebase_core: ^0.4.5
   rflutter_alert: ^1.0.3
   flutter_alert: ^0.4.0
-  image_picker: ^0.6.7+4
-#  multi_image_picker: ^4.7.10
   intl: ^0.16.1
-  image_cropper: ^1.2.3
-  video_trimmer: ^0.2.7
   chewie: ^0.9.10
   video_player: ^0.10.11+2
-  flutter_ffmpeg: ^0.2.10
-#  audio_picker: ^1.0.0
   audioplayers: ^0.13.7
-  file_picker: ^1.13.2
-  mime_type: ^0.3.2
   path: ^1.6.4
   flutter_visualizers: ^0.0.2
-  #uuid: 2.2.0
-  video_compress: ^2.0.0
   flutter_spinkit: ^4.1.2
   rxdart: ^0.24.1
   marquee: ^1.5.2

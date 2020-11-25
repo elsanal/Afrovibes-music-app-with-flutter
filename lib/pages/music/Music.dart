@@ -37,7 +37,7 @@ class _MusicState extends State<Music> {
               child: Column(
                 children: <Widget>[
                   new SizedBox(height: ScreenUtil().setHeight(25),),
-                  MusicHeader(isPlaying, _documentSnapshot, _index, _audioPlayer, isClicked),
+                  //MusicHeader(isPlaying, _documentSnapshot, _index, _audioPlayer, isClicked),
                   Expanded(
                     child: Container(
                       height: MediaQuery.of(context).size.height*(2/3),

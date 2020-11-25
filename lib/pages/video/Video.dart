@@ -18,7 +18,7 @@ class _VideoState extends State<Video> {
           body: Container(
             child: Column(
               children: <Widget>[
-                new VideoHeader(),
+                //new VideoHeader(),
                 Expanded(child: Center(child: new VideoList(Artists: Artists,)))
               ],
             ),

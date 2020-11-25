@@ -1,21 +1,11 @@
 import 'dart:io';
-
-import 'package:afromuse/pages/myInfo/MyPosts.dart';
-import 'package:afromuse/services/uploadToDatabase.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/sharedPage/laoding.dart';
-import 'package:afromuse/sharedPage/methoCalls.dart';
-import 'package:afromuse/staticPage/TextFieldDeco.dart';
-import 'package:afromuse/uploadFile/filePicker.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_visualizers/Visualizers/LineBarVisualizer.dart';
-import 'package:flutter_visualizers/visualizer.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:marquee/marquee.dart';
-import 'package:path/path.dart';
+
 
 class MusicPlayerShow extends StatefulWidget {
   String file;

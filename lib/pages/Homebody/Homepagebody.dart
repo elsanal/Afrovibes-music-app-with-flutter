@@ -25,7 +25,7 @@ class _HomepagebodyState extends State<Homepagebody> {
             child: Column(
               children: <Widget>[
                 new SizedBox(height: ScreenUtil().setWidth(70),),
-                new HomeHeader(),
+                //new HomeHeader(),
                 Expanded(child: Center(child: new HomeContent()))
               ],
             ),
