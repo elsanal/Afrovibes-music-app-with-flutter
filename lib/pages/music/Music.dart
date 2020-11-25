@@ -3,7 +3,7 @@ import 'package:afromuse/pages/music/MusicHeader.dart';
 import 'package:afromuse/pages/music/MusicList.dart';
 import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +18,7 @@ class _MusicState extends State<Music> {
    List<DocumentSnapshot> _documentSnapshot;
    int _index = 0;
    bool isClicked = false;
-   AudioPlayer _audioPlayer = new AudioPlayer();
+   //AudioPlayer _audioPlayer = new AudioPlayer();
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -77,7 +77,7 @@ class _MusicState extends State<Music> {
                                             _index = index;
                                             isPlaying = true;
                                             isClicked = !isClicked;
-                                            MusicPlayerClass(document: _documentSnapshot,audioPlayer: _audioPlayer, index: index).playMusic();
+                                            //MusicPlayerClass(document: _documentSnapshot,audioPlayer: _audioPlayer, index: index).playMusic();
                                             print(isPlaying);
                                           });
                                         },

@@ -63,7 +63,7 @@ class _HomeContentState extends State<HomeContent> {
                                               color: Colors.green,
                                               height: ScreenUtil().setWidth(500),
                                               width: width,
-                                              child: MusicPlayerShow(file: document['contentUrl'],)
+                                              //child: MusicPlayerShow(file: document['contentUrl'],)
                                           ),
                                           //// the Like, Comment and Share
                                           articleBottom(document, width),

@@ -1,7 +1,7 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/sharedPage/searchBar.dart';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,9 +11,9 @@ class MusicHeader extends StatefulWidget {
   bool isPlaying;
   bool isClicked;
   int index;
-  AudioPlayer audioPlayer;
+ // AudioPlayer audioPlayer;
   List<DocumentSnapshot> document;
-  MusicHeader(this.isPlaying, this.document, this.index, this.audioPlayer, this.isClicked);
+  //MusicHeader(this.isPlaying, this.document, this.index, this.audioPlayer, this.isClicked);
   @override
   _MusicHeaderState createState() => _MusicHeaderState();
 }
@@ -113,7 +113,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               IconButton(
                   icon: Icon(Icons.skip_previous,),
                   onPressed: (){
-                   new MusicPlayerClass( audioPlayer: widget.audioPlayer).stopMusic();
+                   //new MusicPlayerClass( audioPlayer: widget.audioPlayer).stopMusic();
                     setState(() {
                       playNow = false;
                     });
@@ -122,7 +122,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               IconButton(
                   icon: Icon(Icons.fast_rewind,),
                   onPressed: (){
-                   new MusicPlayerClass( audioPlayer: widget.audioPlayer).stopMusic();
+                  // new MusicPlayerClass( audioPlayer: widget.audioPlayer).stopMusic();
                     setState(() {
                       playNow = false;
                     });
@@ -131,7 +131,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               playNow||isClicked?IconButton(
                 icon: Icon(Icons.pause,),
                 onPressed: (){
-                  MusicPlayerClass(document: widget.document, audioPlayer: widget.audioPlayer).pauseMusic();
+                  //MusicPlayerClass(document: widget.document, audioPlayer: widget.audioPlayer).pauseMusic();
                   setState(() {
                     playNow = false;
                   });
@@ -139,7 +139,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               ):IconButton(
                   icon: Icon(Icons.play_arrow,),
                   onPressed: (){
-                    MusicPlayerClass(document: widget.document,audioPlayer: widget.audioPlayer, index: widget.index).playMusic();
+                   // MusicPlayerClass(document: widget.document,audioPlayer: widget.audioPlayer, index: widget.index).playMusic();
                     setState(() {
                       playNow = true;
                     });
@@ -148,7 +148,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               IconButton(
                   icon: Icon(Icons.stop,),
                   onPressed: (){
-                    MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
+                   // MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
                     setState(() {
                       playNow = false;
                     });
@@ -157,7 +157,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               IconButton(
                   icon: Icon(Icons.fast_forward,),
                   onPressed: (){
-                    MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
+                   // MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
                     setState(() {
                       playNow = false;
                     });
@@ -166,7 +166,7 @@ class _MusicHeaderState extends State<MusicHeader> {
               IconButton(
                   icon: Icon(Icons.skip_next,),
                   onPressed: (){
-                    MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
+                    //MusicPlayerClass(audioPlayer: widget.audioPlayer).stopMusic();
                     setState(() {
                       playNow = false;
                     });
