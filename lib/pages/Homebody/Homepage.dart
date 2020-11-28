@@ -30,6 +30,12 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Home'),
+        backgroundColor: Colors.orange[800],
+        leading: Icon(Icons.menu, color: Colors.black,),
+        actions: [
+          Icon(Icons.search, color: Colors.white,),
+          SizedBox(width: 8,)
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -139,21 +145,12 @@ class _HomepageState extends State<Homepage> {
 }
 
 
-
-
 class _bottomClipper extends CustomClipper<Path>{
   @override
   Path getClip(Size size) {
     Path path = Path();
     var sw = size.width;
     var sh = size.height;
-
-    // path.cubicTo(3*sw/12, 0, 3*sw/12 , 0, 4*sw/12,0);
-    // path.cubicTo(6*sw/12, 0, 6*sw/12 , 0, 6*sw/12,0);
-    // path.cubicTo(5*sw/12, 0, 5*sw/12 , 7*sh/8, 6*sw/12,7*sh/8);
-    // path.cubicTo(7*sw/12, 7*sh/8, 7*sw/12 , 0, 7*sw/12, 0);
-    // path.cubicTo(9*sw/12, 0, 9*sw/12 , 0, 10*sw/12,0);
-    // path.cubicTo(11*sw/12, 0, 11*sw/12 , 0, sw,0);
     path.lineTo(sw, sh);
     path.addOval(Rect.fromCircle(center: Offset(sw/2,sh/2),radius: ScreenUtil().setWidth(90)));
 

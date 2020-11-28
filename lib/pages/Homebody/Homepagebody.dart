@@ -1,8 +1,12 @@
-import 'package:afromuse/pages/Homebody/homeContent.dart';
-import 'package:afromuse/pages/Homebody/homeHeader.dart';
+import 'package:afromuse/pages/Homebody/NewAlbum.dart';
+import 'package:afromuse/pages/Homebody/RecentPlay.dart';
+import 'package:afromuse/pages/Homebody/ShowAlbum.dart';
+import 'package:afromuse/pages/Homebody/ShowArtist.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'PopularSong.dart';
 
 
 class Homepagebody extends StatefulWidget {
@@ -15,18 +19,45 @@ class _HomepagebodyState extends State<Homepagebody> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
-    final mediaquery = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
       child: Scaffold(
           body: Container(
             decoration: BoxDecoration(
-              gradient: gradient
+              color: Colors.grey[270]
             ),
-            child: Column(
+            width: width,
+            height: height,
+            child: ListView(
+              shrinkWrap: true,
+              //physics: ClampingScrollPhysics(),
               children: <Widget>[
-                new SizedBox(height: ScreenUtil().setWidth(70),),
-                //new HomeHeader(),
-                Expanded(child: Center(child: new HomeContent()))
+                Row(
+                  children: [
+                    Expanded(child: AlbumRow()),
+                  ],
+                ),
+                Row(
+                  children: [
+                  Expanded(child: RecentlyPlayed())
+                ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Artist()),
+                  ],
+                ),
+                Row(
+                  children: [
+                  Expanded(child: PopularSongs())
+                ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: NewAlbum())
+                  ],
+                ),
               ],
             ),
           )

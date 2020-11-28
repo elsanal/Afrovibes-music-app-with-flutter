@@ -36,13 +36,13 @@ dependencies:
   intl: ^0.16.1
   chewie: ^0.9.10
   video_player: ^0.10.11+2
-  #audioplayers: ^0.13.7
+  audioplayers: ^0.13.7
   path: ^1.6.4
-  #flutter_visualizers: ^0.0.2
   flutter_spinkit: ^4.1.2
   rxdart: ^0.24.1
   marquee: ^1.5.2
   google_fonts: ^1.1.0
+  flutter_swiper: ^1.1.6
 
 
   # The following adds the Cupertino Icons font to your application.
