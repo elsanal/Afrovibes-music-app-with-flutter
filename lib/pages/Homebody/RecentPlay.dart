@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RecentlyPlayed extends StatefulWidget {
   @override
@@ -22,10 +23,16 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
               children: [
                 new Container(
                   padding: EdgeInsets.all(10),
-                  child: Text('Recent played',style: TextStyle(fontSize: 18),),),
+                  child: Text('Recently played',style: GoogleFonts.roboto(textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600
+                  )),),),
                 new Container(
                   padding: EdgeInsets.all(10),
-                  child: Text('see All',style: TextStyle(fontSize: 18),),)
+                  child: Text('see All',style: GoogleFonts.roboto(textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600
+                  )),),)
               ],),
             Container(
               width: width,

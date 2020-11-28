@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Artist extends StatefulWidget {
   @override
@@ -21,10 +22,17 @@ class _ArtistState extends State<Artist> {
               children: [
               new Container(
                 padding: EdgeInsets.all(10),
-                child: Text('Artist',style: TextStyle(fontSize: 18),),),
+                child: Text('Artists',style: GoogleFonts.roboto(textStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600
+                )),),),
               new Container(
                 padding: EdgeInsets.all(10),
-                child: Text('see All',style: TextStyle(fontSize: 18),),)
+                child: Text('see All',style: GoogleFonts.roboto(textStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600
+                )),),),
+
             ],),
             Container(
               width: width,

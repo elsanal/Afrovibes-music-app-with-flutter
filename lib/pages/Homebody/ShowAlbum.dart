@@ -93,8 +93,8 @@ class _AlbumRowState extends State<AlbumRow> {
                 builder: new DotSwiperPaginationBuilder(
                     color: Colors.orange,
                     activeColor: Colors.red,
-                    size: 13,
-                    activeSize: 15
+                    size: 10,
+                    activeSize: 13
                 )
             )
         ),
