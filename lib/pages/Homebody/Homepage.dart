@@ -1,3 +1,4 @@
+import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
 import 'package:afromuse/pages/latest/Latest.dart';
@@ -26,22 +27,27 @@ class _HomepageState extends State<Homepage> {
 
   int iconSizeDefault = 70;
   int iconSizePlay = 160;
-
+  GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.grey[350],
       appBar: AppBar(
         centerTitle: true,
         title: Text(Title),
         backgroundColor: Colors.orange[800],
-        leading: Icon(Icons.menu, color: Colors.black,),
+        leading:IconButton(
+            icon:Icon(Icons.menu,color: Colors.black,),
+            onPressed:()=>scaffoldKey.currentState.openDrawer()
+        ),
         actions: [
           Icon(Icons.search, color: Colors.white,),
           SizedBox(width: 8,)
         ],
       ),
+      drawer: mainDrawer(),
       body: Container(
         decoration: BoxDecoration(
             gradient: gradient
