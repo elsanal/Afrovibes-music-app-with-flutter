@@ -1,0 +1,88 @@
+import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_audio_query/flutter_audio_query.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+getAlbum_data()async{
+  List<AlbumInfo> album = await audioQuery.getAlbums();
+  return album;
+}
+
+class LocalAlbums extends StatefulWidget {
+  @override
+  _LocalAlbumsState createState() => _LocalAlbumsState();
+}
+
+class _LocalAlbumsState extends State<LocalAlbums> {
+  @override
+  Widget build(BuildContext context) {
+    final orientation =  MediaQuery.of(context).orientation;
+    ScreenUtil.init(context);
+    return Container(
+        child: FutureBuilder(
+            future: getAlbum_data(),
+            builder: (context,snapshot) {
+              if (!snapshot.hasData) {
+                //print(snapshot.data.length);
+                return Container(color: Colors.grey,child: Center(child: Text("Loading..."),),);
+              } else {
+                List<AlbumInfo> album = snapshot.data;
+                return Container(
+                    child:GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisSpacing: ScreenUtil().setSp(10),
+                          childAspectRatio: 0.9,
+                          crossAxisCount:(orientation == Orientation.portrait)?2:3),
+                      itemCount: album.length,
+                      itemBuilder: (context, index) {
+                        //print(snapshot.data.length);
+                        if (album.isEmpty) {
+                          return Container(child: Center(child: Text("No album founded"),),);
+                        } else {
+                          return GestureDetector(
+                            child: Card(
+                              child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 20,
+                                  child: Stack(children: [
+                                    Positioned(
+                                        top: 3,
+                                        left: 20,
+                                        child: Container(
+                                          // height: 40,
+                                          width: 150,
+                                          child: Marques(album[index].artist + ' - '+ album[index].title),)
+                                    ),
+                                    Positioned(
+                                        right: 5,
+                                        bottom: 5,
+                                        child: Container(child: Text(album[index].id + " "),)
+                                    ),
+                                    Positioned(
+                                        bottom: 5,
+                                        left: 5,
+                                        child: Container(child: Text(album[index].numberOfSongs + ' songs'),)
+                                    ),
+
+                                    Positioned(
+                                        top: 3,
+                                        right: 5,
+                                        child: Container(child: IconButton(
+                                            icon: Icon(Icons.more_vert),
+                                            onPressed: (){}),)
+                                    ),
+
+                                  ],)
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    )
+                );
+              }
+            }
+        )
+    );
+  }
+}

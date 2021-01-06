@@ -1,12 +1,13 @@
+import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
 import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
 import 'package:afromuse/pages/latest/Latest.dart';
 import 'package:afromuse/pages/local/local.dart';
-import 'package:afromuse/pages/music/Music.dart';
+import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/pages/recent/recentPlayed.dart';
-import 'package:afromuse/pages/video/Video.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
+import 'package:afromuse/staticPage/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,9 +32,11 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.grey[350],
+      backgroundColor: Colors.orange[800],
       appBar: AppBar(
         centerTitle: true,
         title: Text(Title),
@@ -49,12 +52,23 @@ class _HomepageState extends State<Homepage> {
       ),
       drawer: mainDrawer(),
       body: Container(
+           height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: gradient
         ),
-        child: pageList[_currentIndex],
+        child: Stack(
+            children: [
+              pageList[_currentIndex],
+              isTapedToPlay? Dragger(height: height-184,width: width,selectedSong: selectedSong,)
+                  :Container(),
+              Positioned(
+                bottom: 0.0,
+                  child:_bottomBar(context, _currentIndex),
+              ),
+            ],
+        ),
       ),
-      bottomNavigationBar: _bottomBar(context,_currentIndex),
+      //bottomNavigationBar: _bottomBar(context,_currentIndex),
     );
   }
 
@@ -63,66 +77,33 @@ class _HomepageState extends State<Homepage> {
     return Container(
       color: Colors.white,
       height: ScreenUtil().setHeight(170),
-      child: Stack(
-        children: [
-          // Positioned(
-          //   bottom: 0,
-          //   child: ClipPath(
-          //     clipper: _bottomClipper(),
-          //     child: Card(
-          //       elevation: 20,
-          //       color: Colors.white,
-          //       child: Container(
-          //         height: ScreenUtil().setHeight(190),
-          //         width: MediaQuery
-          //             .of(context)
-          //             .size
-          //             .width,
-          //         decoration: BoxDecoration(
-          //             // gradient: LinearGradient(
-          //             //     begin: Alignment.topCenter,
-          //             //     end: Alignment.bottomCenter,
-          //             //     colors: [
-          //             //       Colors.redAccent,
-          //             //       Colors.yellow,
-          //             //       Colors.teal
-          //             //     ]
-          //             // )
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Positioned(
-            bottom: ScreenUtil().setWidth(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _bottomItems(
-                    Icons.home_outlined,Icons.home_filled,'Home', 0,iconSizeDefault),
-                  _bottomItems(
-                    Icons.new_releases_outlined,Icons.new_releases,'Hotest', 1,iconSizeDefault),
-                  _bottomItems(
-                      Icons.favorite_border_outlined,Icons.favorite_rounded,'Favorite', 2,iconSizeDefault),
-                  _bottomItems(
-                    Icons.watch_later_outlined,Icons.watch_later,'Recent', 3,iconSizeDefault),
-                  _bottomItems(
-                      Icons.folder_outlined,Icons.folder_rounded,'Library', 4,iconSizeDefault),
-                ],
-              ),
-            ),
-          ),
-        ],
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        color: Colors.white,
+        padding: EdgeInsets.only(
+          top: 5
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _bottomItems(
+              Icons.home_outlined,Icons.home_sharp,'Home', 0,iconSizeDefault),
+            _bottomItems(
+              Icons.new_releases_outlined,Icons.new_releases,'Hotest', 1,iconSizeDefault),
+            _bottomItems(
+                Icons.favorite_border_outlined,Icons.favorite_rounded,'Favorite', 2,iconSizeDefault),
+            _bottomItems(
+              Icons.watch_later_outlined,Icons.watch_later,'Recent', 3,iconSizeDefault),
+            _bottomItems(
+                Icons.folder_outlined,Icons.folder_rounded,'Library', 4,iconSizeDefault),
+          ],
+        ),
       ),
     );
   }
 
 
   _bottomItems(IconData icon_outlined, IconData icon_filled, String title, int index,int iconSize) {
-
     return Container(
       child: InkWell(
         onTap: () {
@@ -151,6 +132,26 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
+  Widget _appBar(){
+    return Container(
+      margin: EdgeInsets.only(
+        top: 0
+      ),
+      color : Colors.orange[800],
+      child: ListTile(
+        // centerTitle: true,
+        title: Text(Title),
+        // backgroundColor: Colors.orange[800],
+        leading:IconButton(
+            icon:Icon(Icons.menu,color: Colors.black,),
+            onPressed:()=>scaffoldKey.currentState.openDrawer()
+        ),
+        trailing: Icon(Icons.search, color: Colors.white,),
+      ),
+    );
+  }
+
 }
 
 

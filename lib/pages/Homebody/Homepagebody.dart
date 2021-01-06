@@ -2,6 +2,7 @@ import 'package:afromuse/pages/Homebody/NewAlbum.dart';
 import 'package:afromuse/pages/Homebody/RecentPlay.dart';
 import 'package:afromuse/pages/Homebody/ShowAlbum.dart';
 import 'package:afromuse/pages/Homebody/ShowArtist.dart';
+import 'package:afromuse/pages/Homebody/Suggestion.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,6 +51,11 @@ class _HomepagebodyState extends State<Homepagebody> {
                 ),
                 Row(
                   children: [
+                    Expanded(child: Suggestion())
+                  ],
+                ),
+                Row(
+                  children: [
                   Expanded(child: PopularSongs())
                 ],
                 ),
@@ -58,6 +64,7 @@ class _HomepagebodyState extends State<Homepagebody> {
                     Expanded(child: NewAlbum())
                   ],
                 ),
+                new Container(height: 120,)
               ],
             ),
           )

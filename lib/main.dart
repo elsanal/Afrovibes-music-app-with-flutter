@@ -1,7 +1,6 @@
 import 'package:afromuse/authentification/authentify.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
-import 'package:afromuse/pages/music/Music.dart';
-import 'package:afromuse/pages/video/Video.dart';
+import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/services/auth.dart';
 import 'package:afromuse/services/settings.dart';
 import 'package:afromuse/services/userModel.dart';
@@ -25,7 +24,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/home' : (context)=>Homepage(),
           '/music' : (context)=>Music(),
-          '/video' : (context)=>Video(),
           '/setting' : (context)=>Settings(),
         },
       ),

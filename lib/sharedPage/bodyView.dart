@@ -85,7 +85,8 @@ Widget articleBottom(DocumentSnapshot document, double width){
 }
 
 Widget Marques(String filename){
-  return new Container(
+  final fileLegth = filename.length;
+  return fileLegth >=23? new Container(
     padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
     child: Marquee(
       text: filename!=null?filename:'',
@@ -97,7 +98,7 @@ Widget Marques(String filename){
           )
       ),
       blankSpace: 10,
-      velocity: 20,
+      velocity: 18,
       pauseAfterRound: Duration(seconds: 1),
       scrollAxis: Axis.horizontal,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +109,20 @@ Widget Marques(String filename){
       accelerationCurve: Curves.linear,
       accelerationDuration: Duration(seconds: 1),
       decelerationDuration: Duration(milliseconds: 500),
-      decelerationCurve: Curves.easeOut,
+      decelerationCurve: Curves.bounceInOut,
+    ),
+  ):Container(
+    margin: EdgeInsets.only(
+      left: 10
+    ),
+    child: Text(filename,style: GoogleFonts.lexendExa(
+        textStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: Colors.black
+          ),
+        ),
+
     ),
   );
 }

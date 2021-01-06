@@ -60,11 +60,14 @@ class _mainDrawerState extends State<mainDrawer> {
               )
           ),
           Positioned(
-            top: height*(2.7/12),
+            top: height*(3.5/12),
             child: Container(
-                height: height*(9/12),
+                height: height*(8/12),
                 width: width*(10/12),
-                color: Colors.grey[270],
+                color: Colors.grey[550],
+                margin: EdgeInsets.only(
+                  bottom: 50,
+                ),
                 child:ListView(
                   children: [
                     InkWell(
@@ -109,28 +112,49 @@ class _mainDrawerState extends State<mainDrawer> {
                             clickedIndex = 5;
                           });
                         },
-                        child: _ListeTile(Icons.download_outlined,'Download',5,clickedIndex)),
+                        child: _ListeTile(Icons.music_note_outlined,'suggestion',5,clickedIndex)),
                     InkWell(
                         onTap: (){
                           setState(() {
                             clickedIndex = 6;
                           });
                         },
-                        child: _ListeTile(Icons.folder_outlined,'Library',6,clickedIndex)),
+                        child: _ListeTile(Icons.download_outlined,'Download',6,clickedIndex)),
                     InkWell(
                         onTap: (){
                           setState(() {
                             clickedIndex = 7;
                           });
                         },
-                        child: _ListeTile(Icons.settings_outlined,'Settings',7,clickedIndex)),
+                        child: _ListeTile(Icons.folder_outlined,'Library',7,clickedIndex)),
                     InkWell(
                         onTap: (){
                           setState(() {
                             clickedIndex = 8;
                           });
                         },
-                        child: _ListeTile(Icons.login_outlined,'Login',8,clickedIndex)),
+                        child: _ListeTile(Icons.settings_outlined,'Settings',8,clickedIndex)),
+                    InkWell(
+                        onTap: (){
+                          setState(() {
+                            clickedIndex = 9;
+                          });
+                        },
+                        child: _ListeTile(Icons.login_outlined,'Login',9,clickedIndex)),
+                    InkWell(
+                        onTap: (){
+                          setState(() {
+                            clickedIndex = 10;
+                          });
+                        },
+                        child: _ListeTile(Icons.rule,'Terms and Conditions',10,clickedIndex)),
+                    InkWell(
+                        onTap: (){
+                          setState(() {
+                            clickedIndex = 11;
+                          });
+                        },
+                        child: _ListeTile(Icons.home_work,'About',11,clickedIndex)),
                   ],
                 )
             ),
