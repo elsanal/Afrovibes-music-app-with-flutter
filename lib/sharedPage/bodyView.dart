@@ -48,7 +48,7 @@ Widget articleBottom(DocumentSnapshot document, double width){
     child: Column(children: [
        Container(
          height: ScreenUtil().setWidth(100),
-           child: Marques(document['title'])),
+           child: Marques(document['title'], Colors.black)),
       new Container(color: Colors.black,height: 1,width: width,),
       new Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,7 +84,7 @@ Widget articleBottom(DocumentSnapshot document, double width){
   );
 }
 
-Widget Marques(String filename){
+Widget Marques(String filename, Color textColor){
   final fileLegth = filename.length;
   return fileLegth >=23? new Container(
     padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
@@ -94,7 +94,7 @@ Widget Marques(String filename){
           textStyle: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 16,
-              color: Colors.black
+              color: textColor
           )
       ),
       blankSpace: 10,

@@ -59,7 +59,8 @@ class _HomepageState extends State<Homepage> {
         child: Stack(
             children: [
               pageList[_currentIndex],
-              isTapedToPlay? Dragger(height: height-184,width: width,selectedSong: selectedSong,)
+              isTapedToPlay? Dragger(height: height-184,width: width,
+                selectedSong: selectedSong,index: songIndex,)
                   :Container(),
               Positioned(
                 bottom: 0.0,

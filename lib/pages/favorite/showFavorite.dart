@@ -129,7 +129,7 @@ class _ShowFavoriteState extends State<ShowFavorite> {
                             height: 40,
                             width: 250,
                             child: Marques(myfavSong[index]['artist'] +
-                                ' - ' + myfavSong[index]['song_name']),)),
+                                ' - ' + myfavSong[index]['song_name'], Colors.black),)),
                       Positioned(
                         top: 25,
                           left: 120,

@@ -1,36 +1,44 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/staticPage/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 class DragPlayer extends StatefulWidget {
-  SongInfo selectedSong;
-  DragPlayer({this.selectedSong});
+  List<SongInfo> selectedSong;
+  int index;
+  DragPlayer({this.selectedSong, this.index});
   @override
   _DragPlayerState createState() => _DragPlayerState();
 }
 
-int _currentIndex = 0;
+int _currentIndex ;
 int iconSizeDefault = 90;
 int iconSizePlay = 160;
-bool isPlaying = true;
 ScrollController _controller;
 
 
 class _DragPlayerState extends State<DragPlayer> {
+  @override
+  void initState() {
+    _currentIndex = widget.index;
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     return Container(
       height: 90,
-      width: width*(5/6) ,
+      width: width*(5/6),
+
       child: Container(
         //color: Colors.white,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.black,
             borderRadius: BorderRadius.all(
                 Radius.circular(8.0)
             )
@@ -42,7 +50,8 @@ class _DragPlayerState extends State<DragPlayer> {
               child: Container(
                 width: width,
                 height: 100,
-                child: Marques(widget.selectedSong.artist + ' - ' + widget.selectedSong.title),
+                child: Marques(widget.selectedSong[widget.index].artist +
+                    ' - ' + widget.selectedSong[widget.index].title, Colors.white),
               ),
             ),
             Positioned(
@@ -79,35 +88,54 @@ class _DragPlayerState extends State<DragPlayer> {
     return Container(
       height: 50,
       width: 50,
-      color: Colors.white,
+      color: Colors.black,
       padding: EdgeInsets.only(
         top: 10,
         left: 15
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         body: Container(
           child: InkWell(
               onTap: () {
                 setState(() {
-                  _currentIndex = index;
+                  int totalSongs = widget.selectedSong.length;
                   if(index == 2){
-                    isPlaying = !isPlaying;
+                    setState(() {
+                      isPlaying = !isPlaying;
+                    });
+                  }else if((index == 1) & (_currentIndex > 0)){
+                    setState(() {
+                      _currentIndex = _currentIndex - 1;
+                      isPlaying = true;
+                    });
+                  }else if((index == 3) & (_currentIndex < totalSongs)){
+                    setState(() {
+                      _currentIndex = _currentIndex + 1;
+                      isPlaying = true;
+                    });
+                  }else{
+
                   }
-                  if(isPlaying){
-                    MusicPlayerClass().pauseMusic();
+                  if(isPlaying == true){
+                    MusicPlayerClass(
+                      file: widget.selectedSong[_currentIndex].filePath.toString(),
+                      isLocal: true,
+                      audioPlayer: audioPlayer
+                    ).playMusic();
                   }else{
                     MusicPlayerClass(
-                      file: widget.selectedSong.filePath.toString(),
+                      file: widget.selectedSong[_currentIndex].filePath.toString(),
                       isLocal: true,
-                    ).playMusic();
+                      audioPlayer: audioPlayer
+                    ).pauseMusic();
                   }
                 });
               },
               child: Column(
                 children: [
                   Icon(icon_outlined,
-                    color: Colors.black,
+                    color: Colors.white,
                     size: ScreenUtil().setWidth(iconSizeDefault),
                   ),
                 ],
@@ -122,8 +150,9 @@ class _DragPlayerState extends State<DragPlayer> {
 class Dragger extends StatefulWidget {
   double height;
   double width;
-  SongInfo selectedSong;
-  Dragger({this.height,this.width, this.selectedSong});
+  int index;
+  List<SongInfo> selectedSong;
+  Dragger({this.height,this.width, this.selectedSong, this.index});
   @override
   _DraggerState createState() => _DraggerState();
 }
@@ -146,21 +175,21 @@ class _DraggerState extends State<Dragger> {
                top: top,
                left: left,
              ),
-          child: DragPlayer(selectedSong: widget.selectedSong,),
+          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
         ),
         feedback: Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(selectedSong: widget.selectedSong,),
+          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
         ),
         childWhenDragging:  Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(selectedSong: widget.selectedSong,),
+          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
         ),
         onDragCompleted: (){},
         onDragEnd: (drag){

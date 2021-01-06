@@ -4,7 +4,8 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 
 bool isTapedToPlay = false;
+bool isPlaying;
+List <SongInfo> selectedSong;
+int songIndex;
 
-SongInfo selectedSong;
-
-AudioPlayer audioPlayer;
+AudioPlayer audioPlayer = AudioPlayer();

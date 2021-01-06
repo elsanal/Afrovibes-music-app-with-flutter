@@ -22,6 +22,10 @@ class _LocalSongsState extends State<LocalSongs> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(
+        bottom: 100,
+      ),
+        color: Colors.white,
         child: FutureBuilder(
             future: getSongs_data(),
             builder: (context,snapshot) {
@@ -38,15 +42,18 @@ class _LocalSongsState extends State<LocalSongs> {
                         if (songs.isEmpty) {
                           return Container(child: Center(child: Text("No music founded"),),);
                         } else {
-                          return GestureDetector(
+                          return InkWell(
                             onTap: (){
                               setState(() {
-                                selectedSong = songs[index];
+                                selectedSong = songs;
+                                songIndex = index;
                                 isTapedToPlay = true;
+                                isPlaying = true;
                               });
                               MusicPlayerClass(
-                                file: songs[index].filePath,
+                                file: songs[songIndex].filePath.toString(),
                                 isLocal: true,
+                                audioPlayer: audioPlayer
                               ).playMusic();
                             },
                             child: Card(
@@ -60,7 +67,7 @@ class _LocalSongsState extends State<LocalSongs> {
                                         child: Container(
                                           height: 40,
                                           width: 250,
-                                          child: Marques(songs[index].artist + ' - '+ songs[index].artist),)
+                                          child: Marques(songs[index].artist + ' - '+ songs[index].artist, Colors.black),)
                                     ),
                                     Positioned(
                                         right: 5,

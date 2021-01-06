@@ -132,7 +132,7 @@ class _PlaylistState extends State<Playlist> {
                                 child: Container(
                                   // height: 40,
                                   width: 150,
-                                  child: Marques(playlist[index]['title']),)
+                                  child: Marques(playlist[index]['title'], Colors.black),)
                             ),
                             Positioned(
                                 bottom: 5,

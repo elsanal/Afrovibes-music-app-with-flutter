@@ -51,7 +51,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                                         child: Container(
                                           // height: 40,
                                           width: 150,
-                                          child: Marques(album[index].artist + ' - '+ album[index].title),)
+                                          child: Marques(album[index].artist + ' - '+ album[index].title, Colors.black),)
                                     ),
                                     Positioned(
                                         right: 5,
