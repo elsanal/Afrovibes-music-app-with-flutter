@@ -4,10 +4,12 @@ import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/services/auth.dart';
 import 'package:afromuse/services/settings.dart';
 import 'package:afromuse/services/userModel.dart';
+import 'package:afromuse/staticPage/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  //readDataPrefs();
   runApp(MyApp());
 }
 

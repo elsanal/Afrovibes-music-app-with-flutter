@@ -7,11 +7,11 @@ import 'package:flutter/cupertino.dart';
 
 class MusicPlayerClass{
   List<DocumentSnapshot> document;
-  //AudioPlayer audioPlayer;
+  AudioPlayer audioPlayer ;
   int index;
   bool isLocal;
   String file;
-  MusicPlayerClass({this.document,this.file, this.index, this.isLocal});
+  MusicPlayerClass({this.document,this.file,this.audioPlayer, this.index, this.isLocal});
 
 
   void playMusic(){

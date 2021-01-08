@@ -8,6 +8,8 @@ import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/pages/recent/recentPlayed.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/staticPage/constant.dart';
+import 'package:afromuse/staticPage/preferences.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,13 +24,20 @@ class _HomepageState extends State<Homepage> {
   //int _currentIndex = pageCurrentIndex;
   String Title = "Home";
 
-
   List<Widget> pageList = [Homepagebody(), Latest(),ShowFavorite(),
     RecentPlayed(),Local(), Categories()];
 
   int iconSizeDefault = 70;
   int iconSizePlay = 160;
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    readDataPrefs();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -51,35 +60,39 @@ class _HomepageState extends State<Homepage> {
         ],
       ),
       drawer: mainDrawer(),
-      body: Container(
-           height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-            gradient: gradient
-        ),
-        child: Stack(
-            children: [
-              ValueListenableBuilder(
-                valueListenable: pageCurrentIndex,
-                builder: (context, value, widget){
-                  return pageList[value];
-                },
-              ),
-              ValueListenableBuilder(
-                valueListenable: isTapedToPlay,
-                builder: (context, value, widget){
-                  if(value == true){
-                    return Dragger(height: height-184,
-                      width: width, selectedSong: selectedSong,index:  songIndex.value,);
-                  }else{
-                    return Container();
-                  }
-                },
-              ),
-              Positioned(
-                bottom: 0.0,
-                  child:_bottomBar(context, pageCurrentIndex.value),
-              ),
-            ],
+      body: DoubleBackToCloseApp(
+           snackBar: const SnackBar(
+           content: Text('Tap back again to leave'),),
+         child: Container(
+             height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+              gradient: gradient
+          ),
+          child: Stack(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: pageCurrentIndex,
+                  builder: (context, value, widget){
+                    return pageList[value];
+                  },
+                ),
+                ValueListenableBuilder(
+                  valueListenable: isTapedToPlay,
+                  builder: (context, value, widget){
+                    if(value == true){
+                      return Dragger(height: height-184,
+                        width: width,);
+                    }else{
+                      return Container();
+                    }
+                  },
+                ),
+                Positioned(
+                  bottom: 0.0,
+                    child:_bottomBar(context, pageCurrentIndex.value),
+                ),
+              ],
+          ),
         ),
       ),
       //bottomNavigationBar: _bottomBar(context,_currentIndex),

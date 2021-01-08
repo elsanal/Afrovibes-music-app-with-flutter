@@ -4,6 +4,7 @@ import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticPage/constant.dart';
+import 'package:afromuse/staticPage/preferences.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -18,12 +19,20 @@ final FlutterAudioQuery audioQuery = FlutterAudioQuery();
   return songs;
 }
 
+
 class LocalSongs extends StatefulWidget {
   @override
   _LocalSongsState createState() => _LocalSongsState();
 }
 class _LocalSongsState extends State<LocalSongs> {
 
+    AudioPlayer _audioPlayer = AudioPlayer();
+    @override
+  void dispose() {
+      _audioPlayer.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -53,19 +62,27 @@ class _LocalSongsState extends State<LocalSongs> {
                         if (songs.isEmpty) {
                           return Container(child: Center(child: Text("No music founded"),),);
                         } else {
+                          selectedSong = songs;
                           return InkWell(
                             onTap: (){
                               setState(() {
-                                selectedSong = songs;
                                 songIndex.value = index;
                                 isTapedToPlay.value = true;
                                 isPlaying.value = true;
+                                SongLength.value = selectedSong.length;
                               });
-                              MusicPlayerClass(
-                                file: songs[songIndex.value].filePath.toString(),
-                                isLocal: true,
-                                //audioPlayer: audioPlayer
-                              ).playMusic();
+                              autoSaveIsPlaying();
+                              autoSaveTapedToPlay();
+                              autoSaveIndexCurrentSong(
+                                songs[index].artist.toString(),
+                                songs[index].title.toString(),
+                                songs[index].filePath.toString()
+                              );
+                              // MusicPlayerClass(
+                              //   file: songs[songIndex.value].filePath.toString(),
+                              //   isLocal: true,
+                              //   audioPlayer: _audioPlayer
+                              // ).playMusic();
                             },
                             child: Card(
                               color: Colors.white,

@@ -45,6 +45,8 @@ dependencies:
   flutter_swiper: ^1.1.6
   flutter_rating_bar: ^3.2.0+1
   flutter_audio_query: ^0.3.5+6
+  shared_preferences: ^0.5.12+4
+  double_back_to_close_app: ^1.2.0
 
 
   # The following adds the Cupertino Icons font to your application.

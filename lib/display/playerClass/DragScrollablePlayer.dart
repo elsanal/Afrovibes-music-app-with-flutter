@@ -1,14 +1,13 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticPage/constant.dart';
+import 'package:afromuse/staticPage/preferences.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 class DragPlayer extends StatefulWidget {
-  List<SongInfo> selectedSong;
-  int index;
-  DragPlayer({this.selectedSong, this.index});
   @override
   _DragPlayerState createState() => _DragPlayerState();
 }
@@ -20,14 +19,33 @@ ScrollController _controller;
 
 
 class _DragPlayerState extends State<DragPlayer> {
+
+  AudioPlayer _audioPlayer = AudioPlayer();
+
   @override
   void initState() {
-    _currentIndex.value = widget.index;
+    if(isPlaying.value == true){
+      MusicPlayerClass(
+          file: SongLength.value>0?
+          selectedSong[songIndex.value].filePath.toString():
+          currentSongFilePath.value.toString(),
+          isLocal: true,
+          audioPlayer: _audioPlayer
+      ).playMusic();
+    }
+
     // TODO: implement initState
     super.initState();
   }
   @override
+  void dispose() {
+    _audioPlayer.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
+
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     return Container(
@@ -52,13 +70,18 @@ class _DragPlayerState extends State<DragPlayer> {
                 child: Container(
                   width: width,
                   height: 110,
-                  child: ValueListenableBuilder(
-                    valueListenable: songIndex,
+                  child:ValueListenableBuilder(
+                    valueListenable: SongLength,
                     builder: (context,value,_widget){
-                      return Marques(widget.selectedSong[value].artist +
-                          ' - ' + widget.selectedSong[value].title, Colors.white);
+                      if(value == 0){
+                        return Marques(currentArtist.value +
+                            ' - ' + currentSongTitle.value, Colors.white);
+                      }else{
+                        return Marques(selectedSong[songIndex.value].artist +
+                            ' - ' + selectedSong[songIndex.value].title, Colors.white);
+                      }
                     },
-                  ),
+                  )
                 ),
               ),
               Positioned(
@@ -107,35 +130,51 @@ class _DragPlayerState extends State<DragPlayer> {
           child: InkWell(
               onTap: () {
                 setState(() {
-                  int totalSongs = widget.selectedSong.length;
                   if(index == 2){
                     setState(() {
                       isPlaying.value = !isPlaying.value;
                     });
+                    autoSaveIsPlaying();
                   }else if((index == 1) & (songIndex.value > 0)){
                     setState(() {
                       songIndex.value = songIndex.value - 1;
                       isPlaying.value = true;
                     });
-                  }else if((index == 3) & (songIndex.value < totalSongs)){
+                    autoSaveIsPlaying();
+                    autoSaveIndexCurrentSong(
+                      currentArtist.value,
+                      currentSongTitle.value,
+                      currentSongFilePath.value
+                    );
+                  }else if((index == 3) & (songIndex.value < SongLength.value)){
                     setState(() {
                       songIndex.value = songIndex.value + 1;
                       isPlaying.value = true;
                     });
+                    autoSaveIsPlaying();
+                    autoSaveIndexCurrentSong(
+                        currentArtist.value,
+                        currentSongTitle.value,
+                        currentSongFilePath.value
+                    );
                   }else{
 
                   }
                   if(isPlaying.value == true){
                     MusicPlayerClass(
-                      file: widget.selectedSong[songIndex.value].filePath.toString(),
+                      file: SongLength.value>0?
+                      selectedSong[songIndex.value].filePath.toString():
+                      currentSongFilePath.value.toString(),
                       isLocal: true,
-                      //audioPlayer: audioPlayer
+                      audioPlayer: _audioPlayer
                     ).playMusic();
                   }else{
                     MusicPlayerClass(
-                      file: widget.selectedSong[songIndex.value].filePath.toString(),
+                      file: SongLength.value>0?
+                      selectedSong[songIndex.value].filePath.toString():
+                      currentSongFilePath.value.toString(),
                       isLocal: true,
-                      //audioPlayer: audioPlayer
+                      audioPlayer: _audioPlayer
                     ).pauseMusic();
                   }
                 });
@@ -158,9 +197,7 @@ class _DragPlayerState extends State<DragPlayer> {
 class Dragger extends StatefulWidget {
   double height;
   double width;
-  int index;
-  List<SongInfo> selectedSong;
-  Dragger({this.height,this.width, this.selectedSong, this.index});
+  Dragger({this.height,this.width,});
   @override
   _DraggerState createState() => _DraggerState();
 }
@@ -185,21 +222,21 @@ class _DraggerState extends State<Dragger> {
                top: top,
                left: left,
              ),
-          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
+          child: DragPlayer(),
         ),
         feedback: Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
+          child: DragPlayer(),
         ),
         childWhenDragging:  Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(selectedSong: widget.selectedSong,index: widget.index),
+          child: DragPlayer(),
         ),
         onDragCompleted: (){},
         onDragEnd: (drag){

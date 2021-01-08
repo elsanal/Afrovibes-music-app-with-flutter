@@ -6,14 +6,17 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 // Player management
 
-ValueNotifier<bool> isTapedToPlay = ValueNotifier(false);
+ValueNotifier<bool> isTapedToPlay  = ValueNotifier(false);
+ValueNotifier<bool> isPlaying = ValueNotifier(false) ;
+List<SongInfo> selectedSong = [];
+ValueNotifier<int> SongLength = ValueNotifier(0) ;
+ValueNotifier<int> songIndex = ValueNotifier(0) ;
+ValueNotifier<String> currentArtist = ValueNotifier('');
+ValueNotifier<String> currentSongTitle = ValueNotifier('');
+ValueNotifier<String> currentSongFilePath = ValueNotifier('');
 
-ValueNotifier<bool> isPlaying = ValueNotifier<bool>(false);
-List<SongInfo> selectedSong ;
-ValueNotifier<int> songIndex = ValueNotifier<int>(0);
-
-AudioPlayer audioPlayer = AudioPlayer();
+//AudioPlayer audioPlayer = AudioPlayer();
 
 // page management
 
-ValueNotifier<int> pageCurrentIndex = ValueNotifier<int>(0);
+ValueNotifier<int> pageCurrentIndex = ValueNotifier(0) ;
