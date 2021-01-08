@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 getSongs_data()async{
   List<SongInfo> songs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
@@ -102,20 +103,35 @@ class _PlaylistState extends State<Playlist> {
   Widget build(BuildContext context) {
     final orientation =  MediaQuery.of(context).orientation;
     ScreenUtil.init(context);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
+        height: height,
+        width: width,
         child: Container(
             child:ListView.builder(
               itemCount: playlist.length,
               itemBuilder: (context, index) {
                 //print(snapshot.data.length);
                 if (playlist.isEmpty) {
-                  return Container(child: Center(child: Text("No album founded"),),);
+                  return Container(color: Colors.white,child: Center(
+                    child: SpinKitFadingCircle(color: Colors.black,),),);
                 } else {
+                  Color color = Colors.red;
+                  bool isPressed = false;
                   return GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        isPressed = true;
+                      });
+                      print('pressed');
+                    },
                     child: Card(
+                      color: isPressed?color:Colors.white,
                       child: Container(
                           width: MediaQuery.of(context).size.width,
                            height: 50,
+                          color: isPressed?color:Colors.white,
                           child: Stack(children: [
                             Positioned(
                                 bottom: 5,

@@ -1,3 +1,6 @@
+import 'package:afromuse/pages/Homebody/Homepage.dart';
+import 'package:afromuse/pages/drawer/category.dart';
+import 'package:afromuse/staticPage/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -95,6 +98,15 @@ class _mainDrawerState extends State<mainDrawer> {
                     InkWell(
                         onTap: (){
                           setState(() {
+                            clickedIndex = 12;
+                            pageCurrentIndex.value = 5;
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: _ListeTile(Icons.category_outlined,'Categories',12,clickedIndex)),
+                    InkWell(
+                        onTap: (){
+                          setState(() {
                             clickedIndex = 3;
                           });
                         },
@@ -103,7 +115,9 @@ class _mainDrawerState extends State<mainDrawer> {
                         onTap: (){
                           setState(() {
                             clickedIndex = 4;
+                            pageCurrentIndex.value = 2;
                           });
+
                         },
                         child: _ListeTile(Icons.favorite_border_outlined,'Favorite',4,clickedIndex)),
                     InkWell(
@@ -111,6 +125,7 @@ class _mainDrawerState extends State<mainDrawer> {
                           setState(() {
                             clickedIndex = 5;
                           });
+                          Navigator.of(context).pop();
                         },
                         child: _ListeTile(Icons.music_note_outlined,'suggestion',5,clickedIndex)),
                     InkWell(
@@ -124,7 +139,9 @@ class _mainDrawerState extends State<mainDrawer> {
                         onTap: (){
                           setState(() {
                             clickedIndex = 7;
+                            pageCurrentIndex.value = 4;
                           });
+
                         },
                         child: _ListeTile(Icons.folder_outlined,'Library',7,clickedIndex)),
                     InkWell(
@@ -164,121 +181,6 @@ class _mainDrawerState extends State<mainDrawer> {
     );
   }
 }
-
-
-// Widget MainDrawer(BuildContext context){
-//   final width = MediaQuery.of(context).size.width;
-//   final height = MediaQuery.of(context).size.height;
-//   int clickedIndex = 0;
-//   return Container(
-//     height: height,
-//     width: width*(10/12),
-//     color: Colors.white,
-//     child: Stack(
-//       children: [
-//         Positioned(
-//             top: 0,
-//             child: new DrawerHeader(
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.all(
-//                         Radius.circular(10)
-//                     ),
-//                     //backgroundBlendMode: BlendMode.darken,
-//                     color: Colors.orange
-//                 ),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: [
-//                     new  CircleAvatar(
-//                       radius: 50,
-//                       backgroundImage: AssetImage('assets/profile.jpeg'),
-//                     ),
-//                     new Container(child: Text('Username'),)
-//                   ],
-//                 )
-//             )
-//         ),
-//         Positioned(
-//           top: height*(3/12),
-//           child: Container(
-//               height: height*(9/12),
-//               width: width*(8.2/12),
-//               color: Colors.grey[270],
-//               child:ListView(
-//                 children: [
-//                   InkWell(
-//                       onTap: (){
-//                         clickedIndex = 0;
-//                       },
-//                       child: _ListeTile(Icons.mic_external_on,'Artists',0,clickedIndex)),
-//                   InkWell(
-//                       onTap: (){
-//                         clickedIndex = 1;
-//                       },
-//                       child: _ListeTile(Icons.mic_external_on,'Musics',1,clickedIndex)),
-//                   new Container(
-//                     color: Colors.white,
-//                     child: ListTile(
-//
-//                       onTap: (){
-//
-//                       },
-//                       title: Text('Musics',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                           fontSize: 18,
-//                           fontWeight: FontWeight.w600
-//                       ))
-//                       ),
-//                     ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Playlist',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Favorite',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Download',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Library',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Settings',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                   new Container(child: ListTile(
-//                     title: Text('Login',style: GoogleFonts.raleway(textStyle: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w600
-//                     ))
-//                     ),
-//                   ),),
-//                 ],
-//               )
-//           ),
-//         )
-//       ],
-//     ),
-//   );
-// }
 
 
 Widget _ListeTile(IconData _icon, String title,int index, int clickedIndex){

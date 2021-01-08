@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
+import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticPage/constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
   getSongs_data()async{
   List<SongInfo> songs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
@@ -19,11 +23,16 @@ class LocalSongs extends StatefulWidget {
   _LocalSongsState createState() => _LocalSongsState();
 }
 class _LocalSongsState extends State<LocalSongs> {
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
-      padding: EdgeInsets.only(
-        bottom: 100,
+      height: height,
+      width: width,
+      margin: EdgeInsets.only(
+        bottom: 73,
       ),
         color: Colors.white,
         child: FutureBuilder(
@@ -31,10 +40,12 @@ class _LocalSongsState extends State<LocalSongs> {
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
                 //print(snapshot.data.length);
-                return Container(color: Colors.grey,child: Center(child: Text("Loading..."),),);
+                return Container(color: Colors.white,child: Center(
+                  child: SpinKitFadingCircle(color: Colors.black,),),);
               } else {
                List<SongInfo> songs = snapshot.data;
                 return Container(
+                  height: height,
                     child:ListView.builder(
                       itemCount: songs.length,
                       itemBuilder: (context, index) {
@@ -46,17 +57,18 @@ class _LocalSongsState extends State<LocalSongs> {
                             onTap: (){
                               setState(() {
                                 selectedSong = songs;
-                                songIndex = index;
-                                isTapedToPlay = true;
-                                isPlaying = true;
+                                songIndex.value = index;
+                                isTapedToPlay.value = true;
+                                isPlaying.value = true;
                               });
                               MusicPlayerClass(
-                                file: songs[songIndex].filePath.toString(),
+                                file: songs[songIndex.value].filePath.toString(),
                                 isLocal: true,
-                                audioPlayer: audioPlayer
+                                //audioPlayer: audioPlayer
                               ).playMusic();
                             },
                             child: Card(
+                              color: Colors.white,
                               child: Container(
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.width*(1/5),

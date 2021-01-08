@@ -19,12 +19,12 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 
-  int _currentIndex = 0;
+  //int _currentIndex = pageCurrentIndex;
   String Title = "Home";
 
 
   List<Widget> pageList = [Homepagebody(), Latest(),ShowFavorite(),
-    RecentPlayed(),Local()];
+    RecentPlayed(),Local(), Categories()];
 
   int iconSizeDefault = 70;
   int iconSizePlay = 160;
@@ -58,13 +58,26 @@ class _HomepageState extends State<Homepage> {
         ),
         child: Stack(
             children: [
-              pageList[_currentIndex],
-              isTapedToPlay? Dragger(height: height-184,width: width,
-                selectedSong: selectedSong,index: songIndex,)
-                  :Container(),
+              ValueListenableBuilder(
+                valueListenable: pageCurrentIndex,
+                builder: (context, value, widget){
+                  return pageList[value];
+                },
+              ),
+              ValueListenableBuilder(
+                valueListenable: isTapedToPlay,
+                builder: (context, value, widget){
+                  if(value == true){
+                    return Dragger(height: height-184,
+                      width: width, selectedSong: selectedSong,index:  songIndex.value,);
+                  }else{
+                    return Container();
+                  }
+                },
+              ),
               Positioned(
                 bottom: 0.0,
-                  child:_bottomBar(context, _currentIndex),
+                  child:_bottomBar(context, pageCurrentIndex.value),
               ),
             ],
         ),
@@ -109,13 +122,13 @@ class _HomepageState extends State<Homepage> {
       child: InkWell(
         onTap: () {
           setState(() {
-            _currentIndex = index;
+            pageCurrentIndex.value = index;
             Title = title;
           });
         },
         child: Column(
           children: [
-            _currentIndex == index?Icon(icon_filled,
+            pageCurrentIndex.value == index?Icon(icon_filled,
               color: Colors.redAccent,
               size: ScreenUtil().setWidth(90),
             ):Icon(icon_outlined,
@@ -125,7 +138,7 @@ class _HomepageState extends State<Homepage> {
             title != '' ? new Text(title,style: GoogleFonts.roboto(textStyle: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
-                color: _currentIndex == index?Colors.redAccent:Colors.black,
+                color: pageCurrentIndex.value == index?Colors.redAccent:Colors.black,
             )),)
              : SizedBox(height: 0,),
           ],
@@ -134,24 +147,6 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget _appBar(){
-    return Container(
-      margin: EdgeInsets.only(
-        top: 0
-      ),
-      color : Colors.orange[800],
-      child: ListTile(
-        // centerTitle: true,
-        title: Text(Title),
-        // backgroundColor: Colors.orange[800],
-        leading:IconButton(
-            icon:Icon(Icons.menu,color: Colors.black,),
-            onPressed:()=>scaffoldKey.currentState.openDrawer()
-        ),
-        trailing: Icon(Icons.search, color: Colors.white,),
-      ),
-    );
-  }
 
 }
 

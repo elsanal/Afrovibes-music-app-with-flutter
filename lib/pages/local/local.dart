@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/pages/local/allFolders.dart';
 import 'package:afromuse/pages/local/allSongs.dart';
 import 'package:afromuse/pages/local/playlist.dart';
 import 'package:afromuse/sharedPage/TopMenu.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/staticPage/constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -15,128 +18,26 @@ class Local extends StatefulWidget {
   @override
   _LocalState createState() => _LocalState();
 }
-int selectedIndex = 0;
-List myfavSong = [
-
-  {
-    'artist' : 'Maitre gims',
-    'song_name': 'Tout donner',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'maitregims.jpeg'
-  },
-  {
-    'artist' : 'Awa Boussim',
-    'song_name': 'Koregore',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'awaboussim.jpeg'
-  },
-  {
-    'artist' : 'Smarty',
-    'song_name': 'Chapeau du chef',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'smarty.jpeg'
-  },
-  {
-    'artist' : 'Black M',
-    'song_name': 'Sur ma route',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'blackm.jpeg'
-  },
-  {
-    'artist' : 'Debordo Leekunfa',
-    'song_name': 'Aperitif',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'debordoleekunfa.jpeg'
-  },
-  {
-    'artist' : 'Dez Altino',
-    'song_name': 'Kabogde',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'dezaltino.jpeg'
-  },
-  {
-    'artist' : 'Salif Keita',
-    'song_name': 'Tekere',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'salifkeita.jpeg'
-  },
-  {
-    'artist' : 'Davido',
-    'song_name': 'Chioma',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'davido.jpeg'
-  },
-];
-
-
-
-
-
-
-
+int _selectedIndex = 0;
 
 
 class _LocalState extends State<Local> {
+
   @override
   Widget build(BuildContext context) {
     final orientation =  MediaQuery.of(context).orientation;
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
-    final tle_cont_w = width*(1/3)-4;
+    final height = MediaQuery.of(context).size.height;
     return Container(
+      height: height,
+      width: width,
       child: Scaffold(
-        body: Container(
-          child: Column(
-            children: [
-              Container(
+        body: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              child: Container(
                 color: Colors.black,
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -145,37 +46,41 @@ class _LocalState extends State<Local> {
                     InkWell(
                         onTap: (){
                           setState(() {
-                            selectedIndex = 0;
+                            _selectedIndex = 0;
                           });
                         },
-                        child: topMenu('All Songs',0,selectedIndex, context)
+                        child: topMenu('All Songs',0,_selectedIndex, context)
                     ),
                     InkWell(
                         onTap: (){
                           setState(() {
-                            selectedIndex = 1;
+                            _selectedIndex = 1;
                           });
                         },
-                        child: topMenu('Folders',1,selectedIndex, context)
+                        child: topMenu('Folders',1, _selectedIndex, context)
                     ),
                     InkWell(
                         onTap: (){
                           setState(() {
-                            selectedIndex = 3;
+                            _selectedIndex = 3;
                           });
                         },
-                        child: topMenu('Playlists',3,selectedIndex, context)
+                        child: topMenu('Playlists',3, _selectedIndex, context)
                     ),
                   ],),
               ),
-              Expanded(
-                  child: new Container(color: Colors.grey[200],
-                    child:selectedIndex ==0 ? LocalSongs():
-                    selectedIndex==1?LocalAlbums():Playlist(),
-                  )
-              )
-            ],
-          ),
+            ),
+            Positioned(
+              top: 50,
+              child: Center(
+                child: new Container(
+                  color: Colors.grey[200],
+                  child: _selectedIndex ==0 ? LocalSongs():
+                  _selectedIndex==1?LocalAlbums():Playlist(),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

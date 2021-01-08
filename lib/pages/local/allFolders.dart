@@ -2,6 +2,7 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 getAlbum_data()async{
   List<AlbumInfo> album = await audioQuery.getAlbums();
@@ -18,13 +19,18 @@ class _LocalAlbumsState extends State<LocalAlbums> {
   Widget build(BuildContext context) {
     final orientation =  MediaQuery.of(context).orientation;
     ScreenUtil.init(context);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
+    height: height,
+        width: width,
         child: FutureBuilder(
             future: getAlbum_data(),
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
                 //print(snapshot.data.length);
-                return Container(color: Colors.grey,child: Center(child: Text("Loading..."),),);
+                return Container(color: Colors.white,child: Center(
+                  child: SpinKitFadingCircle(color: Colors.black,),),);
               } else {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
@@ -37,7 +43,8 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                       itemBuilder: (context, index) {
                         //print(snapshot.data.length);
                         if (album.isEmpty) {
-                          return Container(child: Center(child: Text("No album founded"),),);
+                          return Container(color: Colors.white,child: Center(
+                            child: Text('No album founded'),),);
                         } else {
                           return GestureDetector(
                             child: Card(

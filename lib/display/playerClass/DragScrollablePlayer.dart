@@ -13,7 +13,7 @@ class DragPlayer extends StatefulWidget {
   _DragPlayerState createState() => _DragPlayerState();
 }
 
-int _currentIndex ;
+ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 int iconSizeDefault = 90;
 int iconSizePlay = 160;
 ScrollController _controller;
@@ -22,7 +22,7 @@ ScrollController _controller;
 class _DragPlayerState extends State<DragPlayer> {
   @override
   void initState() {
-    _currentIndex = widget.index;
+    _currentIndex.value = widget.index;
     // TODO: implement initState
     super.initState();
   }
@@ -33,51 +33,59 @@ class _DragPlayerState extends State<DragPlayer> {
     return Container(
       height: 90,
       width: width*(5/6),
-
-      child: Container(
-        //color: Colors.white,
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.all(
-                Radius.circular(8.0)
-            )
-        ),
-        child: Stack(
-          children:[
-            Positioned(
-              left: 100,
-              child: Container(
-                width: width,
-                height: 100,
-                child: Marques(widget.selectedSong[widget.index].artist +
-                    ' - ' + widget.selectedSong[widget.index].title, Colors.white),
-              ),
-            ),
-            Positioned(
-              child: Container(
-                child: Image.asset('assets/equilizer.jpeg'),
-              ),
-            ),
-            Positioned(
-              bottom: 0.0,
-              right: 10,
-              child: Container(
-                width: width*(3/6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _bottomItems(
-                        Icons.skip_previous_outlined ,1, iconSizeDefault),
-                    _bottomItems(
-                        isPlaying == true?Icons.pause_circle_outline_outlined:
-                        Icons.play_circle_outline_outlined ,2, iconSizeDefault),
-                    _bottomItems(
-                        Icons.skip_next_outlined ,3, iconSizeDefault),
-                  ],
+      child: Scaffold(
+        body: Container(
+          height: 90,
+          width: width*(5/6),
+          //color: Colors.white,
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.all(
+                  Radius.circular(8.0)
+              )
+          ),
+          child: Stack(
+            children:[
+              Positioned(
+                left: 100,
+                child: Container(
+                  width: width,
+                  height: 110,
+                  child: ValueListenableBuilder(
+                    valueListenable: songIndex,
+                    builder: (context,value,_widget){
+                      return Marques(widget.selectedSong[value].artist +
+                          ' - ' + widget.selectedSong[value].title, Colors.white);
+                    },
+                  ),
                 ),
-              ),)
-          ],
+              ),
+              Positioned(
+                child: Container(
+                  child: Image.asset('assets/equilizer.jpeg'),
+                ),
+              ),
+              Positioned(
+                bottom: 0.0,
+                right: 10,
+                child: Container(
+                  width: width*(3/6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _bottomItems(
+                          Icons.skip_previous_outlined ,1, iconSizeDefault),
+                      _bottomItems(
+                          isPlaying.value == true?Icons.pause_circle_outline_outlined:
+                          Icons.play_circle_outline_outlined ,2, iconSizeDefault),
+                      _bottomItems(
+                          Icons.skip_next_outlined ,3, iconSizeDefault),
+                    ],
+                  ),
+                ),)
+            ],
+          ),
         ),
       ),
     );
@@ -102,32 +110,32 @@ class _DragPlayerState extends State<DragPlayer> {
                   int totalSongs = widget.selectedSong.length;
                   if(index == 2){
                     setState(() {
-                      isPlaying = !isPlaying;
+                      isPlaying.value = !isPlaying.value;
                     });
-                  }else if((index == 1) & (_currentIndex > 0)){
+                  }else if((index == 1) & (songIndex.value > 0)){
                     setState(() {
-                      _currentIndex = _currentIndex - 1;
-                      isPlaying = true;
+                      songIndex.value = songIndex.value - 1;
+                      isPlaying.value = true;
                     });
-                  }else if((index == 3) & (_currentIndex < totalSongs)){
+                  }else if((index == 3) & (songIndex.value < totalSongs)){
                     setState(() {
-                      _currentIndex = _currentIndex + 1;
-                      isPlaying = true;
+                      songIndex.value = songIndex.value + 1;
+                      isPlaying.value = true;
                     });
                   }else{
 
                   }
-                  if(isPlaying == true){
+                  if(isPlaying.value == true){
                     MusicPlayerClass(
-                      file: widget.selectedSong[_currentIndex].filePath.toString(),
+                      file: widget.selectedSong[songIndex.value].filePath.toString(),
                       isLocal: true,
-                      audioPlayer: audioPlayer
+                      //audioPlayer: audioPlayer
                     ).playMusic();
                   }else{
                     MusicPlayerClass(
-                      file: widget.selectedSong[_currentIndex].filePath.toString(),
+                      file: widget.selectedSong[songIndex.value].filePath.toString(),
                       isLocal: true,
-                      audioPlayer: audioPlayer
+                      //audioPlayer: audioPlayer
                     ).pauseMusic();
                   }
                 });
@@ -168,6 +176,8 @@ class _DraggerState extends State<Dragger> {
   }
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
       child: Draggable(
         child: Container(

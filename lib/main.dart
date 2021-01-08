@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         home: Authentify(),
         routes: {
           '/home' : (context)=>Homepage(),
-          '/music' : (context)=>Music(),
+          '/music' : (context)=>Categories(),
           '/setting' : (context)=>Settings(),
         },
       ),

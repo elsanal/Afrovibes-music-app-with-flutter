@@ -1,16 +1,17 @@
 import 'dart:io';
 
+import 'package:afromuse/staticPage/constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class MusicPlayerClass{
   List<DocumentSnapshot> document;
-  AudioPlayer audioPlayer;
+  //AudioPlayer audioPlayer;
   int index;
   bool isLocal;
   String file;
-  MusicPlayerClass({this.document,this.file,this.audioPlayer, this.index, this.isLocal});
+  MusicPlayerClass({this.document,this.file, this.index, this.isLocal});
 
 
   void playMusic(){
@@ -39,6 +40,5 @@ class MusicPlayerClass{
     Duration newDuration = Duration(seconds: second);
     audioPlayer.seek(newDuration);
   }
-
 
 }

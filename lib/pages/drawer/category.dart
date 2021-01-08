@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Music extends StatefulWidget {
+class Categories extends StatefulWidget {
   @override
-  _MusicState createState() => _MusicState();
+  _CategoriesState createState() => _CategoriesState();
 }
 
 List catList = [
@@ -78,7 +78,7 @@ List catList = [
 
 ];
 
-class _MusicState extends State<Music> {
+class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
