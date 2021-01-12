@@ -3,13 +3,13 @@ import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
 import 'package:afromuse/pages/latest/Latest.dart';
-import 'package:afromuse/pages/local/local.dart';
+import 'package:afromuse/pages/local/library.dart';
 import 'package:afromuse/pages/drawer/category.dart';
+import 'package:afromuse/pages/local/playlist.dart';
 import 'package:afromuse/pages/recent/recentPlayed.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
-import 'package:afromuse/staticPage/constant.dart';
-import 'package:afromuse/staticPage/preferences.dart';
-import 'package:double_back_to_close_app/double_back_to_close_app.dart';
+import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/services/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,13 +19,36 @@ class Homepage extends StatefulWidget {
   _HomepageState createState() => _HomepageState();
 }
 
+ appBarTitleFunc(int pageIndex){
+  if(pageIndex == 0){
+    appBArTitle.value = 'Home';
+  }else if(pageIndex == 1){
+    appBArTitle.value = 'Hotest';
+  }else if(pageIndex == 2){
+    appBArTitle.value = 'Favorite';
+  }else if(pageIndex == 3){
+    appBArTitle.value = 'Recent';
+  }else if(pageIndex == 4){
+    appBArTitle.value = 'Library';
+  }else if(pageIndex == 5){
+    appBArTitle.value = 'Category';
+  }else{
+    appBArTitle.value = 'Error';
+  }
+  return appBArTitle.value;
+}
+
+
 class _HomepageState extends State<Homepage> {
 
-  //int _currentIndex = pageCurrentIndex;
-  String Title = "Home";
-
-  List<Widget> pageList = [Homepagebody(), Latest(),ShowFavorite(),
-    RecentPlayed(),Local(), Categories()];
+  List<Widget> pageList = [
+    Homepagebody(),
+    Latest(),
+    ShowFavorite(),
+    RecentPlayed(),
+    Local(),
+    Categories()
+  ];
 
   int iconSizeDefault = 70;
   int iconSizePlay = 160;
@@ -33,13 +56,21 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+
     readDataPrefs();
+    getSongs_data();
     // TODO: implement initState
     super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -48,7 +79,13 @@ class _HomepageState extends State<Homepage> {
       backgroundColor: Colors.orange[800],
       appBar: AppBar(
         centerTitle: true,
-        title: Text(Title),
+        title: ValueListenableBuilder(
+          valueListenable: pageCurrentIndex,
+            builder: (context, value, widget){
+              return Text(appBArTitle.value);
+            },
+
+        ),
         backgroundColor: Colors.orange[800],
         leading:IconButton(
             icon:Icon(Icons.menu,color: Colors.black,),
@@ -60,38 +97,57 @@ class _HomepageState extends State<Homepage> {
         ],
       ),
       drawer: mainDrawer(),
-      body: DoubleBackToCloseApp(
-           snackBar: const SnackBar(
-           content: Text('Tap back again to leave'),),
-         child: Container(
-             height: MediaQuery.of(context).size.height,
+      body: WillPopScope(
+        onWillPop: (){
+         return showDialog(
+              context: context,
+              builder: (context) =>
+                  AlertDialog(title: Text('Are you leaving AfroMuse?'), actions: <Widget>[
+                    RaisedButton(
+                        child: Text('yes'),
+                        onPressed: (){
+                          setState(() {
+                            isPlaying.value = false;
+                          });
+                          autoSavePlayerCurrentInfo();
+                          Navigator.of(context).pop(true);
+                        },),
+                    RaisedButton(
+                        child: Text('cancel'),
+                        onPressed: () => Navigator.of(context).pop(false)),
+
+                  ]));
+        },
+        child: Container(
+          height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
               gradient: gradient
           ),
           child: Stack(
-              children: [
-                ValueListenableBuilder(
-                  valueListenable: pageCurrentIndex,
-                  builder: (context, value, widget){
-                    return pageList[value];
-                  },
-                ),
-                ValueListenableBuilder(
-                  valueListenable: isTapedToPlay,
-                  builder: (context, value, widget){
-                    if(value == true){
-                      return Dragger(height: height-184,
-                        width: width,);
-                    }else{
-                      return Container();
-                    }
-                  },
-                ),
-                Positioned(
-                  bottom: 0.0,
-                    child:_bottomBar(context, pageCurrentIndex.value),
-                ),
-              ],
+            children: [
+              ValueListenableBuilder(
+                valueListenable: pageCurrentIndex,
+                builder: (context, value, widget){
+
+                  return pageList[value];
+                },
+              ),
+              ValueListenableBuilder(
+                valueListenable: isTapedToPlay,
+                builder: (context, value, widget){
+                  if(value == true){
+                    return Dragger(height: height-184,
+                      width: width,);
+                  }else{
+                    return Container();
+                  }
+                },
+              ),
+              Positioned(
+                bottom: 0.0,
+                child:_bottomBar(context, pageCurrentIndex.value),
+              ),
+            ],
           ),
         ),
       ),
@@ -136,25 +192,31 @@ class _HomepageState extends State<Homepage> {
         onTap: () {
           setState(() {
             pageCurrentIndex.value = index;
-            Title = title;
+            appBarTitleFunc(index);
           });
         },
-        child: Column(
-          children: [
-            pageCurrentIndex.value == index?Icon(icon_filled,
-              color: Colors.redAccent,
-              size: ScreenUtil().setWidth(90),
-            ):Icon(icon_outlined,
-              color: Colors.black,
-              size: ScreenUtil().setWidth(iconSizeDefault),
-            ),
-            title != '' ? new Text(title,style: GoogleFonts.roboto(textStyle: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: pageCurrentIndex.value == index?Colors.redAccent:Colors.black,
-            )),)
-             : SizedBox(height: 0,),
-          ],
+        child: ValueListenableBuilder(
+          valueListenable: pageCurrentIndex,
+          builder: (context, value, widget){
+            return Column(
+              children: [
+                value == index?Icon(icon_filled,
+                  color: Colors.redAccent,
+                  size: ScreenUtil().setWidth(90),
+                ):Icon(icon_outlined,
+                  color: Colors.black,
+                  size: ScreenUtil().setWidth(iconSizeDefault),
+                ),
+                title != '' ? new Text(title,style: GoogleFonts.roboto(textStyle: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: value == index?Colors.redAccent:Colors.black,
+                )),)
+                    : SizedBox(height: 0,),
+              ],
+            );
+          },
+
         )
       ),
     );

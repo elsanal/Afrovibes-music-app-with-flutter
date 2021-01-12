@@ -1,51 +1,63 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/constant.dart';
-import 'package:afromuse/staticPage/preferences.dart';
+import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/services/preferences.dart';
+import 'package:audio_manager/audio_manager.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
+import 'package:path/path.dart';
 
 class DragPlayer extends StatefulWidget {
+  DragPlayer();
   @override
   _DragPlayerState createState() => _DragPlayerState();
 }
 
-ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
-int iconSizeDefault = 90;
-int iconSizePlay = 160;
-ScrollController _controller;
-
-
 class _DragPlayerState extends State<DragPlayer> {
 
+  int iconSizeDefault = 90;
+  int iconSizePlay = 160;
   AudioPlayer _audioPlayer = AudioPlayer();
+  AudioManager _audioManager = AudioManager.instance;
+  void playMusic(){
+    print("play called");
+    if(_audioManager.isPlaying){
+      _audioManager.toPause();
+    }else{
+      _audioManager.play();
+    }
+
+  }
+  void stopMusic(){
+    print("stop called");
+    _audioManager.stop();
+
+  }
+  void pauseMusic(){
+    print("pause called");
+    _audioManager.toPause();
+  }
+
+
 
   @override
   void initState() {
-    if(isPlaying.value == true){
-      MusicPlayerClass(
-          file: SongLength.value>0?
-          selectedSong[songIndex.value].filePath.toString():
-          currentSongFilePath.value.toString(),
-          isLocal: true,
-          audioPlayer: _audioPlayer
-      ).playMusic();
-    }
 
     // TODO: implement initState
     super.initState();
   }
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _audioManager.release();
     // TODO: implement dispose
     super.dispose();
   }
+
+
   @override
   Widget build(BuildContext context) {
-
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     return Container(
@@ -71,15 +83,10 @@ class _DragPlayerState extends State<DragPlayer> {
                   width: width,
                   height: 110,
                   child:ValueListenableBuilder(
-                    valueListenable: SongLength,
+                    valueListenable: currentSongIndex,
                     builder: (context,value,_widget){
-                      if(value == 0){
-                        return Marques(currentArtist.value +
-                            ' - ' + currentSongTitle.value, Colors.white);
-                      }else{
-                        return Marques(selectedSong[songIndex.value].artist +
-                            ' - ' + selectedSong[songIndex.value].title, Colors.white);
-                      }
+                      return Marques(allInternalSongs.value[audio.value.curIndex ].artist +
+                          ' - ' + allInternalSongs.value[audio.value.curIndex].title, Colors.white);
                     },
                   )
                 ),
@@ -133,49 +140,22 @@ class _DragPlayerState extends State<DragPlayer> {
                   if(index == 2){
                     setState(() {
                       isPlaying.value = !isPlaying.value;
+
                     });
-                    autoSaveIsPlaying();
-                  }else if((index == 1) & (songIndex.value > 0)){
+
+                  }else if((index == 1) & (_audioManager.curIndex  > 0)){
                     setState(() {
-                      songIndex.value = songIndex.value - 1;
-                      isPlaying.value = true;
+                      currentSongIndex.value = currentSongIndex.value - 1;
+                      _audioManager.previous();
                     });
-                    autoSaveIsPlaying();
-                    autoSaveIndexCurrentSong(
-                      currentArtist.value,
-                      currentSongTitle.value,
-                      currentSongFilePath.value
-                    );
-                  }else if((index == 3) & (songIndex.value < SongLength.value)){
+                  }else if((index == 3) & (_audioManager.curIndex <
+                      allInternalSongs.value.length)){
                     setState(() {
-                      songIndex.value = songIndex.value + 1;
-                      isPlaying.value = true;
+                      currentSongIndex.value = currentSongIndex.value + 1;
+                      _audioManager.next();
                     });
-                    autoSaveIsPlaying();
-                    autoSaveIndexCurrentSong(
-                        currentArtist.value,
-                        currentSongTitle.value,
-                        currentSongFilePath.value
-                    );
                   }else{
 
-                  }
-                  if(isPlaying.value == true){
-                    MusicPlayerClass(
-                      file: SongLength.value>0?
-                      selectedSong[songIndex.value].filePath.toString():
-                      currentSongFilePath.value.toString(),
-                      isLocal: true,
-                      audioPlayer: _audioPlayer
-                    ).playMusic();
-                  }else{
-                    MusicPlayerClass(
-                      file: SongLength.value>0?
-                      selectedSong[songIndex.value].filePath.toString():
-                      currentSongFilePath.value.toString(),
-                      isLocal: true,
-                      audioPlayer: _audioPlayer
-                    ).pauseMusic();
                   }
                 });
               },
@@ -240,20 +220,28 @@ class _DraggerState extends State<Dragger> {
         ),
         onDragCompleted: (){},
         onDragEnd: (drag){
+          drag.velocity.pixelsPerSecond.dy.ceilToDouble();
           setState(() {
-            if((top + drag.offset.dy) > (widget.height - 90.0)){
-              top = (widget.height - 90.0);
-            }else if((top + drag.offset.dy-90.0) < 0.0){
-              top = 0.0;
-            }else{
-              top =  top + drag.offset.dy-90.0;
+            if((top + drag.offset.dy) < 0.0){
+              isTapedToPlay.value = false;
+            }else if((top + drag.offset.dy) < (height - 250)){
+              top = top + drag.offset.dy;
+            }else if((top + drag.offset.dy) > (height - 50)){
+              isTapedToPlay.value = false;
+            }else {
+              top = top ;
             }
-            if((left + drag.offset.dx) > (widget.width - 90.0)){
-              left = (widget.width - 90.0);
-            }else if((left + drag.offset.dx-90.0) < 0.0){
+            if(( drag.offset.dx) > (widget.width - widget.width*(1/3))){
+              isTapedToPlay.value = false;
+            }else if((drag.offset.dx) < - widget.width*(0.7)){
+              isTapedToPlay.value = false;
+            }else if((drag.offset.dx)< 0.0){
               left = 0;
-            }else{
-              left =  left + drag.offset.dx-90.0;
+            }else if((drag.offset.dx + left) > widget.width*(1/6)){
+              left = widget.width*(1/6);
+            }
+            else{
+              left = left + drag.offset.dx;
             }
           });
         },

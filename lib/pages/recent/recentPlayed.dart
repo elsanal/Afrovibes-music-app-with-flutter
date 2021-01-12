@@ -1,4 +1,6 @@
+import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/staticPage/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -104,11 +106,16 @@ List myfavSong = [
     'num_dld' : 3204,
     'image' : 'angeliquekidjo.jpeg'
   },
-
-
 ];
 
 class _RecentPlayedState extends State<RecentPlayed> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

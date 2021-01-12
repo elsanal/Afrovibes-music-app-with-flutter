@@ -88,6 +88,9 @@ class _CategoriesState extends State<Categories> {
     return Container(
       height: height,
       width: width,
+      padding: EdgeInsets.only(
+        bottom: 50
+      ),
       child: Scaffold(
         body: Card(
           child: Container(

@@ -1,6 +1,6 @@
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/pages/drawer/category.dart';
-import 'package:afromuse/staticPage/constant.dart';
+import 'package:afromuse/staticPage/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -100,7 +100,9 @@ class _mainDrawerState extends State<mainDrawer> {
                           setState(() {
                             clickedIndex = 12;
                             pageCurrentIndex.value = 5;
+                            appBArTitle.value = "Category";
                           });
+
                           Navigator.of(context).pop();
                         },
                         child: _ListeTile(Icons.category_outlined,'Categories',12,clickedIndex)),
@@ -116,8 +118,10 @@ class _mainDrawerState extends State<mainDrawer> {
                           setState(() {
                             clickedIndex = 4;
                             pageCurrentIndex.value = 2;
+                            appBArTitle.value = "Favorite";
                           });
 
+                          Navigator.of(context).pop(true);
                         },
                         child: _ListeTile(Icons.favorite_border_outlined,'Favorite',4,clickedIndex)),
                     InkWell(

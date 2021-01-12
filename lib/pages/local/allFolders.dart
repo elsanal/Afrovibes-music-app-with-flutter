@@ -1,13 +1,13 @@
+import 'package:afromuse/pages/local/SongsFromAlbum.dart';
+import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/staticPage/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-getAlbum_data()async{
-  List<AlbumInfo> album = await audioQuery.getAlbums();
-  return album;
-}
+
 
 class LocalAlbums extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
     height: height,
         width: width,
         child: FutureBuilder(
-            future: getAlbum_data(),
+            future: getData().getAllInternalAlbum(),
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
                 //print(snapshot.data.length);
@@ -47,6 +47,11 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                             child: Text('No album founded'),),);
                         } else {
                           return GestureDetector(
+                            onTap: ()async{
+                              allInternalSongs.value = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
+                              libraryCurrentPage.value = 3;
+
+                            },
                             child: Card(
                               child: Container(
                                   width: MediaQuery.of(context).size.width,
@@ -76,7 +81,11 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                                         right: 5,
                                         child: Container(child: IconButton(
                                             icon: Icon(Icons.more_vert),
-                                            onPressed: (){}),)
+                                            onPressed: (){
+
+                                            }
+                                            ),
+                                        )
                                     ),
 
                                   ],)
