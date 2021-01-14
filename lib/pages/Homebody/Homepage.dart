@@ -7,8 +7,11 @@ import 'package:afromuse/pages/local/library.dart';
 import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/pages/local/playlist.dart';
 import 'package:afromuse/pages/recent/recentPlayed.dart';
+import 'package:afromuse/services/SqlitePersistance.dart';
+import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/constant.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,21 +58,7 @@ class _HomepageState extends State<Homepage> {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
-  void initState() {
-
-    readDataPrefs();
-    getSongs_data();
-    // TODO: implement initState
-    super.initState();
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
 
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
@@ -84,7 +73,6 @@ class _HomepageState extends State<Homepage> {
             builder: (context, value, widget){
               return Text(appBArTitle.value);
             },
-
         ),
         backgroundColor: Colors.orange[800],
         leading:IconButton(
@@ -105,12 +93,35 @@ class _HomepageState extends State<Homepage> {
                   AlertDialog(title: Text('Are you leaving AfroMuse?'), actions: <Widget>[
                     RaisedButton(
                         child: Text('yes'),
-                        onPressed: (){
-                          setState(() {
-                            isPlaying.value = false;
+                        onPressed: ()async{
+                          List<Music> musicList = new List();
+
+                          var res = await Preferences().autoSavePlayerCurrentInfo();
+
+                          currentPlayingList.value.forEach((song) async{
+                            var id = await Sqlite(dataBaseName: singleDatabase,
+                                tableName: CURRENT_PLAYING_TABLE)
+                                .maxId();
+                            final music = Music(
+                              id: id,
+                              artistName: song.artist,
+                              musicTitle: song.artist,
+                              albumName: song.album,
+                              liked: 0,
+                              Ndownload: 0,
+                              NListened: 0,
+                              rate: 0,
+                              genre: "unknown",
+                              artwork: song.albumArtwork,
+                              file: song.filePath,
+                            );
+                            musicList.add(music);
                           });
-                          autoSavePlayerCurrentInfo();
-                          Navigator.of(context).pop(true);
+                          await Sqlite(dataBaseName: singleDatabase,
+                              tableName: CURRENT_PLAYING_TABLE).saveSqliteDB(musicList);
+                          if(res == true){
+                            Navigator.of(context).pop(true);
+                          }
                         },),
                     RaisedButton(
                         child: Text('cancel'),
@@ -128,7 +139,6 @@ class _HomepageState extends State<Homepage> {
               ValueListenableBuilder(
                 valueListenable: pageCurrentIndex,
                 builder: (context, value, widget){
-
                   return pageList[value];
                 },
               ),

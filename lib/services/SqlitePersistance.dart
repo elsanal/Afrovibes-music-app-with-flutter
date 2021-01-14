@@ -1,5 +1,5 @@
 import 'package:afromuse/services/models.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -14,9 +14,9 @@ class Sqlite{
  Sqlite({this.dataBaseName, this.tableName});
 
 
- final delay = Duration(seconds: 2);
+
  init(int delay)async{
-   db = await Future.delayed(Duration(seconds: delay), ()=>database());
+   db = await Future.delayed(Duration(milliseconds: delay), ()=>database());
    return db;
  }
 
@@ -49,7 +49,7 @@ class Sqlite{
 
  ////// Save  music  list file
 Future saveSqliteDB(List<Music> musicList)async{
-   var req = await init(2);
+   var req = await init(1000);
    for(int i = 0; i< musicList.length; i++){
      req.insert('$tableName', musicList[i].toMap(),
        conflictAlgorithm: ConflictAlgorithm.replace,);
@@ -59,15 +59,15 @@ Future saveSqliteDB(List<Music> musicList)async{
 
 //// restore file from sqlite db
 
-Future<List> retrieveMusic()async{
-   var request  = await init(1);
-   List songs = [];
+Future<List<Music>> retrieveMusic()async{
+   var request  = await init(500);
    List<Music> musics = new List();
    List<Map<String, dynamic>> list = await request.query('$tableName');
-
-   final myFavorite = list.toList();
-
-    return myFavorite;
+   list.forEach((song) {
+     Music music = Music.fromJson(song);
+     musics.add(music);
+   });
+    return musics;
   }
 
 /////////////// delete element
@@ -77,7 +77,7 @@ Future deleteMusic(int id)async{
 }
 
 Future<int> maxId()async{
-   var req = await init(1);
+   var req = await init(500);
    var maxIdRes = await req.rawQuery("SELECT MAX(id) as last_inserted_id FROM $tableName");
    var id = maxIdRes.first["last_inserted_id"];
    if(id == null){
@@ -89,7 +89,7 @@ Future<int> maxId()async{
 }
 
 Future<bool> checkdB(String path)async{
-  var req = await init(1);
+  var req = await init(500);
   final defaul = await getDatabasesPath();
  final result =   databaseFactory.databaseExists(defaul + '/' + path);
  var tab = req.rawQuery("SELECT name FROM sqlite_master WHERE name=$tableName");

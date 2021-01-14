@@ -1,13 +1,13 @@
-import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 
+
+final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 
 class LocalAlbums extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
     height: height,
         width: width,
         child: FutureBuilder(
-            future: getData().getAllInternalAlbum(),
+            future: getInternalData().getAllInternalAlbum(),
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
                 //print(snapshot.data.length);
@@ -48,9 +48,8 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                         } else {
                           return GestureDetector(
                             onTap: ()async{
-                              allInternalSongs.value = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
+                              currentPlayingList.value = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
                               libraryCurrentPage.value = 3;
-
                             },
                             child: Card(
                               child: Container(

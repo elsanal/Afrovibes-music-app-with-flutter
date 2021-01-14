@@ -7,9 +7,11 @@ import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/pages/local/allFolders.dart';
 import 'package:afromuse/pages/local/allSongs.dart';
 import 'package:afromuse/pages/local/playlist.dart';
+import 'package:afromuse/services/preferences.dart';
 import 'package:afromuse/sharedPage/TopMenu.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
+import 'package:afromuse/staticValues/constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -19,15 +21,23 @@ class Local extends StatefulWidget {
   @override
   _LocalState createState() => _LocalState();
 }
-int _selectedIndex = 0;
-List<Widget> libraryPages = [
-  LocalSongs(),
-  LocalAlbums(),
-  Playlist(),
-  SongsFromAlbum(),
-];
+
+
 
 class _LocalState extends State<Local> {
+  int _position ;
+
+  List<Widget> libraryPages = [
+    LocalSongs(),
+    LocalAlbums(),
+    Playlist(),
+    SongsFromAlbum(),
+  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +63,9 @@ class _LocalState extends State<Local> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         InkWell(
-                            onTap: (){
+                            onTap: ()async{
+                              _position = await Preferences().readScrollPosition(libraryAllSongsPositionKey);
+                              libraryPages[0] = LocalSongs(position: _position,);
                               setState(() {
                                 libraryCurrentPage.value = 0;
                               });

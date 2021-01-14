@@ -1,6 +1,6 @@
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/pages/drawer/category.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

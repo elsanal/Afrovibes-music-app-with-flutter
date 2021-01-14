@@ -1,6 +1,7 @@
 import 'package:afromuse/pages/Homebody/Homepage.dart';
+import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -123,8 +124,9 @@ class _RecentPlayedState extends State<RecentPlayed> {
       child: Scaffold(
         body: Container(
           child: ListView.builder(
-              itemCount: myfavSong.length,
+              itemCount: recentPlayedMusic.length,
               itemBuilder:(context,index){
+                Music music = recentPlayedMusic[index];
                 return Card(
                   child: Container(
                     width: 200,
@@ -136,16 +138,16 @@ class _RecentPlayedState extends State<RecentPlayed> {
                             child: Container(
                               height: 40,
                               width: 250,
-                              child: Marques(myfavSong[index]['artist'] +
-                                  ' - ' + myfavSong[index]['song_name'], Colors.black),)),
+                              child: Marques(music.artistName +
+                                  ' - ' + music.musicTitle, Colors.black),)),
                         Positioned(
                           top: 25,
                           left: 120,
-                          child: Container(child: Text(myfavSong[index]['category'])),),
+                          child: Container(child: Text(music.genre)),),
                         Positioned(
                             bottom: 5,
                             right: 5,
-                            child: Container(child: Text(myfavSong[index]['duration']),)),
+                            child: Container(child: Text("--:--"),)),
                         Positioned(
                             bottom: 5,
                             left: 100,
@@ -158,7 +160,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                   Row(
                                     children: [
                                       Container(child: RatingBar.builder(
-                                          initialRating: myfavSong[index]['rate'],
+                                          initialRating: music.rate + 0.0,
                                           minRating: 1,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
@@ -174,7 +176,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                           })
                                         ,),
                                       SizedBox(width: 2,),
-                                      Container(child: Text(myfavSong[index]['num_part'].toString()),)
+                                      Container(child: Text(music.rate.toString()),)
                                     ],
                                   ),
                                   Row(
@@ -184,7 +186,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                         color: Colors.amber,
                                       ),),
                                       SizedBox(width: 2,),
-                                      Text(myfavSong[index]['num_view'].toString()),
+                                      Text(music.NListened.toString()),
                                     ],
                                   ),
                                   Row(
@@ -193,7 +195,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                         Icons.download_outlined,
                                         color: Colors.red,
                                       ),),
-                                      Text(myfavSong[index]['num_dld'].toString()),
+                                      Text(music.Ndownload.toString()),
                                     ],
                                   ),
 
@@ -211,7 +213,10 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                 width: 90,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image: AssetImage('assets/artists/'+myfavSong[index]['image']),
+                                        image: AssetImage( index<myfavSong.length?
+                                        'assets/artists/'+myfavSong[index]['image']
+                                            :'assets/artists/'+myfavSong[0]['image']
+                                        ),
                                         fit: BoxFit.cover
                                     )
                                 ),

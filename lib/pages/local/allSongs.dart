@@ -1,33 +1,56 @@
 import 'dart:async';
 
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
+import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/constant.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 
 class LocalSongs extends StatefulWidget {
+  int position;
+  LocalSongs({this.position});
   @override
   _LocalSongsState createState() => _LocalSongsState();
 }
 class _LocalSongsState extends State<LocalSongs> {
 
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final String recentTable = "RECENT_PLAY";
+  final String recent_favDB = "recent_fav.db";
+  int position;
+
+   @override
+  void initState(){
+     setState(() {
+       position = widget.position;
+     });
+
+    // TODO: implement initState
+    super.initState();
+  }
+
     @override
   void dispose() {
+      int position = _itemPositionsListener
+          .itemPositions.value.first.index;
+      Preferences().saveScrollPosition('allSongPos', position);
+      print(position);
     // TODO: implement dispose
     super.dispose();
   }
 
-  final String recentTable = "RECENT_PLAY";
-  final String recent_favDB = "recent_fav.db";
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +59,26 @@ class _LocalSongsState extends State<LocalSongs> {
     return Container(
       height: height,
       width: width,
-      margin: EdgeInsets.only(
-        bottom: 73,
+      padding: EdgeInsets.only(
+        bottom: 100,
       ),
         color: Colors.white,
         child: FutureBuilder(
-          future: getData().getAllInternalSongs(),
+          future: getInternalData().getAllInternalSongs(),
           builder: (context,snapshot){
             if(!snapshot.hasData){
               return Container();
             }else{
+
               return Container(
                   height: height,
-                  child:ListView.builder(
+                margin: EdgeInsets.only(
+                  bottom: 150,
+                ),
+                  child:ScrollablePositionedList.builder(
+                    initialScrollIndex:widget.position!=null?widget.position:0,
+                    itemScrollController: _itemScrollController,
+                    itemPositionsListener: _itemPositionsListener,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       final song = snapshot.data[index];
@@ -57,13 +87,17 @@ class _LocalSongsState extends State<LocalSongs> {
                       } else {
                         return InkWell(
                           onTap: ()async{
+                            currentPlayingList.value = snapshot.data;
+                            playerToggleNotifier.value = false;
+                            bool toggle = await getToggle();
                             setState(() {
                               currentSongIndex.value = index;
                               isTapedToPlay.value = true;
                               isPlaying.value = true;
+                              playerToggleNotifier.value = toggle;
                             });
-                            var id = await Sqlite(dataBaseName: recent_favDB,
-                                tableName: recentTable)
+                            var id = await Sqlite(dataBaseName: singleDatabase,
+                                tableName: RECENT_PLAYED_TABLE)
                             .maxId();
                             final music = Music(
                               id: id,
@@ -81,7 +115,8 @@ class _LocalSongsState extends State<LocalSongs> {
                             List<Music> musicList = new List();
                             musicList.add(music);
 
-                            await Sqlite(dataBaseName: recent_favDB, tableName: recentTable)
+                            await Sqlite(dataBaseName: singleDatabase,
+                                tableName: RECENT_PLAYED_TABLE)
                                  .saveSqliteDB(musicList);
                           },
                           child: Card(
@@ -110,7 +145,7 @@ class _LocalSongsState extends State<LocalSongs> {
                                   Positioned(
                                       top: 30,
                                       left: 20,
-                                      child: Container(child: Text(song.album),)
+                                      child: Container(child: Text('$index'),)
                                   ),
 
                                   Positioned(

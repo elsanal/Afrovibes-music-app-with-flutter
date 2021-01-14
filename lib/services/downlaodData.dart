@@ -1,25 +1,33 @@
+import 'package:afromuse/services/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
-class getData{
-  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+class getInternalData{
+  FlutterAudioQuery _audioQuery = FlutterAudioQuery();
+  Future<List<Music>> getAllInternalSongs()async{
+    List<Music> Musics = [];
+    List<SongInfo> allSongs = await _audioQuery.getSongs(sortType: SongSortType.DEFAULT);
 
-  dataFromDB(){
-    Stream<QuerySnapshot> snapshot =  Firestore.instance.collection('Content').orderBy('title').snapshots();
-    return snapshot;
-  }
-
-  getAllInternalSongs()async{
-    List<SongInfo> allSongs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
-    if(allSongs.isEmpty){
-      print("Empty");
-      print(allSongs.length);
-    }
-    return allSongs;
+    allSongs.forEach((song) {
+      Music music = Music(
+        artistName: song.artist,
+        musicTitle: song.title,
+        albumName: song.album,
+        file: song.filePath,
+        liked : 0,
+        Ndownload : 0,
+        NListened : 0,
+        genre : "unknown",
+        artwork: song.albumArtwork,
+        rate: 0,
+      );
+      Musics.add(music);
+    });
+    return Musics;
   }
 
   getAllInternalAlbum()async{
-    List<AlbumInfo> album = await audioQuery.getAlbums();
+    List<AlbumInfo> album = await _audioQuery.getAlbums();
     return album;
   }
 

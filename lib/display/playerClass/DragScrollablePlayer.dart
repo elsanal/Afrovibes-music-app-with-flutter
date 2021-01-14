@@ -1,6 +1,6 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
-import 'package:afromuse/staticPage/valueNotifier.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
 import 'package:audio_manager/audio_manager.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -10,7 +10,6 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:path/path.dart';
 
 class DragPlayer extends StatefulWidget {
-  DragPlayer();
   @override
   _DragPlayerState createState() => _DragPlayerState();
 }
@@ -19,42 +18,37 @@ class _DragPlayerState extends State<DragPlayer> {
 
   int iconSizeDefault = 90;
   int iconSizePlay = 160;
+  List<SongInfo> songsList = [];
+  int index;
   AudioPlayer _audioPlayer = AudioPlayer();
-  AudioManager _audioManager = AudioManager.instance;
+  //AudioManager _audioManager = AudioManager.instance;
   void playMusic(){
     print("play called");
-    if(_audioManager.isPlaying){
-      _audioManager.toPause();
-    }else{
-      _audioManager.play();
-    }
-
+    _audioPlayer.play(songsList[currentSongIndex.value].filePath, isLocal: true);
   }
   void stopMusic(){
     print("stop called");
-    _audioManager.stop();
+    _audioPlayer.stop();
 
   }
   void pauseMusic(){
     print("pause called");
-    _audioManager.toPause();
+    _audioPlayer.pause();
   }
-
-
 
   @override
   void initState() {
-
+    _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+    print("new calllllll to playyyyyyyyyy");
     // TODO: implement initState
     super.initState();
   }
   @override
   void dispose() {
-    _audioManager.release();
+    _audioPlayer.release();
     // TODO: implement dispose
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +79,8 @@ class _DragPlayerState extends State<DragPlayer> {
                   child:ValueListenableBuilder(
                     valueListenable: currentSongIndex,
                     builder: (context,value,_widget){
-                      return Marques(allInternalSongs.value[audio.value.curIndex ].artist +
-                          ' - ' + allInternalSongs.value[audio.value.curIndex].title, Colors.white);
+                      return Marques(currentPlayingList.value[currentSongIndex.value].artist +
+                          ' - ' + currentPlayingList.value[currentSongIndex.value].title, Colors.white);
                     },
                   )
                 ),
@@ -135,24 +129,36 @@ class _DragPlayerState extends State<DragPlayer> {
         backgroundColor: Colors.black,
         body: Container(
           child: InkWell(
-              onTap: () {
+              onTap: () async{
                 setState(() {
                   if(index == 2){
-                    setState(() {
+                    setState(() async{
                       isPlaying.value = !isPlaying.value;
-
+                      if(isPlaying.value == true){
+                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                      }else{
+                        await _audioPlayer.pause();
+                      }
                     });
-
-                  }else if((index == 1) & (_audioManager.curIndex  > 0)){
-                    setState(() {
+                  }else if((index == 1) & (currentSongIndex.value  > 0)){
+                    setState(() async{
                       currentSongIndex.value = currentSongIndex.value - 1;
-                      _audioManager.previous();
+                      if(isPlaying.value == true){
+                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                      }else{
+                        await _audioPlayer.pause();
+                      }
                     });
-                  }else if((index == 3) & (_audioManager.curIndex <
-                      allInternalSongs.value.length)){
-                    setState(() {
+
+                  }else if((index == 3) & (currentSongIndex.value <
+                      currentPlayingList.value.length-1)){
+                    setState(() async{
                       currentSongIndex.value = currentSongIndex.value + 1;
-                      _audioManager.next();
+                      if(isPlaying.value == true){
+                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                      }else{
+                        await _audioPlayer.pause();
+                      }
                     });
                   }else{
 
@@ -202,21 +208,47 @@ class _DraggerState extends State<Dragger> {
                top: top,
                left: left,
              ),
-          child: DragPlayer(),
-        ),
+          child: ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+              builder: (context, value, widget){
+              if(value == true){
+                return DragPlayer();
+              }else{
+                return Container();
+               }
+              },
+           ),),
         feedback: Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(),
+          child: ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+            builder: (context, value, widget){
+              if(value == true){
+                return DragPlayer();
+              }else{
+                return Container();
+              }
+            },
+          ),
         ),
         childWhenDragging:  Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(),
+          child: ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+            builder: (context, value, widget){
+              if(value == true){
+                return DragPlayer();
+              }else{
+                return Container();
+              }
+            },
+          ),
         ),
         onDragCompleted: (){},
         onDragEnd: (drag){
