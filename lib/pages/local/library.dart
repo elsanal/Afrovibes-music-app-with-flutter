@@ -6,10 +6,12 @@ import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/pages/local/allFolders.dart';
 import 'package:afromuse/pages/local/allSongs.dart';
+import 'package:afromuse/pages/local/displayPlaylistContain.dart';
 import 'package:afromuse/pages/local/playlist.dart';
 import 'package:afromuse/services/preferences.dart';
 import 'package:afromuse/sharedPage/TopMenu.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/sharedPage/createPlaylist.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -41,7 +43,6 @@ class _LocalState extends State<Local> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation =  MediaQuery.of(context).orientation;
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -93,6 +94,7 @@ class _LocalState extends State<Local> {
                 ),
                 Positioned(
                   top: 50,
+                  bottom:0,
                   child: Center(
                     child: new Container(
                         color: Colors.grey[200],

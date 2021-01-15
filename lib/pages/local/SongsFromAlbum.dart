@@ -11,8 +11,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 
 
-final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-
 
 class SongsFromAlbum extends StatefulWidget {
   ValueNotifier<List<SongInfo>> newListOfSongs;
@@ -22,15 +20,10 @@ class SongsFromAlbum extends StatefulWidget {
 }
 
 class _SongsFromAlbumState extends State<SongsFromAlbum> {
-
-
-
-  final String recentTable = "RECENT_PLAY";
-  final String recent_favDB = "recent_fav.db";
+  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 
   @override
   void initState() {
-
     // TODO: implement initState
     super.initState();
   }
@@ -46,99 +39,100 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Container(
-        height: height,
-        width: width,
-        margin: EdgeInsets.only(
-          bottom: 100,
-        ),
-        color: Colors.white,
-        child: Scaffold(
-          body: Container(
-              height: height,
-              margin: EdgeInsets.only(
-                bottom: 150,
-              ),
-              child:ListView.builder(
-                itemCount:currentPlayingList.value.length,
-                itemBuilder: (context, index) {
-                  final song = currentPlayingList.value[index];
-                  if (currentPlayingList.value.isEmpty) {
-                    return Container(child: Center(child: Text("No music founded"),),);
-                  } else {
-                    return InkWell(
-                      onTap: ()async{
-                        playerToggleNotifier.value = false;
-                          bool toggle = await getToggle();
-                        setState(() {
-                          currentSongIndex.value = index;
-                          isTapedToPlay.value = true;
-                          isPlaying.value = true;
-                        });
-                        playerToggleNotifier.value = toggle;
-                        var id = await Sqlite(dataBaseName: singleDatabase,
-                            tableName: RECENT_PLAYED_TABLE)
-                            .maxId();
-                        final music = Music(
-                          id: id!=null?(id + 1):0,
-                          artistName: song.artist,
-                          musicTitle: song.artist,
-                          albumName: song.album,
-                          liked: 0,
-                          Ndownload: 0,
-                          NListened: 0,
-                          rate: 0,
-                          genre: "unknown",
-                          artwork: song.albumArtwork,
-                          file: song.filePath,
+      width: width,
+      height: height,
+      padding: EdgeInsets.only(
+        bottom: ScreenUtil().setHeight(60),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          width: width,
+          height: height,
+          child: Stack(
+            children: [
+              Positioned(
+                bottom:libraryCurrentPage.value==3?
+                ScreenUtil().setHeight(300)
+                    :ScreenUtil().setHeight(270),
+                top: ScreenUtil().setHeight(5),
+                child: Container(
+                  width: width,
+                  height: height,
+                  child: ListView.builder(
+                    itemCount:currentPlayingList.value.length,
+                    itemBuilder: (context, index) {
+                      Music music = currentPlayingList.value[index];
+                      var len = currentPlayingList.value.length;
+                      if (currentPlayingList.value.isEmpty) {
+                        return Container(child: Center(child: Text("No music founded"),),);
+                      } else {
+                        return InkWell(
+                          onTap: ()async{
+                            playerToggleNotifier.value = false;
+                            bool toggle = await getToggle();
+                            setState(() {
+                              currentSongIndex.value = index;
+                              isTapedToPlay.value = true;
+                              isPlaying.value = true;
+                              playerToggleNotifier.value = toggle;
+                            });
+
+                            List<Music> musicList = new List();
+                            musicList.add(music);
+
+                            await Sqlite(dataBaseName: singleDatabase, tableName: RECENT_PLAYED_TABLE)
+                                .saveSqliteDB(musicList);
+                          },
+                          child: Card(
+                            color: Colors.white,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width*(1/5),
+                                child: Stack(children: [
+                                  Positioned(
+                                      top: 3,
+                                      left: 20,
+                                      child: Container(
+                                        height: 40,
+                                        width: 250,
+                                        child: Marques(music.musicTitle, Colors.black),)
+                                  ),
+                                  Positioned(
+                                      right: 15,
+                                      bottom: 5,
+                                      child: Container(
+                                        child: Text(
+                                            music.duration!=null?music.duration.toString():"-- : --"),
+                                      )
+                                  ),
+                                  Positioned(
+                                      top: 30,
+                                      left: 20,
+                                      child: Container(child: Text('$index'),)
+                                  ),
+
+                                  Positioned(
+                                      top: 3,
+                                      right: 5,
+                                      child: Container(child: IconButton(
+                                          icon: Icon(Icons.more_vert),
+                                          onPressed: (){}),)
+                                  ),
+                                ],)
+                            ),
+                          ),
                         );
-                        List<Music> musicList = new List();
-                        musicList.add(music);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
 
-                        await Sqlite(dataBaseName: singleDatabase, tableName: RECENT_PLAYED_TABLE)
-                            .saveSqliteDB(musicList);
-                      },
-                      child: Card(
-                        color: Colors.white,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.width*(1/5),
-                            child: Stack(children: [
-                              Positioned(
-                                  top: 3,
-                                  left: 20,
-                                  child: Container(
-                                    height: 40,
-                                    width: 250,
-                                    child: Marques(currentPlayingList.value[index].artist +
-                                        ' - '+ currentPlayingList.value[index].artist, Colors.black),)
-                              ),
-                              Positioned(
-                                  right: 5,
-                                  bottom: 5,
-                                  child: Container(child: Text(currentPlayingList.value[index].duration),)
-                              ),
-                              Positioned(
-                                  top: 30,
-                                  left: 20,
-                                  child: Container(child: Text(currentPlayingList.value[index].album),)
-                              ),
-
-                              Positioned(
-                                  top: 3,
-                                  right: 5,
-                                  child: Container(child: IconButton(
-                                      icon: Icon(Icons.more_vert),
-                                      onPressed: (){}),)
-                              ),
-                            ],)
-                        ),
-                      ),
-                    );
-                  }
-                },
-              )
           ),
         )
+      ),
     );
   }
 }

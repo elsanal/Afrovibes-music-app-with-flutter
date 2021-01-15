@@ -1,21 +1,14 @@
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/sharedPage/createPlaylist.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-getSongs_data()async{
-  List<SongInfo> songs = await audioQuery.getSongs(sortType: SongSortType.DEFAULT);
-  if(songs.isEmpty){
-    print("Empty");
-    print(songs.length);
-  }
-  return songs;
-}
 
+final FlutterAudioQuery audioQuery = FlutterAudioQuery();
 List playlist = [
   {
     'title' : 'Hip-Hop',
@@ -34,27 +27,16 @@ List playlist = [
 
 List<AlbumInfo> playlists = [];
 List<AlbumInfo> newList = [];
-getAlbum_data()async{
-  playlists = await audioQuery.getAlbums();
-}
-
 
 class Playlist extends StatefulWidget {
   @override
   _PlaylistState createState() => _PlaylistState();
 }
-AudioPlayer _audioPlayer = new AudioPlayer();
+
 class _PlaylistState extends State<Playlist> {
-  @override
-  void initState() {
-    getAlbum_data();
-    // TODO: implement initState
-    super.initState();
-  }
   int _count = 0;
   @override
   Widget build(BuildContext context) {
-    final orientation =  MediaQuery.of(context).orientation;
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -70,6 +52,7 @@ class _PlaylistState extends State<Playlist> {
               new IconButton(
                   icon: Icon(Icons.add_circle_outline, color: Colors.black87),
                   onPressed: (){
+                    return playlistCreation(context);
                     if(_count <= playlists.length-1){
                       setState(() {
                         newList.add(playlists[_count]);
@@ -78,7 +61,6 @@ class _PlaylistState extends State<Playlist> {
                     }
                    print(playlists);
                   }
-
               )
             ],
           ),
@@ -102,6 +84,7 @@ class _PlaylistState extends State<Playlist> {
                         onTap: ()async{
                           allInternalSongs.value = await audioQuery.getSongsFromAlbum(
                               albumId: newList[index].id);
+
                           setState(() {
                           libraryCurrentPage.value = 3;
                           });

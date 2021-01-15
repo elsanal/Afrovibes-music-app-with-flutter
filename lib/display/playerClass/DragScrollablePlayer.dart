@@ -18,13 +18,14 @@ class _DragPlayerState extends State<DragPlayer> {
 
   int iconSizeDefault = 90;
   int iconSizePlay = 160;
-  List<SongInfo> songsList = [];
+  //List<SongInfo> songsList = [];
   int index;
   AudioPlayer _audioPlayer = AudioPlayer();
   //AudioManager _audioManager = AudioManager.instance;
   void playMusic(){
     print("play called");
-    _audioPlayer.play(songsList[currentSongIndex.value].filePath, isLocal: true);
+    _audioPlayer.play(
+        currentPlayingList.value[currentSongIndex.value].file, isLocal: true,stayAwake: true);
   }
   void stopMusic(){
     print("stop called");
@@ -38,7 +39,8 @@ class _DragPlayerState extends State<DragPlayer> {
 
   @override
   void initState() {
-    _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+    _audioPlayer.play(
+        currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
     print("new calllllll to playyyyyyyyyy");
     // TODO: implement initState
     super.initState();
@@ -79,8 +81,8 @@ class _DragPlayerState extends State<DragPlayer> {
                   child:ValueListenableBuilder(
                     valueListenable: currentSongIndex,
                     builder: (context,value,_widget){
-                      return Marques(currentPlayingList.value[currentSongIndex.value].artist +
-                          ' - ' + currentPlayingList.value[currentSongIndex.value].title, Colors.white);
+                      return Marques(currentPlayingList.value[currentSongIndex.value].artistName +
+                          ' - ' + currentPlayingList.value[currentSongIndex.value].musicTitle, Colors.white);
                     },
                   )
                 ),
@@ -135,7 +137,8 @@ class _DragPlayerState extends State<DragPlayer> {
                     setState(() async{
                       isPlaying.value = !isPlaying.value;
                       if(isPlaying.value == true){
-                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                        await _audioPlayer.play(
+                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
                       }else{
                         await _audioPlayer.pause();
                       }
@@ -144,7 +147,8 @@ class _DragPlayerState extends State<DragPlayer> {
                     setState(() async{
                       currentSongIndex.value = currentSongIndex.value - 1;
                       if(isPlaying.value == true){
-                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                        await _audioPlayer.play(
+                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true, stayAwake: true);
                       }else{
                         await _audioPlayer.pause();
                       }
@@ -155,7 +159,8 @@ class _DragPlayerState extends State<DragPlayer> {
                     setState(() async{
                       currentSongIndex.value = currentSongIndex.value + 1;
                       if(isPlaying.value == true){
-                        await _audioPlayer.play(currentPlayingList.value[currentSongIndex.value].filePath,isLocal: true);
+                        await _audioPlayer.play(
+                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
                       }else{
                         await _audioPlayer.pause();
                       }

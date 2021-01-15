@@ -27,8 +27,6 @@ class _LocalSongsState extends State<LocalSongs> {
 
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  final String recentTable = "RECENT_PLAY";
-  final String recent_favDB = "recent_fav.db";
   int position;
 
    @override
@@ -64,16 +62,15 @@ class _LocalSongsState extends State<LocalSongs> {
       ),
         color: Colors.white,
         child: FutureBuilder(
-          future: getInternalData().getAllInternalSongs(),
+          future: getInternalData().getAllInternalSongs(null),
           builder: (context,snapshot){
             if(!snapshot.hasData){
               return Container();
             }else{
-
               return Container(
                   height: height,
                 margin: EdgeInsets.only(
-                  bottom: 150,
+                  bottom: 40,
                 ),
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:widget.position!=null?widget.position:0,
@@ -81,8 +78,8 @@ class _LocalSongsState extends State<LocalSongs> {
                     itemPositionsListener: _itemPositionsListener,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      final song = snapshot.data[index];
-                      if (song == null) {
+                      Music music = snapshot.data[index];
+                      if (music == null) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
@@ -96,22 +93,7 @@ class _LocalSongsState extends State<LocalSongs> {
                               isPlaying.value = true;
                               playerToggleNotifier.value = toggle;
                             });
-                            var id = await Sqlite(dataBaseName: singleDatabase,
-                                tableName: RECENT_PLAYED_TABLE)
-                            .maxId();
-                            final music = Music(
-                              id: id,
-                              artistName: song.artist,
-                              musicTitle: song.artist,
-                              albumName: song.album,
-                              liked: 0,
-                              Ndownload: 0,
-                              NListened: 0,
-                              rate: 0,
-                              genre: "unknown",
-                              artwork: song.albumArtwork,
-                              file: song.filePath,
-                            );
+
                             List<Music> musicList = new List();
                             musicList.add(music);
 
@@ -131,25 +113,24 @@ class _LocalSongsState extends State<LocalSongs> {
                                       child: Container(
                                         height: 40,
                                         width: 250,
-                                        child: Marques(song.artist +
-                                            ' - '+ song.artist, Colors.black),)
+                                        child: Marques(music.musicTitle, Colors.black),)
                                   ),
                                   Positioned(
-                                      right: 5,
+                                      right: 15,
                                       bottom: 5,
                                       child: Container(
                                         child: Text(
-                                            song.duration),
+                                            music.duration!=null?music.duration.toString():"-- : --"),
                                       )
                                   ),
                                   Positioned(
-                                      top: 30,
-                                      left: 20,
-                                      child: Container(child: Text('$index'),)
+                                      bottom: 5,
+                                      left: 35,
+                                      child: Container(child: Text(music.albumName),)
                                   ),
 
                                   Positioned(
-                                      top: 3,
+                                      top: 0,
                                       right: 5,
                                       child: Container(child: IconButton(
                                           icon: Icon(Icons.more_vert),

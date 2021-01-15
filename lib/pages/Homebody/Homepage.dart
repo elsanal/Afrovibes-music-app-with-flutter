@@ -3,6 +3,7 @@ import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
 import 'package:afromuse/pages/latest/Latest.dart';
+import 'package:afromuse/pages/local/displayPlaylistContain.dart';
 import 'package:afromuse/pages/local/library.dart';
 import 'package:afromuse/pages/drawer/category.dart';
 import 'package:afromuse/pages/local/playlist.dart';
@@ -50,7 +51,8 @@ class _HomepageState extends State<Homepage> {
     ShowFavorite(),
     RecentPlayed(),
     Local(),
-    Categories()
+    Categories(),
+    DisplayPlaylistContain(),
   ];
 
   int iconSizeDefault = 70;
@@ -69,7 +71,7 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         centerTitle: true,
         title: ValueListenableBuilder(
-          valueListenable: pageCurrentIndex,
+          valueListenable: HomepageCurrentIndex,
             builder: (context, value, widget){
               return Text(appBArTitle.value);
             },
@@ -95,31 +97,13 @@ class _HomepageState extends State<Homepage> {
                         child: Text('yes'),
                         onPressed: ()async{
                           List<Music> musicList = new List();
-
-                          var res = await Preferences().autoSavePlayerCurrentInfo();
-
-                          currentPlayingList.value.forEach((song) async{
-                            var id = await Sqlite(dataBaseName: singleDatabase,
-                                tableName: CURRENT_PLAYING_TABLE)
-                                .maxId();
-                            final music = Music(
-                              id: id,
-                              artistName: song.artist,
-                              musicTitle: song.artist,
-                              albumName: song.album,
-                              liked: 0,
-                              Ndownload: 0,
-                              NListened: 0,
-                              rate: 0,
-                              genre: "unknown",
-                              artwork: song.albumArtwork,
-                              file: song.filePath,
-                            );
-                            musicList.add(music);
+                          bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
+                          currentPlayingList.value.forEach((song){
+                            musicList.add(song);
                           });
-                          await Sqlite(dataBaseName: singleDatabase,
+                          bool sqliteSaved = await Sqlite(dataBaseName: singleDatabase,
                               tableName: CURRENT_PLAYING_TABLE).saveSqliteDB(musicList);
-                          if(res == true){
+                          if(prefsSaved && sqliteSaved){
                             Navigator.of(context).pop(true);
                           }
                         },),
@@ -136,11 +120,24 @@ class _HomepageState extends State<Homepage> {
           ),
           child: Stack(
             children: [
-              ValueListenableBuilder(
-                valueListenable: pageCurrentIndex,
-                builder: (context, value, widget){
-                  return pageList[value];
-                },
+              ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  Container(
+                    color: Colors.red,
+                    height: height,
+                    padding: EdgeInsets.only(
+                        bottom: 50
+                    ),
+                    child: ValueListenableBuilder(
+                      valueListenable: HomepageCurrentIndex,
+                      builder: (context, value, widget){
+                        return pageList[value];
+                      },
+                    ),
+                  ),
+                ],
               ),
               ValueListenableBuilder(
                 valueListenable: isTapedToPlay,
@@ -155,7 +152,7 @@ class _HomepageState extends State<Homepage> {
               ),
               Positioned(
                 bottom: 0.0,
-                child:_bottomBar(context, pageCurrentIndex.value),
+                child:_bottomBar(context, HomepageCurrentIndex.value),
               ),
             ],
           ),
@@ -201,12 +198,12 @@ class _HomepageState extends State<Homepage> {
       child: InkWell(
         onTap: () {
           setState(() {
-            pageCurrentIndex.value = index;
+            HomepageCurrentIndex.value = index;
             appBarTitleFunc(index);
           });
         },
         child: ValueListenableBuilder(
-          valueListenable: pageCurrentIndex,
+          valueListenable: HomepageCurrentIndex,
           builder: (context, value, widget){
             return Column(
               children: [

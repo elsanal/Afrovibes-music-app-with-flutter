@@ -11,7 +11,7 @@ class Preferences{
     await prefs.setBool('isTapedToPlay', isTapedToPlay.value);
     await prefs.setBool('isPlaying', isPlaying.value);
     await prefs.setInt('currentSongIndex', currentSongIndex.value);
-    await prefs.setInt('pageCurrentIndex', pageCurrentIndex.value);
+    await prefs.setInt('HomepageCurrentIndex', HomepageCurrentIndex.value);
     await prefs.setBool('playerToggleNotifier', playerToggleNotifier.value);
     print("All have been saved");
     return true;
@@ -38,15 +38,9 @@ class Preferences{
     isTapedToPlay.value = prefs.getBool('isTapedToPlay')??false;
     isPlaying.value = prefs.getBool('isPlaying')??false;
     currentSongIndex.value = prefs.getInt('currentSongIndex')??0;
-    pageCurrentIndex.value = prefs.getInt('pageCurrentIndex')??0;
+    HomepageCurrentIndex.value = prefs.getInt('HomepageCurrentIndex')??0;
     playerToggleNotifier.value = prefs.getBool('playerToggleNotifier')??false;
-    appBarTitleFunc(pageCurrentIndex.value);
-    print("Values");
-    print(isTapedToPlay.value);
-    print(isTapedToPlay.value);
-    print(isPlaying.value);
-    print(currentSongIndex.value);
-    print(pageCurrentIndex.value);
+    appBarTitleFunc(HomepageCurrentIndex.value);
     print("All restored");
 
   }

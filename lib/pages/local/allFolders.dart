@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
@@ -28,12 +29,14 @@ class _LocalAlbumsState extends State<LocalAlbums> {
             future: getInternalData().getAllInternalAlbum(),
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
-                //print(snapshot.data.length);
                 return Container(color: Colors.white,child: Center(
                   child: SpinKitFadingCircle(color: Colors.black,),),);
               } else {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
+                  padding: EdgeInsets.only(
+                    bottom:ScreenUtil().setSp(380),
+                  ),
                     child:GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: ScreenUtil().setSp(10),
@@ -41,52 +44,63 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                           crossAxisCount:(orientation == Orientation.portrait)?2:3),
                       itemCount: album.length,
                       itemBuilder: (context, index) {
-                        //print(snapshot.data.length);
+
                         if (album.isEmpty) {
                           return Container(color: Colors.white,child: Center(
                             child: Text('No album founded'),),);
                         } else {
                           return GestureDetector(
                             onTap: ()async{
-                              currentPlayingList.value = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
-                              libraryCurrentPage.value = 3;
+                              List<SongInfo> songs = [];
+                              songs = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
+                              currentPlayingList.value = await getInternalData().getAllInternalSongs(songs);
+                              setState((){
+                                libraryCurrentPage.value = 3;
+                              });
                             },
                             child: Card(
                               child: Container(
                                   width: MediaQuery.of(context).size.width,
-                                  height: 20,
+                                  // height: 20,
                                   child: Stack(children: [
                                     Positioned(
-                                        top: 3,
-                                        left: 20,
+                                        top: 1,
+                                        left: 1,
+                                        right: 1,
                                         child: Container(
-                                          // height: 40,
-                                          width: 150,
-                                          child: Marques(album[index].artist + ' - '+ album[index].title, Colors.black),)
+                                          width: MediaQuery.of(context).size.width/2,
+                                          height: MediaQuery.of(context).size.width*(4/10),
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage("assets/equilizer.jpeg"),
+                                              fit: BoxFit.cover
+                                            )
+                                          ),
+                                        )
                                     ),
                                     Positioned(
-                                        right: 5,
-                                        bottom: 5,
-                                        child: Container(child: Text(album[index].id + " "),)
+                                        bottom: 25,
+                                        left: 0,
+                                        child: Container(
+                                          // height: 40,
+                                          width: MediaQuery.of(context).size.width/2,
+                                          child: Text(album[index].title,style: GoogleFonts.lexendExa(
+                                            textStyle: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                            ),
+                                          ),
+                                            overflow: TextOverflow.clip,
+                                            maxLines: 1,
+                                          ),
+                                        )
                                     ),
                                     Positioned(
                                         bottom: 5,
                                         left: 5,
                                         child: Container(child: Text(album[index].numberOfSongs + ' songs'),)
                                     ),
-
-                                    Positioned(
-                                        top: 3,
-                                        right: 5,
-                                        child: Container(child: IconButton(
-                                            icon: Icon(Icons.more_vert),
-                                            onPressed: (){
-
-                                            }
-                                            ),
-                                        )
-                                    ),
-
                                   ],)
                               ),
                             ),

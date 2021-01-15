@@ -10,12 +10,12 @@ ValueNotifier<bool> playerToggleNotifier = ValueNotifier(false);
 ValueNotifier<List<SongInfo>> allInternalSongs = ValueNotifier([]);
 ValueNotifier<List<SongInfo>> myFavorite = ValueNotifier([]);
 ValueNotifier<List<SongInfo>> myRecentPlayed = ValueNotifier([]);
-ValueNotifier<List<SongInfo>> currentPlayingList = ValueNotifier<List<SongInfo>>([]);
+ValueNotifier<List<Music>> currentPlayingList = ValueNotifier<List<Music>>([]);
 ValueNotifier<int> currentSongIndex = ValueNotifier(0) ;
 
 // page management
 
-ValueNotifier<int> pageCurrentIndex = ValueNotifier(0) ;
+ValueNotifier<int> HomepageCurrentIndex = ValueNotifier(0) ;
 ValueNotifier<int> libraryCurrentPage = ValueNotifier(0);
 ValueNotifier<String> appBArTitle = ValueNotifier('Home');
 

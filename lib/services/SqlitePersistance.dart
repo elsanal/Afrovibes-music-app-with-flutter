@@ -29,7 +29,7 @@ class Sqlite{
      onCreate: (Database dB, int version){
        print("created");
        return dB.execute("CREATE TABLE $tableName("
-           "id INTEGER PRIMARY KEY,"
+           "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
            "artistName TEXT,"
            "musicTitle TEXT,"
            "file TEXT,"
@@ -54,7 +54,7 @@ Future saveSqliteDB(List<Music> musicList)async{
      req.insert('$tableName', musicList[i].toMap(),
        conflictAlgorithm: ConflictAlgorithm.replace,);
    }
-
+    return true;
    }
 
 //// restore file from sqlite db

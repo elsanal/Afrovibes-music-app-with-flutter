@@ -99,7 +99,7 @@ class _mainDrawerState extends State<mainDrawer> {
                         onTap: (){
                           setState(() {
                             clickedIndex = 12;
-                            pageCurrentIndex.value = 5;
+                            HomepageCurrentIndex.value = 5;
                             appBArTitle.value = "Category";
                           });
 
@@ -117,7 +117,7 @@ class _mainDrawerState extends State<mainDrawer> {
                         onTap: (){
                           setState(() {
                             clickedIndex = 4;
-                            pageCurrentIndex.value = 2;
+                            HomepageCurrentIndex.value = 2;
                             appBArTitle.value = "Favorite";
                           });
 
@@ -143,7 +143,7 @@ class _mainDrawerState extends State<mainDrawer> {
                         onTap: (){
                           setState(() {
                             clickedIndex = 7;
-                            pageCurrentIndex.value = 4;
+                            HomepageCurrentIndex.value = 4;
                           });
 
                         },

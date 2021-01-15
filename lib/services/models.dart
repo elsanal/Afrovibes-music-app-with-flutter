@@ -6,6 +6,7 @@ import 'package:afromuse/pages/local/playlist.dart';
 
 class Music{
   int id;
+  int duration;
   String artistName;
   String musicTitle;
   String file,artwork;
@@ -16,13 +17,14 @@ class Music{
 
   Music({this.id, this.file, this.albumName, this.artistName,
          this.artwork, this.genre, this.liked, this.musicTitle,
-        this.Ndownload, this.NListened, this.rate});
+        this.Ndownload, this.NListened, this.rate, this.duration});
 
   factory  Music.fromJson(Map<String, dynamic> map)=> new Music(
     id : map['id'],
     artistName : map['artistName'],
     musicTitle : map['musicTitle'],
     file : map['file'],
+    duration : map['duration'],
     artwork : map['artwork'],
     albumName : map['albumName'],
     liked : map['liked'],
@@ -37,6 +39,7 @@ class Music{
     "artistName" : artistName,
     "musicTitle" : musicTitle,
     "file" : file,
+    'duration' : duration,
     "artwork" : artwork,
     "albumName" : albumName,
     "liked" : liked,
@@ -45,6 +48,8 @@ class Music{
     "genre" : genre,
     "rate" : rate,
   };
+
+
 
 }
 
