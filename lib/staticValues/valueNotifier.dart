@@ -8,6 +8,8 @@ ValueNotifier<bool> isTapedToPlay  = ValueNotifier(false);
 ValueNotifier<bool> isPlaying = ValueNotifier(false);
 ValueNotifier<bool> playerToggleNotifier = ValueNotifier(false);
 ValueNotifier<int> currentSongIndex = ValueNotifier(0) ;
+ValueNotifier<bool> releasePlayer = ValueNotifier(false);
+ValueNotifier<bool> isDragging = ValueNotifier(false);
 
 // page management
 

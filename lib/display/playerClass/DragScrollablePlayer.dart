@@ -1,3 +1,4 @@
+import 'package:afromuse/display/playerClass/MusicPlayer.dart';
 import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
@@ -9,181 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:path/path.dart';
 
-class DragPlayer extends StatefulWidget {
-  @override
-  _DragPlayerState createState() => _DragPlayerState();
-}
-
-class _DragPlayerState extends State<DragPlayer> {
-
-  int iconSizeDefault = 90;
-  int iconSizePlay = 160;
-  //List<SongInfo> songsList = [];
-  int index;
-  AudioPlayer _audioPlayer = AudioPlayer();
-  //AudioManager _audioManager = AudioManager.instance;
-  void playMusic(){
-    print("play called");
-    _audioPlayer.play(
-        currentPlayingList.value[currentSongIndex.value].file, isLocal: true,stayAwake: true);
-  }
-  void stopMusic(){
-    print("stop called");
-    _audioPlayer.stop();
-
-  }
-  void pauseMusic(){
-    print("pause called");
-    _audioPlayer.pause();
-  }
-
-  @override
-  void initState() {
-    _audioPlayer.play(
-        currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
-    print("new calllllll to playyyyyyyyyy");
-    // TODO: implement initState
-    super.initState();
-  }
-  @override
-  void dispose() {
-    _audioPlayer.release();
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-    final width = MediaQuery.of(context).size.width;
-    return Container(
-      height: 90,
-      width: width*(5/6),
-      child: Scaffold(
-        body: Container(
-          height: 90,
-          width: width*(5/6),
-          //color: Colors.white,
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.all(
-                  Radius.circular(8.0)
-              )
-          ),
-          child: Stack(
-            children:[
-              Positioned(
-                left: 100,
-                child: Container(
-                  width: width,
-                  height: 110,
-                  child:ValueListenableBuilder(
-                    valueListenable: currentSongIndex,
-                    builder: (context,value,_widget){
-                      return Marques(currentPlayingList.value[currentSongIndex.value].artistName +
-                          ' - ' + currentPlayingList.value[currentSongIndex.value].musicTitle, Colors.white);
-                    },
-                  )
-                ),
-              ),
-              Positioned(
-                child: Container(
-                  child: Image.asset('assets/equilizer.jpeg'),
-                ),
-              ),
-              Positioned(
-                bottom: 0.0,
-                right: 10,
-                child: Container(
-                  width: width*(3/6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _bottomItems(
-                          Icons.skip_previous_outlined ,1, iconSizeDefault),
-                      _bottomItems(
-                          isPlaying.value == true?Icons.pause_circle_outline_outlined:
-                          Icons.play_circle_outline_outlined ,2, iconSizeDefault),
-                      _bottomItems(
-                          Icons.skip_next_outlined ,3, iconSizeDefault),
-                    ],
-                  ),
-                ),)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  _bottomItems(IconData icon_outlined, int index,int iconSize) {
-
-    return Container(
-      height: 50,
-      width: 50,
-      color: Colors.black,
-      padding: EdgeInsets.only(
-        top: 10,
-        left: 15
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-          child: InkWell(
-              onTap: () async{
-                setState(() {
-                  if(index == 2){
-                    setState(() async{
-                      isPlaying.value = !isPlaying.value;
-                      if(isPlaying.value == true){
-                        await _audioPlayer.play(
-                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
-                      }else{
-                        await _audioPlayer.pause();
-                      }
-                    });
-                  }else if((index == 1) & (currentSongIndex.value  > 0)){
-                    setState(() async{
-                      currentSongIndex.value = currentSongIndex.value - 1;
-                      if(isPlaying.value == true){
-                        await _audioPlayer.play(
-                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true, stayAwake: true);
-                      }else{
-                        await _audioPlayer.pause();
-                      }
-                    });
-
-                  }else if((index == 3) & (currentSongIndex.value <
-                      currentPlayingList.value.length-1)){
-                    setState(() async{
-                      currentSongIndex.value = currentSongIndex.value + 1;
-                      if(isPlaying.value == true){
-                        await _audioPlayer.play(
-                            currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
-                      }else{
-                        await _audioPlayer.pause();
-                      }
-                    });
-                  }else{
-
-                  }
-                });
-              },
-              child: Column(
-                children: [
-                  Icon(icon_outlined,
-                    color: Colors.white,
-                    size: ScreenUtil().setWidth(iconSizeDefault),
-                  ),
-                ],
-              )
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class Dragger extends StatefulWidget {
   double height;
@@ -209,35 +35,65 @@ class _DraggerState extends State<Dragger> {
     return Container(
       child: Draggable(
         child: Container(
-             padding: EdgeInsets.only(
-               top: top,
-               left: left,
-             ),
-          child: ValueListenableBuilder(
-            valueListenable: playerToggleNotifier,
+            padding: EdgeInsets.only(
+              top: top,
+              left: left,
+            ),
+            child: ValueListenableBuilder(
+              valueListenable: playerToggleNotifier,
               builder: (context, value, widget){
-              if(value == true){
-                return DragPlayer();
-              }else{
-                return Container();
-               }
+                if(value == true){
+                  return MusicPlayer();
+                }else{
+                  return Container();
+                }
               },
-           ),),
+            ),
+        ),
         feedback: Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer()
+          child:  ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+            builder: (context, value, widget){
+              if(value == true){
+                return MusicPlayer();
+              }else{
+                return Container();
+              }
+            },
+          ),
         ),
         childWhenDragging:  Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: DragPlayer(),
+          child:  ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+            builder: (context, value, widget){
+              if(value == true){
+                return MusicPlayer();
+              }else{
+                return Container();
+              }
+            },
+          ),
         ),
-        onDragCompleted: (){},
+        onDragStarted: (){
+          setState(() {
+            isDragging.value = true;
+            print(isDragging.value);
+          });
+        },
+        onDragCompleted: (){
+          setState(() {
+            isDragging.value = false;
+            print(isDragging.value);
+          });
+        },
         onDragEnd: (drag){
           drag.velocity.pixelsPerSecond.dy.ceilToDouble();
           setState(() {

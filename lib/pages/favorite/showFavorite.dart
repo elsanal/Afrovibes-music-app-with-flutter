@@ -1,10 +1,13 @@
+import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
+import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ShowFavorite extends StatefulWidget {
   @override
@@ -114,10 +117,8 @@ List myfavSong = [
 
 class _ShowFavoriteState extends State<ShowFavorite> {
 
-  Future <ValueNotifier> recentPlayed ;
-  final String recentTable = "RECENT_PLAY";
-  final String recent_favDB = "recent_fav.db";
-  List<Music> list = [];
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   @override
   void initState() {
     //print(recentPlayed);
@@ -128,115 +129,154 @@ class _ShowFavoriteState extends State<ShowFavorite> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
-      child: Scaffold(
-        body: Container(
-          child: ListView.builder(
-              itemCount: myFavorite.value.length,
-              itemBuilder:(context,index){
-                Music music = myFavorite.value[index];
-                print("okokokok");
-                return Card(
-                  child: Container(
-                    width: 200,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                            top: 0,
-                            left: 90,
-                            child: Container(
-                              height: 40,
-                              width: 250,
-                              child: Marques(music.musicTitle, Colors.black),)),
-                        Positioned(
-                          top: 25,
-                          left: 120,
-                          child: Container(child: Text(music.genre)),),
-                        Positioned(
-                            bottom: 5,
-                            right: 5,
-                            child: Container(child: Text(music.duration.toString()),)),
-                        Positioned(
-                            bottom: 5,
-                            left: 100,
-                            child: Container(
-                              width: width-150,
-
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(child: RatingBar.builder(
-                                          initialRating: music.rate + 0.0,
-                                          minRating: 1,
-                                          direction: Axis.horizontal,
-                                          allowHalfRating: true,
-                                          itemCount: 5,
-                                          itemSize: 13,
-                                          itemBuilder: (context,_)=>Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 10,
-                                          ),
-                                          onRatingUpdate: (rating){
-                                            print(rating);
-                                          })
-                                        ,),
-                                      SizedBox(width: 2,),
-                                      Container(child: Text(music.liked.toString()),)
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(child: Icon(
-                                        Icons.hearing_outlined,
-                                        color: Colors.amber,
-                                      ),),
-                                      SizedBox(width: 2,),
-                                      Text(music.NListened.toString()),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(child: Icon(
-                                        Icons.download_outlined,
-                                        color: Colors.red,
-                                      ),),
-                                      Text(music.Ndownload.toString()),
-                                    ],
-                                  ),
-
-                                ],
-                              ),)),
-                        Positioned(
-                            top: 3,
-                            right: 5,
-                            child: Container(
-                              child: Icon(Icons.favorite_rounded,color: Colors.redAccent,),)),
-                        Positioned(
-                            child: Container(
-                              child: Container(
-                                height: 90,
-                                width: 90,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage( index<myfavSong.length?
-                                        'assets/artists/'+myfavSong[index]['image']
-                                            :'assets/artists/'+myfavSong[0]['image']
-                                        ),
-                                        fit: BoxFit.cover
-                                    )
-                                ),
-                              ),)),
-                      ],
-                    ),
-                  ),
-                );
-              }
-          ),
+        height: height,
+        width: width,
+        padding: EdgeInsets.only(
+          bottom: 100,
         ),
-      ),
+        color: Colors.white,
+        child: FutureBuilder(
+          future: Sqlite(dataBaseName: FAVORITE_DB,
+              tableName: FAVORITE_TABLE).retrieveMusic(),
+          builder: (context,snapshot){
+            if(!snapshot.hasData){
+              return Container(child: Center(child: SpinKitFadingCircle(color: Colors.black87,),),);
+            }else{
+              print(myRecentPlayed.value.length);
+              return Container(
+                  height: height,
+                  margin: EdgeInsets.only(
+                    bottom: 40,
+                  ),
+                  child:ScrollablePositionedList.builder(
+                    initialScrollIndex:0,
+                    itemScrollController: _itemScrollController,
+                    itemPositionsListener: _itemPositionsListener,
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      Music music = snapshot.data[index];
+                      if (myRecentPlayed.value.isEmpty) {
+                        return Container(child: Center(child: Text("No music founded"),),);
+                      } else {
+                        print("Has data1111");
+                        return InkWell(
+                          onTap: ()async{
+                            currentPlayingList.value = snapshot.data;
+                            playerToggleNotifier.value = false;
+                            bool toggle = await getToggle();
+                            setState(() {
+                              currentSongIndex.value = index;
+                              isTapedToPlay.value = true;
+                              isPlaying.value = true;
+                              playerToggleNotifier.value = toggle;
+                            });
+                          },
+                          child: Card(
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width*(1/5),
+                                child: Stack(children: [
+                                  Positioned(
+                                      top: 0,
+                                      left: 90,
+                                      child: Container(
+                                        height: 40,
+                                        width: 250,
+                                        child: Marques(music.musicTitle, Colors.black),)),
+                                  Positioned(
+                                    top: 25,
+                                    left: 120,
+                                    child: Container(child: Text(music.genre)),),
+                                  Positioned(
+                                      bottom: 5,
+                                      right: 5,
+                                      child: Container(child: Text(music.duration.toString()),)),
+                                  Positioned(
+                                      bottom: 5,
+                                      left: 100,
+                                      child: Container(
+                                        width: width-150,
+
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(child: RatingBar.builder(
+                                                    initialRating: music.rate + 0.0,
+                                                    minRating: 1,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 5,
+                                                    itemSize: 13,
+                                                    itemBuilder: (context,_)=>Icon(
+                                                      Icons.star,
+                                                      color: Colors.amber,
+                                                      size: 10,
+                                                    ),
+                                                    onRatingUpdate: (rating){
+                                                      print(rating);
+                                                    })
+                                                  ,),
+                                                SizedBox(width: 2,),
+                                                Container(child: Text(music.liked.toString()),)
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(child: Icon(
+                                                  Icons.hearing_outlined,
+                                                  color: Colors.amber,
+                                                ),),
+                                                SizedBox(width: 2,),
+                                                Text(music.NListened.toString()),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(child: Icon(
+                                                  Icons.download_outlined,
+                                                  color: Colors.red,
+                                                ),),
+                                                Text(music.Ndownload.toString()),
+                                              ],
+                                            ),
+
+                                          ],
+                                        ),)),
+                                  Positioned(
+                                      top: 3,
+                                      right: 5,
+                                      child: Container(
+                                        child: Icon(Icons.favorite_rounded,color: Colors.redAccent,),)),
+                                  Positioned(
+                                      child: Container(
+                                        child: Container(
+                                          height: 90,
+                                          width: 90,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage( index<myfavSong.length?
+                                                  'assets/artists/'+myfavSong[index]['image']
+                                                      :'assets/artists/'+myfavSong[0]['image']
+                                                  ),
+                                                  fit: BoxFit.cover
+                                              )
+                                          ),
+                                        ),)),
+                                ],)
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  )
+              );
+            }
+          },
+        )
     );
   }
 }

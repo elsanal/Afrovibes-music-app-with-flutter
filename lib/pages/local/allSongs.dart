@@ -83,29 +83,44 @@ class _LocalSongsState extends State<LocalSongs> {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
-                          onTap: ()async {
+                          onTap: ()async{
                             currentPlayingList.value = snapshot.data;
                             playerToggleNotifier.value = false;
-                            bool toggle = await getToggle();
-                            setState(() {
-                              currentSongIndex.value = index;
-                              isTapedToPlay.value = true;
-                              isPlaying.value = true;
-                              playerToggleNotifier.value = toggle;
-                            });
-                            List<Music> musicList = [];
+                            bool toggle = false;
+                            toggle = await getToggle();
+
+                            if(toggle){
+                              setState(() {
+                                currentSongIndex.value = index;
+                                isTapedToPlay.value = true;
+                                isPlaying.value = true;
+                                isDragging.value = false;
+                                playerToggleNotifier.value = toggle;
+                              });
+                            }
                             bool isMatched = false;
-                            for(int i = 0; i<myRecentPlayed.value.length; i++){
-                              if(music.file == myRecentPlayed.value[i].file){
-                                setState(() {
-                                  isMatched = true;
-                                });
-                              }
-                              if((isMatched == false)&(i == snapshot.data.length)){
-                                myRecentPlayed.value.add(snapshot.data[index]);
+                            int _count = 0;
+                            if(myRecentPlayed.value.isEmpty){
+                              myRecentPlayed.value.add(snapshot.data[index]);
+                              print(myRecentPlayed.value[index].musicTitle);
+                            }else{
+                              for(int i = 0;i<myRecentPlayed.value.length; i++){
+                                print(music.musicTitle.toString());
+                                _count++;
+                                if(music.musicTitle == myRecentPlayed.value[i].musicTitle){
+                                  setState(() {
+                                    isMatched = true;
+                                  });
+                                }
                               }
                             }
-
+                            if((isMatched == false)&(_count == myRecentPlayed.value.length)){
+                              myRecentPlayed.value.add(snapshot.data[index]);
+                              print("Added sucessfully");
+                              print(myRecentPlayed.value[index].musicTitle);
+                            }else{
+                              print("Exist already in the list");
+                            }
                           },
                           child: Card(
                             color: Colors.white,

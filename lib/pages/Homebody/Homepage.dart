@@ -62,6 +62,15 @@ class _HomepageState extends State<Homepage> {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    setState(() {
+      releasePlayer.value = true;
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context){
 
     ScreenUtil.init(context);
@@ -98,6 +107,7 @@ class _HomepageState extends State<Homepage> {
                     RaisedButton(
                         child: Text('yes'),
                         onPressed: ()async{
+                          releasePlayer.value = true;
                           List<Music> musicList = new List();
                           List<Music> recentMusic = new List();
                           bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
