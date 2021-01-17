@@ -3,6 +3,7 @@ import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
 import 'package:afromuse/pages/latest/Latest.dart';
+import 'package:afromuse/pages/local/displayAlbumContain.dart';
 import 'package:afromuse/pages/local/displayPlaylistContain.dart';
 import 'package:afromuse/pages/local/library.dart';
 import 'package:afromuse/pages/drawer/category.dart';
@@ -53,6 +54,7 @@ class _HomepageState extends State<Homepage> {
     Local(),
     Categories(),
     DisplayPlaylistContain(),
+    DisplayAlbumContain(),
   ];
 
   int iconSizeDefault = 70;
@@ -92,25 +94,30 @@ class _HomepageState extends State<Homepage> {
          return showDialog(
               context: context,
               builder: (context) =>
-                  AlertDialog(title: Text('Are you leaving AfroMuse?'), actions: <Widget>[
+                  AlertDialog(title: Text('Are you leaving YenMusic?'), actions: <Widget>[
                     RaisedButton(
                         child: Text('yes'),
                         onPressed: ()async{
                           List<Music> musicList = new List();
+                          List<Music> recentMusic = new List();
                           bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
                           currentPlayingList.value.forEach((song){
                             musicList.add(song);
                           });
-                          bool sqliteSaved = await Sqlite(dataBaseName: singleDatabase,
+                          myRecentPlayed.value.forEach((song) {
+                            recentMusic.add(song);
+                          });
+                          bool sqliteSaved = await Sqlite(dataBaseName: CURRENT_PLAYING_DB,
                               tableName: CURRENT_PLAYING_TABLE).saveSqliteDB(musicList);
-                          if(prefsSaved && sqliteSaved){
+                          bool sqliteRecent = await Sqlite(dataBaseName: RECENT_PLAYED_DB, tableName: RECENT_PLAYED_TABLE)
+                              .saveSqliteDB(recentMusic);
+                          if(prefsSaved && sqliteSaved & sqliteRecent){
                             Navigator.of(context).pop(true);
                           }
                         },),
                     RaisedButton(
                         child: Text('cancel'),
                         onPressed: () => Navigator.of(context).pop(false)),
-
                   ]));
         },
         child: Container(

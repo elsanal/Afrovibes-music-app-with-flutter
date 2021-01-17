@@ -19,47 +19,27 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  bool ready = await restoreValue();
+  if(ready){
+    runApp(MyApp());
+  }
+}
+
+Future<bool> restoreValue()async{
   await Preferences().readDataPrefs();
-  recentPlayedMusic = await Sqlite(dataBaseName: singleDatabase,
+  currentPlayingList.value = await Sqlite(dataBaseName: CURRENT_PLAYING_DB,
+      tableName: CURRENT_PLAYING_TABLE).retrieveMusic();
+  myRecentPlayed.value = await Sqlite(dataBaseName: RECENT_PLAYED_DB,
       tableName: RECENT_PLAYED_TABLE).retrieveMusic();
-  recentPlayedMusic.forEach((element) {
-    print(element.file);
-  });
-  runApp(MyApp());
+  myFavorite.value = await Sqlite(dataBaseName: FAVORITE_DB,
+      tableName: FAVORITE_TABLE).retrieveMusic();
+  myPlaylist.value = await Sqlite(dataBaseName: PLAYLIST_DB,
+      tableName: PLAYLIST_TABLE).retrieveMusic();
+  return true;
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthenficationService().user,
-      child:MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'AfroVibes',
-        home: Authentify(),
-        routes: {
-          '/home' : (context)=>Homepage(),
-          '/music' : (context)=>Categories(),
-          '/setting' : (context)=>Settings(),
-        },
-      ),
-    );
-  }
-}
-
-class AfroApp extends StatefulWidget {
-  @override
-  _AfroAppState createState() => _AfroAppState();
-}
-
-class _AfroAppState extends State<AfroApp> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User>.value(

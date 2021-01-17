@@ -12,8 +12,10 @@ String recentPlayedSongsPositionKey = 'recentPlayedSongsPositionKey';
 String CURRENT_PLAYING_TABLE = "CURRENT_PLAYING_TABLE";
 String FAVORITE_TABLE = "FAVORITE_TABLE";
 String RECENT_PLAYED_TABLE = "RECENT_PLAYED_TABLE";
-String LIKED_TABLE = "LIKED_TABLE";
 String PLAYLIST_TABLE = "PLAYLIST_TABLE";
-String singleDatabase = "singleDatabase.db";
-String playlistDatabase = "playlistDatabase.db";
+String CURRENT_PLAYING_DB = "CURRENT_PLAYING_DB.db";
+String FAVORITE_DB = "FAVORITE_DB.db";
+String RECENT_PLAYED_DB = "RECENT_PLAYED_DB.db";
+String PLAYLIST_DB = "PLAYLIST_DB.db";
+
 

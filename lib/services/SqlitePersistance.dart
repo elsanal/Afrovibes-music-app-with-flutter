@@ -33,6 +33,7 @@ class Sqlite{
            "artistName TEXT,"
            "musicTitle TEXT,"
            "file TEXT,"
+           "duration INTEGER,"
            "artwork TEXT,"
            "albumName TEXT,"
            "liked INTEGER,"
@@ -54,6 +55,8 @@ Future saveSqliteDB(List<Music> musicList)async{
      req.insert('$tableName', musicList[i].toMap(),
        conflictAlgorithm: ConflictAlgorithm.replace,);
    }
+   print("Saved on $tableName");
+   print(musicList);
     return true;
    }
 
@@ -67,6 +70,8 @@ Future<List<Music>> retrieveMusic()async{
      Music music = Music.fromJson(song);
      musics.add(music);
    });
+   print("Restored from $tableName");
+   print(musics);
     return musics;
   }
 

@@ -131,124 +131,110 @@ class _ShowFavoriteState extends State<ShowFavorite> {
     return Container(
       child: Scaffold(
         body: Container(
-          child: FutureBuilder(
-            future: Sqlite(
-                dataBaseName: recent_favDB, tableName: recentTable
-            ).retrieveMusic(),
-            builder: (context, snap){
-              if(!snap.hasData){
-                return Container(child: Center(
-                  child: SpinKitFadingCircle(color: Colors.black,),),);
-              }else{
-                print("okokokok0");
-                return ListView.builder(
-                    itemCount: snap.data.length,
-                    itemBuilder:(context,index){
-                      final myFav = snap.data[index];
-                      print("okokokok");
-                      return Card(
-                        child: Container(
-                          width: 200,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                  top: 0,
-                                  left: 90,
-                                  child: Container(
-                                    height: 40,
-                                    width: 250,
-                                    child: Marques(myFav['artistName'] +
-                                        ' - ' + myFav['musicTitle'], Colors.black),)),
-                              Positioned(
-                                top: 25,
-                                left: 120,
-                                child: Container(child: Text(myFav['genre'])),),
-                              Positioned(
-                                  bottom: 5,
-                                  right: 5,
-                                  child: Container(child: Text("--:--"),)),
-                              Positioned(
-                                  bottom: 5,
-                                  left: 100,
-                                  child: Container(
-                                    width: width-150,
+          child: ListView.builder(
+              itemCount: myFavorite.value.length,
+              itemBuilder:(context,index){
+                Music music = myFavorite.value[index];
+                print("okokokok");
+                return Card(
+                  child: Container(
+                    width: 200,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            top: 0,
+                            left: 90,
+                            child: Container(
+                              height: 40,
+                              width: 250,
+                              child: Marques(music.musicTitle, Colors.black),)),
+                        Positioned(
+                          top: 25,
+                          left: 120,
+                          child: Container(child: Text(music.genre)),),
+                        Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: Container(child: Text(music.duration.toString()),)),
+                        Positioned(
+                            bottom: 5,
+                            left: 100,
+                            child: Container(
+                              width: width-150,
 
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(child: RatingBar.builder(
-                                                initialRating: myFav['rate'] + 0.0,
-                                                minRating: 1,
-                                                direction: Axis.horizontal,
-                                                allowHalfRating: true,
-                                                itemCount: 5,
-                                                itemSize: 13,
-                                                itemBuilder: (context,_)=>Icon(
-                                                  Icons.star,
-                                                  color: Colors.amber,
-                                                  size: 10,
-                                                ),
-                                                onRatingUpdate: (rating){
-                                                  print(rating);
-                                                })
-                                              ,),
-                                            SizedBox(width: 2,),
-                                            Container(child: Text(myFav['liked'].toString()),)
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(child: Icon(
-                                              Icons.hearing_outlined,
-                                              color: Colors.amber,
-                                            ),),
-                                            SizedBox(width: 2,),
-                                            Text(myFav['NListened'].toString()),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(child: Icon(
-                                              Icons.download_outlined,
-                                              color: Colors.red,
-                                            ),),
-                                            Text(myFav['Ndownload'].toString()),
-                                          ],
-                                        ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(child: RatingBar.builder(
+                                          initialRating: music.rate + 0.0,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 13,
+                                          itemBuilder: (context,_)=>Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                            size: 10,
+                                          ),
+                                          onRatingUpdate: (rating){
+                                            print(rating);
+                                          })
+                                        ,),
+                                      SizedBox(width: 2,),
+                                      Container(child: Text(music.liked.toString()),)
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(child: Icon(
+                                        Icons.hearing_outlined,
+                                        color: Colors.amber,
+                                      ),),
+                                      SizedBox(width: 2,),
+                                      Text(music.NListened.toString()),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(child: Icon(
+                                        Icons.download_outlined,
+                                        color: Colors.red,
+                                      ),),
+                                      Text(music.Ndownload.toString()),
+                                    ],
+                                  ),
 
-                                      ],
-                                    ),)),
-                              Positioned(
-                                  top: 3,
-                                  right: 5,
-                                  child: Container(
-                                    child: Icon(Icons.favorite_rounded,color: Colors.redAccent,),)),
-                              Positioned(
-                                  child: Container(
-                                    child: Container(
-                                      height: 90,
-                                      width: 90,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage( index<myfavSong.length?
-                                                  'assets/artists/'+myfavSong[index]['image']
-                                                  :'assets/artists/'+myfavSong[0]['image']
-                                              ),
-                                              fit: BoxFit.cover
-                                          )
-                                      ),
-                                    ),)),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
+                                ],
+                              ),)),
+                        Positioned(
+                            top: 3,
+                            right: 5,
+                            child: Container(
+                              child: Icon(Icons.favorite_rounded,color: Colors.redAccent,),)),
+                        Positioned(
+                            child: Container(
+                              child: Container(
+                                height: 90,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage( index<myfavSong.length?
+                                        'assets/artists/'+myfavSong[index]['image']
+                                            :'assets/artists/'+myfavSong[0]['image']
+                                        ),
+                                        fit: BoxFit.cover
+                                    )
+                                ),
+                              ),)),
+                      ],
+                    ),
+                  ),
                 );
               }
-            },
-          )
+          ),
         ),
       ),
     );

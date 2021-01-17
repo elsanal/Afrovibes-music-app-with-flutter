@@ -55,7 +55,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                               songs = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
                               currentPlayingList.value = await getInternalData().getAllInternalSongs(songs);
                               setState((){
-                                libraryCurrentPage.value = 3;
+                                HomepageCurrentIndex.value = 7;
                               });
                             },
                             child: Card(
@@ -91,7 +91,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                                                 color: Colors.black,
                                             ),
                                           ),
-                                            overflow: TextOverflow.clip,
+                                            overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
                                         )

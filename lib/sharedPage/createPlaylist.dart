@@ -11,14 +11,7 @@ ValueNotifier<bool> activeWhiteSpace = ValueNotifier<bool>(false);
  playlistCreation(BuildContext context){
    final _formKey = GlobalKey<FormState>();
    TextEditingController _textController = TextEditingController();
-   void _saveForm() {
-     final isValid = _formKey.currentState.validate();
-     if (isValid) {
-       HomepageCurrentIndex.value = 6;
-       appBArTitle.value = _playlistName;
-       return Navigator.of(context).pop(true);
-     }
-   }
+
   return Alert(
     title: 'Create new playlist',
     context: context,
@@ -40,8 +33,6 @@ ValueNotifier<bool> activeWhiteSpace = ValueNotifier<bool>(false);
             onPressed:(){
               if((_playlistName!=null)&_formKey.currentState.validate()){
                 HomepageCurrentIndex.value = 6;
-                appBArTitle.value = _playlistName;
-                _playlistName = null;
                 return Navigator.of(context).pop(true);
               }
             })
@@ -61,9 +52,9 @@ ValueNotifier<bool> activeWhiteSpace = ValueNotifier<bool>(false);
                      validator: (val) {
                        if(!(val.contains(RegExp(r'[a-zA-Z0-9]'),0))&(val.length>=1)
                            ||(val == null)|| (val.length<2)){
-                         String text = "";
+                         String text = '';
                          _textController.value = _textController.value.copyWith(
-                             text: null,
+                             text: text,
                            composing: TextRange.empty,
                            selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
 
@@ -82,7 +73,7 @@ ValueNotifier<bool> activeWhiteSpace = ValueNotifier<bool>(false);
                     focusedBorder: InputBorder.none,
                     //contentPadding: EdgeInsets.all(10),
                   ),
-                  autovalidate: true,
+                  //autovalidate: true,
                   keyboardType: TextInputType.text,
                   onChanged: (value){
                     _playlistName = value;

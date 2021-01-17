@@ -7,10 +7,6 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 ValueNotifier<bool> isTapedToPlay  = ValueNotifier(false);
 ValueNotifier<bool> isPlaying = ValueNotifier(false);
 ValueNotifier<bool> playerToggleNotifier = ValueNotifier(false);
-ValueNotifier<List<SongInfo>> allInternalSongs = ValueNotifier([]);
-ValueNotifier<List<SongInfo>> myFavorite = ValueNotifier([]);
-ValueNotifier<List<SongInfo>> myRecentPlayed = ValueNotifier([]);
-ValueNotifier<List<Music>> currentPlayingList = ValueNotifier<List<Music>>([]);
 ValueNotifier<int> currentSongIndex = ValueNotifier(0) ;
 
 // page management
@@ -26,7 +22,11 @@ ValueNotifier<int> librarySongsFromAlbumPositionValue = ValueNotifier(0) ;
 ValueNotifier<int> favoriteSongsPositionValue = ValueNotifier(0) ;
 ValueNotifier<int> recentPlayedSongsPositionValue = ValueNotifier(0) ;
 
-//// ////// Recent Played List
+//// ////// Music List
 //
-List<Music> recentPlayedMusic = [];
 
+ValueNotifier<List<Music>> allInternalSongs = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<Music>> myFavorite = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<Music>> myRecentPlayed = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<Music>> myPlaylist = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<Music>> currentPlayingList = ValueNotifier<List<Music>>([]);

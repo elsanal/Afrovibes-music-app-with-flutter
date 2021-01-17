@@ -6,6 +6,7 @@ import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/pages/local/allFolders.dart';
 import 'package:afromuse/pages/local/allSongs.dart';
+import 'package:afromuse/pages/local/displayAlbumContain.dart';
 import 'package:afromuse/pages/local/displayPlaylistContain.dart';
 import 'package:afromuse/pages/local/playlist.dart';
 import 'package:afromuse/services/preferences.dart';
@@ -33,7 +34,6 @@ class _LocalState extends State<Local> {
     LocalSongs(),
     LocalAlbums(),
     Playlist(),
-    SongsFromAlbum(),
   ];
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _LocalState extends State<Local> {
                 Positioned(
                   top: 0,
                   child: Container(
-                    color: Colors.black,
+                    color: Colors.black87,
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
@@ -97,7 +97,7 @@ class _LocalState extends State<Local> {
                   bottom:0,
                   child: Center(
                     child: new Container(
-                        color: Colors.grey[200],
+                        //color: Colors.grey[200],
                         child: libraryPages[value]
                     ),
                   ),

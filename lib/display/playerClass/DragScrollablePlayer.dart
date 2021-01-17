@@ -228,32 +228,14 @@ class _DraggerState extends State<Dragger> {
             top: top,
             left: left,
           ),
-          child: ValueListenableBuilder(
-            valueListenable: playerToggleNotifier,
-            builder: (context, value, widget){
-              if(value == true){
-                return DragPlayer();
-              }else{
-                return Container();
-              }
-            },
-          ),
+          child: DragPlayer()
         ),
         childWhenDragging:  Container(
           padding: EdgeInsets.only(
             top: top,
             left: left,
           ),
-          child: ValueListenableBuilder(
-            valueListenable: playerToggleNotifier,
-            builder: (context, value, widget){
-              if(value == true){
-                return DragPlayer();
-              }else{
-                return Container();
-              }
-            },
-          ),
+          child: DragPlayer(),
         ),
         onDragCompleted: (){},
         onDragEnd: (drag){

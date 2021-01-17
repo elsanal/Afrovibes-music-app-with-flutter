@@ -83,7 +83,7 @@ class _LocalSongsState extends State<LocalSongs> {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
-                          onTap: ()async{
+                          onTap: ()async {
                             currentPlayingList.value = snapshot.data;
                             playerToggleNotifier.value = false;
                             bool toggle = await getToggle();
@@ -93,13 +93,19 @@ class _LocalSongsState extends State<LocalSongs> {
                               isPlaying.value = true;
                               playerToggleNotifier.value = toggle;
                             });
+                            List<Music> musicList = [];
+                            bool isMatched = false;
+                            for(int i = 0; i<myRecentPlayed.value.length; i++){
+                              if(music.file == myRecentPlayed.value[i].file){
+                                setState(() {
+                                  isMatched = true;
+                                });
+                              }
+                              if((isMatched == false)&(i == snapshot.data.length)){
+                                myRecentPlayed.value.add(snapshot.data[index]);
+                              }
+                            }
 
-                            List<Music> musicList = new List();
-                            musicList.add(music);
-
-                            await Sqlite(dataBaseName: singleDatabase,
-                                tableName: RECENT_PLAYED_TABLE)
-                                 .saveSqliteDB(musicList);
                           },
                           child: Card(
                             color: Colors.white,

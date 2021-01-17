@@ -77,12 +77,17 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                               isPlaying.value = true;
                               playerToggleNotifier.value = toggle;
                             });
-
-                            List<Music> musicList = new List();
-                            musicList.add(music);
-
-                            await Sqlite(dataBaseName: singleDatabase, tableName: RECENT_PLAYED_TABLE)
-                                .saveSqliteDB(musicList);
+                            myRecentPlayed.value.forEach((element) {
+                              bool isMatched = false;
+                              if(element.file == music.file){
+                                setState(() {
+                                  isMatched = true;
+                                });
+                              }
+                              if(isMatched){
+                                myRecentPlayed.value.add(music);
+                              }
+                            });
                           },
                           child: Card(
                             color: Colors.white,
@@ -107,9 +112,9 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                                       )
                                   ),
                                   Positioned(
-                                      top: 30,
-                                      left: 20,
-                                      child: Container(child: Text('$index'),)
+                                      bottom: 5,
+                                      left: 35,
+                                      child: Container(child: Text(music.albumName.toString()),)
                                   ),
 
                                   Positioned(
