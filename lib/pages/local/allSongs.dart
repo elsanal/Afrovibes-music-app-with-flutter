@@ -58,7 +58,7 @@ class _LocalSongsState extends State<LocalSongs> {
       height: height,
       width: width,
       padding: EdgeInsets.only(
-        bottom: 100,
+        bottom: 0,
       ),
         color: Colors.white,
         child: FutureBuilder(
@@ -69,9 +69,9 @@ class _LocalSongsState extends State<LocalSongs> {
             }else{
               return Container(
                   height: height,
-                margin: EdgeInsets.only(
-                  bottom: 40,
-                ),
+                // margin: EdgeInsets.only(
+                //   bottom: 40,
+                // ),
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:widget.position!=null?widget.position:0,
                     itemScrollController: _itemScrollController,

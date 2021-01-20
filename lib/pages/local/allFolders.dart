@@ -23,7 +23,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Container(
-    height: height,
+        height: height,
         width: width,
         child: FutureBuilder(
             future: getInternalData().getAllInternalAlbum(),
@@ -34,9 +34,9 @@ class _LocalAlbumsState extends State<LocalAlbums> {
               } else {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
-                  padding: EdgeInsets.only(
-                    bottom:ScreenUtil().setSp(380),
-                  ),
+                  // padding: EdgeInsets.only(
+                  //   bottom:ScreenUtil().setSp(380),
+                  // ),
                     child:GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: ScreenUtil().setSp(10),
@@ -44,7 +44,6 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                           crossAxisCount:(orientation == Orientation.portrait)?2:3),
                       itemCount: album.length,
                       itemBuilder: (context, index) {
-
                         if (album.isEmpty) {
                           return Container(color: Colors.white,child: Center(
                             child: Text('No album founded'),),);

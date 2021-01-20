@@ -49,7 +49,9 @@ class _LocalState extends State<Local> {
     return Container(
       height: height,
       width: width,
+      color: Colors.transparent,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: ValueListenableBuilder(
           valueListenable: libraryCurrentPage,
           builder: (context, value, widget){
@@ -93,8 +95,10 @@ class _LocalState extends State<Local> {
                   ),
                 ),
                 Positioned(
-                  top: 50,
-                  bottom:0,
+                  top: 45,
+                  left: 0,
+                  right: 0,
+                  bottom:135,
                   child: Center(
                     child: new Container(
                         //color: Colors.grey[200],

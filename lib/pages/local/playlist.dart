@@ -64,16 +64,17 @@ class _PlaylistState extends State<Playlist> {
               } else {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
-                    padding: EdgeInsets.only(
-                      bottom: ScreenUtil().setSp(380),
-                    ),
+                  height: height,
+                    // padding: EdgeInsets.only(
+                    //   bottom: ScreenUtil().setSp(380),
+                    // ),
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: ScreenUtil().setSp(10),
                           childAspectRatio: 0.9,
                           crossAxisCount: (orientation ==
                               Orientation.portrait) ? 2 : 3),
-                      itemCount: album.length + 1,
+                      itemCount: album.length,
                       itemBuilder: (context, index) {
                         if (album.isEmpty) {
                           return Card(

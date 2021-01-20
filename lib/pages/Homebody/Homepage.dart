@@ -1,4 +1,5 @@
 import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
+import 'package:afromuse/display/playerClass/FullMusicPlayer.dart';
 import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/favorite/showFavorite.dart';
@@ -56,9 +57,9 @@ class _HomepageState extends State<Homepage> {
     DisplayPlaylistContain(),
     DisplayAlbumContain(),
   ];
-
   int iconSizeDefault = 70;
   int iconSizePlay = 160;
+  bool _showFullPlayer = false;
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -68,6 +69,10 @@ class _HomepageState extends State<Homepage> {
       releasePlayer.value = true;
     });
     super.dispose();
+  }
+
+  void _playerToggle(){
+    _showFullPlayer = !_showFullPlayer;
   }
 
   @override
@@ -142,7 +147,7 @@ class _HomepageState extends State<Homepage> {
                 physics: NeverScrollableScrollPhysics(),
                 children: [
                   Container(
-                    color: Colors.red,
+                    color: Colors.white,
                     height: height,
                     padding: EdgeInsets.only(
                         bottom: 50

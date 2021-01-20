@@ -146,7 +146,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
         padding: EdgeInsets.only(
           bottom: 100,
         ),
-        color: Colors.white,
+        color: Colors.transparent,
         child: FutureBuilder(
           future: Sqlite(dataBaseName: RECENT_PLAYED_DB,
               tableName: RECENT_PLAYED_TABLE).retrieveMusic(),
@@ -157,9 +157,10 @@ class _RecentPlayedState extends State<RecentPlayed> {
               print(myRecentPlayed.value.length);
               return Container(
                   height: height,
-                  margin: EdgeInsets.only(
-                    bottom: 40,
-                  ),
+                  // margin: EdgeInsets.only(
+                  //   bottom: 40,
+                  // ),
+                  color: Colors.transparent,
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:0,
                     itemScrollController: _itemScrollController,
@@ -184,6 +185,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                    });
                           },
                           child: Card(
+                            color: Colors.white,
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.width*(1/5),

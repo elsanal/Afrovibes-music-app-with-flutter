@@ -1,3 +1,4 @@
+import 'package:afromuse/display/playerClass/FullMusicPlayer.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -10,7 +11,7 @@ class MusicPlayer extends StatefulWidget {
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-  int iconSizeDefault = 90;
+  int iconSizeDefault = 70;
   int iconSizePlay = 160;
 
   int index;
@@ -20,6 +21,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     print("play called");
     _audioPlayer.play(
         currentPlayingList.value[currentSongIndex.value].file, isLocal: true,stayAwake: true);
+
   }
   void stopMusic(){
     print("stop called");
@@ -36,6 +38,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     if((isPlaying.value == true)&(isDragging.value == false)){
       _audioPlayer.play(
           currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
+
     }
     print("new calllllll to playyyyyyyyyy");
     // TODO: implement initState
@@ -95,7 +98,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 bottom: 0.0,
                 right: 10,
                 child: Container(
-                  width: width*(3/6),
+                  width: width*(3.1/6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -106,6 +109,11 @@ class _MusicPlayerState extends State<MusicPlayer> {
                           Icons.play_circle_outline_outlined ,2, iconSizeDefault),
                       _bottomItems(
                           Icons.skip_next_outlined ,3, iconSizeDefault),
+                      new IconButton(
+                          icon: Icon(Icons.fullscreen,
+                            color: Colors.white,size: ScreenUtil().setWidth(iconSizeDefault),),
+                          onPressed: ()=>Navigator.of(context).push(
+                              new MaterialPageRoute(builder: (context)=>FullMusicPlayer())))
                     ],
                   ),
                 ),
@@ -118,7 +126,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                   }
                   return Container();
                 },
-              )
+              ),
             ],
           ),
         ),
@@ -127,14 +135,13 @@ class _MusicPlayerState extends State<MusicPlayer> {
   }
 
   _bottomItems(IconData icon_outlined, int index,int iconSize) {
-
     return Container(
       height: 50,
       width: 50,
       color: Colors.black,
       padding: EdgeInsets.only(
           top: 10,
-          left: 15
+          left: 20
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
