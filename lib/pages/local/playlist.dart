@@ -74,7 +74,7 @@ class _PlaylistState extends State<Playlist> {
                           childAspectRatio: 0.9,
                           crossAxisCount: (orientation ==
                               Orientation.portrait) ? 2 : 3),
-                      itemCount: album.length,
+                      itemCount: album.length + 1 ,
                       itemBuilder: (context, index) {
                         if (album.isEmpty) {
                           return Card(

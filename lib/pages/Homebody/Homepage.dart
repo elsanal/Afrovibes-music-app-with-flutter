@@ -92,7 +92,7 @@ class _HomepageState extends State<Homepage> {
               return Text(appBArTitle.value);
             },
         ),
-        backgroundColor: Colors.orange[800],
+        backgroundColor:Colors.orange[800],
         leading:IconButton(
             icon:Icon(Icons.menu,color: Colors.black,),
             onPressed:()=>scaffoldKey.currentState.openDrawer()
@@ -201,7 +201,7 @@ class _HomepageState extends State<Homepage> {
             _bottomItems(
               Icons.home_outlined,Icons.home_sharp,'Home', 0,iconSizeDefault),
             _bottomItems(
-              Icons.new_releases_outlined,Icons.new_releases,'Hotest', 1,iconSizeDefault),
+              Icons.new_releases_outlined,Icons.new_releases,'Latest', 1,iconSizeDefault),
             _bottomItems(
                 Icons.favorite_border_outlined,Icons.favorite_rounded,'Favorite', 2,iconSizeDefault),
             _bottomItems(

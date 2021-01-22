@@ -62,72 +62,76 @@ class _MusicPlayerState extends State<MusicPlayer> {
       width: width*(5/6),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Container(
-          height: 90,
-          width: width*(5/6),
-          //color: Colors.white,
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.all(
-                  Radius.circular(8.0)
-              )
-          ),
-          child: Stack(
-            children:[
-              Positioned(
-                left: 100,
-                child: Container(
-                    width: width,
-                    height: 110,
-                    child:ValueListenableBuilder(
-                      valueListenable: currentSongIndex,
-                      builder: (context,value,_widget){
-                        return Marques(currentPlayingList.value[currentSongIndex.value].artistName +
-                            ' - ' + currentPlayingList.value[currentSongIndex.value].musicTitle, Colors.white);
-                      },
-                    )
-                ),
-              ),
-              Positioned(
-                child: Container(
-                  child: Image.asset('assets/equilizer.jpeg'),
-                ),
-              ),
-              Positioned(
-                bottom: 0.0,
-                right: 10,
-                child: Container(
-                  width: width*(3.1/6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _bottomItems(
-                          Icons.skip_previous_outlined ,1, iconSizeDefault),
-                      _bottomItems(
-                          isPlaying.value == true?Icons.pause_circle_outline_outlined:
-                          Icons.play_circle_outline_outlined ,2, iconSizeDefault),
-                      _bottomItems(
-                          Icons.skip_next_outlined ,3, iconSizeDefault),
-                      new IconButton(
-                          icon: Icon(Icons.fullscreen,
-                            color: Colors.white,size: ScreenUtil().setWidth(iconSizeDefault),),
-                          onPressed: ()=>Navigator.of(context).push(
-                              new MaterialPageRoute(builder: (context)=>FullMusicPlayer())))
-                    ],
+        body: GestureDetector(
+          onTap: ()=>Navigator.of(context).push(
+              new MaterialPageRoute(builder: (context)=>FullMusicPlayer())),
+          child: Container(
+            height: 90,
+            width: width*(5/6),
+            //color: Colors.white,
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.all(
+                    Radius.circular(8.0)
+                )
+            ),
+            child: Stack(
+              children:[
+                Positioned(
+                  left: 100,
+                  child: Container(
+                      width: width,
+                      height: 110,
+                      child:ValueListenableBuilder(
+                        valueListenable: currentSongIndex,
+                        builder: (context,value,_widget){
+                          return Marques(currentPlayingList.value[currentSongIndex.value].artistName +
+                              ' - ' + currentPlayingList.value[currentSongIndex.value].musicTitle, Colors.white);
+                        },
+                      )
                   ),
                 ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: releasePlayer,
-                builder: (context, value, widget){
-                  if(value){
-                    _audioPlayer.release();
-                  }
-                  return Container();
-                },
-              ),
-            ],
+                Positioned(
+                  child: Container(
+                    child: Image.asset('assets/equilizer.jpeg'),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0.0,
+                  right: 10,
+                  child: Container(
+                    width: width*(3.1/6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _bottomItems(
+                            Icons.skip_previous_outlined ,1, iconSizeDefault),
+                        _bottomItems(
+                            isPlaying.value == true?Icons.pause_circle_outline_outlined:
+                            Icons.play_circle_outline_outlined ,2, iconSizeDefault),
+                        _bottomItems(
+                            Icons.skip_next_outlined ,3, iconSizeDefault),
+                        new IconButton(
+                            icon: Icon(Icons.open_in_full,
+                              color: Colors.white,size: ScreenUtil().setWidth(iconSizeDefault),),
+                            onPressed: ()=>Navigator.of(context).push(
+                                new MaterialPageRoute(builder: (context)=>FullMusicPlayer())))
+                      ],
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: releasePlayer,
+                  builder: (context, value, widget){
+                    if(value){
+                      _audioPlayer.release();
+                    }
+                    return Container();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -11,7 +11,7 @@ var album_grad = new  LinearGradient(
     begin: Alignment.topCenter,
     end : Alignment.bottomCenter,
     colors: [
-      Colors.redAccent.withOpacity(0.1),Colors.redAccent.withOpacity(0.1),
-      Colors.redAccent.withOpacity(0.1),
-      Colors.redAccent,Colors.redAccent,
+      Colors.grey[100].withOpacity(0.1),Colors.grey[100].withOpacity(0.1),
+      Colors.grey[100].withOpacity(0.1),Colors.grey[100].withOpacity(0.1),
+      Colors.grey[400].withOpacity(0.7),Colors.grey[400].withOpacity(0.7),
     ]);
