@@ -108,7 +108,24 @@ Widget Marques(String filename){
       accelerationCurve: Curves.linear,
       accelerationDuration: Duration(seconds: 1),
       decelerationDuration: Duration(milliseconds: 500),
+<<<<<<< Updated upstream
       decelerationCurve: Curves.easeOut,
+=======
+      decelerationCurve: Curves.bounceInOut,
+    ),
+  ):Container(
+    margin: EdgeInsets.only(
+      left: 10
+    ),
+    child: Text(filename,style: GoogleFonts.lexendExa(
+        textStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: textColor
+          ),
+        ),
+
+>>>>>>> Stashed changes
     ),
   );
 }
