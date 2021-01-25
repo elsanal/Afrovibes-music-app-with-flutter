@@ -16,7 +16,7 @@ ValueNotifier<bool> isDragging = ValueNotifier(false);
 ValueNotifier<int> HomepageCurrentIndex = ValueNotifier(0) ;
 ValueNotifier<int> libraryCurrentPage = ValueNotifier(0);
 ValueNotifier<String> appBArTitle = ValueNotifier('Home');
-
+ValueNotifier<bool> isFull = ValueNotifier(false);
 
 // Lists position
 ValueNotifier<int> libraryAllSongsPositionValue = ValueNotifier(0) ;

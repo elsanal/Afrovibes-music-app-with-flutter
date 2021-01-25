@@ -119,7 +119,7 @@ Widget Marques(String filename, Color textColor){
         textStyle: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
-            color: Colors.black
+            color: textColor
           ),
         ),
 
