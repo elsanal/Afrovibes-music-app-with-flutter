@@ -238,16 +238,15 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
   _fullPlayer(){
     final width = MediaQuery.of(context).size.width;
     final heigth = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-            statusBarColor: Theme.of(context).primaryColor
-        ),
-        child: Container(
-          height: heigth,
-          width: width,
-          child: SafeArea(
+    return Container(
+      color: Colors.black,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Container(
+            height: heigth,
+            width: width,
+            color : Colors.black,
             child: Stack(children: [
               Positioned(
                   left: 8,
@@ -371,9 +370,10 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _PlayerButton(Icons.loop_rounded,_func(),30),
-                    _PlayerButton(Icons.skip_previous_rounded,skipPrevious(),30),
-                    _PlayerButton(Icons.play_circle_outline_rounded, playMusic(),60),
-                    _PlayerButton(Icons.skip_next_rounded, skipNext(),30),
+                    _bottomItems(Icons.skip_previous_rounded, 1, 30),
+                    _bottomItems( isPlaying.value == true?Icons.pause_circle_filled_rounded:
+                    Icons.play_circle_fill_rounded , 2, 60),
+                    _bottomItems(Icons.skip_next_rounded, 3, 30),
                     _PlayerButton(Icons.shuffle_rounded,_func(),30),
                   ],),
               ),

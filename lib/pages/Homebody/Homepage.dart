@@ -125,7 +125,7 @@ class _HomepageState extends State<Homepage> {
                   ]));
         },
         child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
+          value: SystemUiOverlayStyle.dark.copyWith(
               statusBarColor: Theme.of(context).bottomAppBarColor
           ),
           child: Container(
