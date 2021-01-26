@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:afromuse/display/playerClass/FullMusicPlayer.dart';
 import 'package:afromuse/services/models.dart';
@@ -6,6 +7,7 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -80,7 +82,6 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
 
   }
 
-
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -154,17 +155,54 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
             ],
           ),
         ),
-      ):Container(
-        height: height,
-        width: width,
-        child: Stack(children: [
-          Positioned(
+      ):ColorfulSafeArea(
+        color: Colors.black.withOpacity(0.3),
+        child: Container(
+          height: height,
+          width: width,
+          child: Stack(children: [
+            Positioned(
               bottom: 0,
-              child: Container(
-                height: height,
-                width: width,
-                child: _fullPlayer(),)),
-        ],),
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Container(
+                  //height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.9),
+                    // borderRadius: BorderRadius.all(
+                    //     Radius.circular(width*(2.7/4)/2)
+                    // ),
+                    image: DecorationImage(
+                        image: ExactAssetImage(
+                            currentPlayingList.value[currentSongIndex.value].artwork!=null?
+                            currentPlayingList.value[currentSongIndex.value].artwork
+                            :"assets/artists/dezaltino.jpeg"),
+                        fit: BoxFit.cover,
+                      alignment: Alignment.center
+                    ),
+                  ),
+                  child: new BackdropFilter(
+                    filter: new ImageFilter.blur(sigmaX: width/5, sigmaY: height/2),
+                    child: new Container(
+                      decoration: new BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                    ),
+                  ),
+                )
+            ),
+            Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Container(
+                  height: height,
+                  width: width,
+                  //color: Colors.black,
+                  child: _fullPlayer(),)),
+          ],),
+        ),
       ),
     );
   }
@@ -173,13 +211,9 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
     return Container(
       height: 50,
       width: 50,
-      color: Colors.black,
-      // padding: EdgeInsets.only(
-      //     top: 5,
-      //     left: 5
-      // ),
+      color: Colors.transparent,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         body: Container(
           child: InkWell(
               onTap: () async{
@@ -239,14 +273,15 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
     final width = MediaQuery.of(context).size.width;
     final heigth = MediaQuery.of(context).size.height;
     return Container(
-      color: Colors.black,
+      //color: Colors.wh,
+      color: Colors.transparent,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.transparent,
           body: Container(
             height: heigth,
             width: width,
-            color : Colors.black,
+            color : Colors.transparent,
             child: Stack(children: [
               Positioned(
                   left: 8,
@@ -393,10 +428,13 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
           height: size,
           width: size,
           //color: Colors.amber,
-          child: new Icon(
-            icon,
-            size: size,
-            color: Colors.white,)
+          child: FittedBox(
+            fit: BoxFit.contain,
+            child: new Icon(
+              icon,
+              size: size,
+              color: Colors.white,),
+          )
       ),
     );
   }
@@ -423,10 +461,10 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
     final heigth = MediaQuery.of(context).size.height;
     return Container(
       width: width*(3/4),
-      height: width*(3/4),//heigth*(2.3/4),
+      height: width*(3/4),
       color: Colors.transparent,
       child: Container(
-        color: Colors.transparent,
+        //color: Colors.red,
         child: new Swiper(
           scrollDirection: Axis.horizontal,
           itemHeight: heigth*(2/4),
@@ -439,38 +477,44 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
           itemCount: currentPlayingList.value.length,
           itemBuilder:(context, index){
             Music music = currentPlayingList.value[index];
-            return Column(
-              children: [
-                AnimatedBuilder(
-                  animation:_animationController,
-                  builder: (_, child){
-                    return Transform.rotate(
-                      angle: _animationController.value*2*pi,
-                      child: child,
-                    );
-                  },
-                  child: Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(width*(2.7/4)/2)),
-                    child: Container(
-                      width: width*(2.7/4),
-                      height: width*(2.7/4),//heigth*(1.5/4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(width*(2.7/4)/2)
+            return Container(
+              child: Column(
+                children: [
+                  AnimatedBuilder(
+                    animation:_animationController,
+                    builder: (_, child){
+                      return Transform.rotate(
+                        angle: _animationController.value*2*pi,
+                        child: child,
+                      );
+                    },
+                    child: Card(
+                      color: Colors.grey[600],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(width*(2.7/4)/2)),
+                      child: Container(
+                        width: width*(2.7/4),
+                        height: width*(2.7/4),//heigth*(1.5/4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(width*(2.7/4)/2)
+                          ),
+                          image: DecorationImage(
+                              image: AssetImage(music.artwork!=null?music.artwork:"assets/playerDisk2.png"),
+                              fit: BoxFit.cover
+                          ),
                         ),
-                        image: DecorationImage(
-                            image: AssetImage(music.artwork!=null?music.artwork:"assets/equilizer.jpeg"),
-                            fit: BoxFit.cover
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(45),
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage(music.artwork!=null?music.artwork:"assets/artists/floby.jpeg"),
                         ),
                       ),
-                      margin: EdgeInsets.all(5),
                     ),
                   ),
-                ),
-              ],
+                 ]
+              )
             );
           },
         ),
