@@ -78,16 +78,13 @@ class _HomepageState extends State<Homepage> {
     super.initState();
   }
 
-// void _playerToggle(){
-//   _showFullPlayer = !_showFullPlayer;
-// }
 
   @override
   Widget build(BuildContext context){
-
+    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,]);
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height ;
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.black.withOpacity(0.9),
@@ -127,6 +124,8 @@ class _HomepageState extends State<Homepage> {
           child: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.dark.copyWith(
                 statusBarColor: Colors.white.withOpacity(0),
+              systemNavigationBarColor: Colors.white,
+              systemNavigationBarIconBrightness: Brightness.dark
             ),
             child: Container(
                 height: MediaQuery.of(context).size.height,
@@ -135,6 +134,7 @@ class _HomepageState extends State<Homepage> {
                 ),
                 child: Stack(
                   children: [
+
                     ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -166,7 +166,7 @@ class _HomepageState extends State<Homepage> {
                     },
                     ),
                     Positioned(
-                      bottom: 0,
+                      bottom: -15,
                       child: ValueListenableBuilder(
                         valueListenable: isFull,
                         builder: (context, value, widget){

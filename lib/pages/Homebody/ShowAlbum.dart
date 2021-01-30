@@ -65,7 +65,8 @@ class _AlbumRowState extends State<AlbumRow> {
                                   Positioned(
                                       bottom: 60,
                                       left: 10,
-                                      child: new Container(child: Text(album.title),)),
+                                      child: new Container(child: Text(
+                                          album.title!=null?album.title:''),)),
                                   Positioned(
                                       bottom: 55,
                                       left: 10,
@@ -73,11 +74,13 @@ class _AlbumRowState extends State<AlbumRow> {
                                   Positioned(
                                       bottom: 30,
                                       left: 60,
-                                      child: new Container(child: Text(album.artist),)),
+                                      child: new Container(child: Text(
+                                          album.artist!=null?album.artist:''),)),
                                   Positioned(
                                       bottom: 10,
                                       left: 60,
-                                      child: new Container(child: Text(album.numberOfSongs + " Songs"),)),
+                                      child: new Container(child: Text(
+                                          (album.numberOfSongs!=null?album.numberOfSongs:'') + " Songs"),)),
                                   Positioned(
                                       bottom: 10,
                                       left: 10,

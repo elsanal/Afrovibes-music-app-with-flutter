@@ -9,7 +9,8 @@ class Preferences{
   autoSavePlayerCurrentInfo()async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isTapedToPlay', isTapedToPlay.value);
-    await prefs.setBool('isPlaying', isPlaying.value);
+    await prefs.setBool('isLooping', isLooping.value);
+    await prefs.setBool('isShuffle', isLooping.value);
     await prefs.setInt('currentSongIndex', currentSongIndex.value);
     await prefs.setInt('HomepageCurrentIndex', HomepageCurrentIndex.value);
     await prefs.setBool('playerToggleNotifier', playerToggleNotifier.value);
@@ -36,13 +37,12 @@ class Preferences{
   readDataPrefs()async{
     final prefs = await SharedPreferences.getInstance();
     isTapedToPlay.value = prefs.getBool('isTapedToPlay')??false;
-    isPlaying.value = prefs.getBool('isPlaying')??false;
+    isLooping.value = prefs.getBool('isLooping')??false;
+    isShuffle.value = prefs.getBool('isShuffle')??false;
     currentSongIndex.value = prefs.getInt('currentSongIndex')??0;
     HomepageCurrentIndex.value = prefs.getInt('HomepageCurrentIndex')??0;
     playerToggleNotifier.value = prefs.getBool('playerToggleNotifier')??false;
     appBarTitleFunc(HomepageCurrentIndex.value);
     print("All restored");
-
   }
-
 }

@@ -11,13 +11,15 @@ import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
 
 
-
+List<SystemUiOverlay> overlays = [SystemUiOverlay.top];
 
 Future<void> main() async{
+  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,]);
   WidgetsFlutterBinding.ensureInitialized();
   bool ready = await restoreValue();
   if(ready){
