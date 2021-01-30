@@ -84,20 +84,24 @@ class _LocalSongsState extends State<LocalSongs> {
                       } else {
                         return InkWell(
                           onTap: ()async{
-                            currentPlayingList.value = snapshot.data;
-                            playerToggleNotifier.value = false;
                             bool toggle = false;
-                            toggle = await getToggle();
-
-                            if(toggle){
-                              setState(() {
-                                currentSongIndex.value = index;
-                                isTapedToPlay.value = true;
-                                isPlaying.value = true;
+                            setState(() {
+                              currentPlayingList.value = snapshot.data;
+                              playerToggleNotifier.value = false;
+                              isPlaying.value = false;
+                              currentSongIndex.value = index;
+                              isTapedToPlay.value = true;
+                            });
+                            if(toggle == false){
+                              toggle = await getToggle();
+                              print("toggle");
+                              setState((){
                                 isDragging.value = false;
+                                isPlaying.value = toggle;
                                 playerToggleNotifier.value = toggle;
                               });
                             }
+
                             bool isMatched = false;
                             int _count = 0;
                             if(myRecentPlayed.value.isEmpty){

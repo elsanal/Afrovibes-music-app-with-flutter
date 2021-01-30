@@ -33,6 +33,7 @@ ValueNotifier<bool> activeWhiteSpace = ValueNotifier<bool>(false);
             onPressed:(){
               if((_playlistName!=null)&_formKey.currentState.validate()){
                 HomepageCurrentIndex.value = 6;
+                currentAlbum.value = [];
                 return Navigator.of(context).pop(true);
               }
             })

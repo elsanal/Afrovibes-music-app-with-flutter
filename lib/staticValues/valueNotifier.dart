@@ -34,3 +34,4 @@ ValueNotifier<List<Music>> myFavorite = ValueNotifier<List<Music>>([]);
 ValueNotifier<List<Music>> myRecentPlayed = ValueNotifier<List<Music>>([]);
 ValueNotifier<List<Music>> myPlaylist = ValueNotifier<List<Music>>([]);
 ValueNotifier<List<Music>> currentPlayingList = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<Music>> currentAlbum = ValueNotifier<List<Music>>([]);

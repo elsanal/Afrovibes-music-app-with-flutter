@@ -11,21 +11,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-List playlist = [
-  {
-    'title' : 'Hip-Hop',
-    'image': 'hip-hop.jpeg'
-  },
-  {
-    'title' : 'Reggea',
-    'image': 'reggea.jpeg'
-  },
-  {
-    'title' : 'Jazz',
-    'image': 'jazz.jpeg'
-  },
-
-];
 
 List<AlbumInfo> playlists = [];
 List<AlbumInfo> newList = [];
@@ -36,7 +21,7 @@ class Playlist extends StatefulWidget {
 }
 
 class _PlaylistState extends State<Playlist> {
-  int _count = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +50,6 @@ class _PlaylistState extends State<Playlist> {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
                   height: height,
-                    // padding: EdgeInsets.only(
-                    //   bottom: ScreenUtil().setSp(380),
-                    // ),
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: ScreenUtil().setSp(10),
@@ -99,7 +81,7 @@ class _PlaylistState extends State<Playlist> {
                               List<SongInfo> songs = [];
                               songs = await audioQuery.getSongsFromAlbum(
                                   albumId: album[index].id);
-                              currentPlayingList.value =
+                              currentAlbum.value =
                               await getInternalData().getAllInternalSongs(
                                   songs);
                               setState(() {

@@ -34,9 +34,6 @@ class _LocalAlbumsState extends State<LocalAlbums> {
               } else {
                 List<AlbumInfo> album = snapshot.data;
                 return Container(
-                  // padding: EdgeInsets.only(
-                  //   bottom:ScreenUtil().setSp(380),
-                  // ),
                     child:GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: ScreenUtil().setSp(10),
@@ -52,7 +49,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                             onTap: ()async{
                               List<SongInfo> songs = [];
                               songs = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
-                              currentPlayingList.value = await getInternalData().getAllInternalSongs(songs);
+                              currentAlbum.value = await getInternalData().getAllInternalSongs(songs);
                               setState((){
                                 HomepageCurrentIndex.value = 7;
                               });

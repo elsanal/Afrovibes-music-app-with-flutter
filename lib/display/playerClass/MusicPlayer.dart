@@ -26,6 +26,7 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
   int iconSizePlay = 160;
   AnimationController _animationController;
   int index = 0;
+  double _cursor = 0;
   AudioPlayer _audioPlayer = AudioPlayer();
   int _hour;
   int _minute;
@@ -93,11 +94,11 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
 
   @override
   void initState() {
-    if((isPlaying.value == true)&(isDragging.value == false)){
+    if((isPlaying.value == true)){
       _audioPlayer.play(
           currentPlayingList.value[currentSongIndex.value].file,isLocal: true,stayAwake: true);
     }
-    _animationController = AnimationController(vsync: this, duration: Duration(seconds: 100))..repeat();
+    _animationController = AnimationController(vsync: this, duration: Duration(seconds:10))..repeat();
     print("new calllllll to playyyyyyyyyy");
     // TODO: implement initState
     super.initState();
@@ -106,6 +107,7 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
   void dispose() {
     print('disposer');
     _audioPlayer.release();
+    _audioPlayer.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -126,9 +128,7 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
     });
     if((_position == Duration(seconds: 0))
     &(isPlaying.value == false)
-    &((isLooping.value== true)||(isShuffle.value = true))){
-      int index = 0;
-      print("Current index0 : $index");
+    &((isLooping.value== true)||(isShuffle.value == true))){
       return skipNext();
     }
   }
@@ -156,15 +156,22 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
               }else{
                 _audioPlayer.onAudioPositionChanged.listen((event) {
                   setState(() {
+                    //_cursor = event.inSeconds.toDouble();
                     _position = event;
-                    _hour = event.inHours.toInt();
-                    _minute = event.inMinutes.toInt();
-                    _second = event.inSeconds.toInt();
-                    if(event.inSeconds.toInt() % 60 == 0){
-                      _second = event.inSeconds.toInt() - ((event.inSeconds.toInt()~/60).toInt() * 60);
+                    _hour = _position.inHours.toInt();
+                    _minute = _position.inMinutes.toInt();
+                    _second = _position.inSeconds.toInt();
+                    if(_position.inSeconds.toInt() % 60 == 0){
+                      _second = _position.inSeconds.toInt() - ((_position.inSeconds.toInt()~/60).toInt() * 60);
                     }
                     else{
-                      _second = event.inSeconds.toInt() - ((event.inSeconds.toInt()~/60).toInt() * 60);
+                      _second =_position.inSeconds.toInt() - ((_position.inSeconds.toInt()~/60).toInt() * 60);
+                    }
+                    if(_position.inMinutes.toInt() % 60 == 0){
+                      _minute = _position.inMinutes.toInt() - ((_position.inMinutes.toInt()~/60).toInt() * 60);
+                    }
+                    else{
+                      _minute = _position.inMinutes.toInt() - ((_position.inMinutes.toInt()~/60).toInt() * 60);
                     }
                   });
                 });
@@ -177,14 +184,28 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
                   });
                 });
                 _audioPlayer.onPlayerStateChanged.listen((AudioPlayerState event)async{
-                  print("Current state : $event");
-                  String state = "AudioPlayerState.COMPLETED";
-                  if((event.toString() == state)&(count <= 0)){
+                  String _completed = "AudioPlayerState.COMPLETED";
+                  String _playing = "AudioPlayerState.PLAYING";
+                  print(event.toString());
+                  if((event.toString() == _completed)&(count <= 0)){
                     count =1;
-                    print("Finished $count");
+                    _animationController.stop();
                     await _WaitToUpdate();
+                  }else if(event.toString() == _playing){
+                    _animationController.repeat();
+                  }else{
+                    _animationController.stop();
                   }
                 });
+              }
+              return Container();
+            }
+        ),
+        new ValueListenableBuilder(
+            valueListenable: playerToggleNotifier,
+            builder:(context, value, widget){
+              if((value == false)){
+                playMusic();
               }
               return Container();
             }
@@ -312,15 +333,23 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
                   }else if(index == 0){
                      setState(() {
                        isLooping.value = !isLooping.value;
-                       isShuffle.value = false;
+                       if(isLooping.value == true){
+                         isShuffle.value = false;
+                       }
+
                      });
                   }else if (index == 4){
                     setState(() {
                       isShuffle.value = !isShuffle.value;
-                      isLooping.value = false;
+                      if(isShuffle.value == true){
+                        isLooping.value = false;
+                      }
                     });
                   }else{
-
+                    setState(() {
+                      isLooping.value = false;
+                      isShuffle.value = false;
+                    });
                   }
                 });
               },
@@ -538,12 +567,15 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
                               overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                             ),
                             child: Slider(
-                              max: _duration.inSeconds.toDouble(),
+                              max: _duration.inMicroseconds.toDouble(),
                               min: 0.0,
-                              value: _position.inSeconds.toDouble(),
+                              value: _position.inMicroseconds.toDouble(),
+                              divisions: _duration.inMicroseconds.toInt()==0?1:_duration.inMicroseconds.toInt(),
                               mouseCursor: MouseCursor.defer,
                               onChanged: (value){
-                                value = _position.inSeconds.toDouble();
+                                setState(() {
+                                  _audioPlayer.seek(Duration(microseconds: value.toInt()));
+                                });
                               },
                             ),
                           ),
@@ -636,8 +668,8 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
         //color: Colors.red,
         child: new Swiper(
           scrollDirection: Axis.horizontal,
-          itemHeight: heigth*(2/4),
-          itemWidth: width*(3/4),
+          itemHeight: heigth*(2/5),
+          itemWidth: width*(2/5),
           viewportFraction: 0.9,
           scale: 0.9,
           loop: true,
@@ -660,14 +692,14 @@ class _MusicPlayerState extends State<MusicPlayer> with TickerProviderStateMixin
                     child: Card(
                       color: Colors.grey[600],
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(width*(2.7/4)/2)),
+                          borderRadius: BorderRadius.circular(width*(2/5))),
                       child: Container(
-                        width: width*(2.7/4),
-                        height: width*(2.7/4),//heigth*(1.5/4),
+                        width: width*(2/4),
+                        height: width*(2/4),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           borderRadius: BorderRadius.all(
-                              Radius.circular(width*(2.7/4)/2)
+                              Radius.circular(width*(2/4))
                           ),
                           image: DecorationImage(
                               image: AssetImage(music.artwork!=null?music.artwork:"assets/playerDisk3.png"),

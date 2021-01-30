@@ -60,34 +60,55 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                   width: width,
                   height: height,
                   child: ListView.builder(
-                    itemCount:currentPlayingList.value.length,
+                    itemCount:currentAlbum.value.length,
                     itemBuilder: (context, index) {
-                      Music music = currentPlayingList.value[index];
+                      Music music = currentAlbum.value[index];
                       var len = currentPlayingList.value.length;
-                      if (currentPlayingList.value.isEmpty) {
+                      if (currentAlbum.value.isEmpty) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
                           onTap: ()async{
-                            playerToggleNotifier.value = false;
-                            bool toggle = await getToggle();
+                            bool toggle = false;
                             setState(() {
+                              currentPlayingList.value = currentAlbum.value;
+                              playerToggleNotifier.value = false;
+                              isPlaying.value = false;
                               currentSongIndex.value = index;
                               isTapedToPlay.value = true;
-                              isPlaying.value = true;
-                              playerToggleNotifier.value = toggle;
                             });
-                            myRecentPlayed.value.forEach((element) {
-                              bool isMatched = false;
-                              if(element.file == music.file){
-                                setState(() {
-                                  isMatched = true;
-                                });
+                            if(toggle == false){
+                              toggle = await getToggle();
+                              print("toggle");
+                              setState((){
+                                isDragging.value = false;
+                                isPlaying.value = toggle;
+                                playerToggleNotifier.value = toggle;
+                              });
+                            }
+                            bool isMatched = false;
+                            int _count = 0;
+                            if(myRecentPlayed.value.isEmpty){
+                              myRecentPlayed.value.add(currentAlbum.value[index]);
+                              print(myRecentPlayed.value[index].musicTitle);
+                            }else{
+                              for(int i = 0;i<myRecentPlayed.value.length; i++){
+                                print(music.musicTitle.toString());
+                                _count++;
+                                if(music.musicTitle == myRecentPlayed.value[i].musicTitle){
+                                  setState(() {
+                                    isMatched = true;
+                                  });
+                                }
                               }
-                              if(isMatched){
-                                myRecentPlayed.value.add(music);
-                              }
-                            });
+                            }
+                            if((isMatched == false)&(_count == myRecentPlayed.value.length)){
+                              myRecentPlayed.value.add(currentAlbum.value[index]);
+                              print("Added sucessfully");
+                              print(myRecentPlayed.value[index].musicTitle);
+                            }else{
+                              print("Exist already in the list");
+                            }
                           },
                           child: Card(
                             color: Colors.white,

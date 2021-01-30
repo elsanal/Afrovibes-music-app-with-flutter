@@ -32,7 +32,7 @@ class _DisplayPlaylistContainState extends State<DisplayPlaylistContain> {
                   )
               ),
               child: Container(
-                color: Colors.orange[800].withOpacity(0.8),
+                color: Colors.black.withOpacity(1),
                 child: Column(
                   children: [
                     new SizedBox(height: 5,),
@@ -41,7 +41,9 @@ class _DisplayPlaylistContainState extends State<DisplayPlaylistContain> {
                       backgroundImage: AssetImage('assets/equilizer.jpeg'),
                     ),),
                     new SizedBox(height: 5,),
-                    new Center(child: Text("Playlist's name"),),
+                    new Center(child: Text("Playlist's name",style: TextStyle(
+                      color: Colors.white
+                    ),),),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -101,8 +103,11 @@ Widget _ServiceRow(IconData icon, String title){
   return new Center(child: Column(children: [
     new Container(child: IconButton(
       icon:Icon(icon),
+      color: Colors.white,
       onPressed: (){},
     ),),
-    new Container(child: Text(title),)
+    new Container(child: Text(title, style: TextStyle(
+      color: Colors.white
+    ),),)
   ],),);
 }

@@ -11,6 +11,7 @@ class DisplayAlbumContain extends StatefulWidget {
 class _DisplayAlbumContainState extends State<DisplayAlbumContain> {
   @override
   Widget build(BuildContext context) {
+    final length = currentAlbum.value.length;
     return Container(
       color: Colors.orange[800],
       child: Container(
@@ -56,7 +57,7 @@ class _DisplayAlbumContainState extends State<DisplayAlbumContain> {
                                 fontSize: 18
                               ),),),
                               new SizedBox(height: 20,),
-                              new Center(child: Text('2278 songs',)
+                              new Center(child: Text('$length songs',)
                               ),
                             ],
                           ),
