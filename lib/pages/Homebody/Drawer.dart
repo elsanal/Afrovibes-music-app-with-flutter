@@ -140,19 +140,23 @@ class _mainDrawerState extends State<mainDrawer> {
                         },
                         child: _ListeTile(Icons.download_outlined,'Download',6,clickedIndex)),
                     InkWell(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
                             clickedIndex = 7;
                             HomepageCurrentIndex.value = 4;
+                            appBArTitle.value = "Library";
                           });
-
+                          Navigator.of(context).pop(true);
                         },
                         child: _ListeTile(Icons.folder_outlined,'Library',7,clickedIndex)),
                     InkWell(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
                             clickedIndex = 8;
+                            HomepageCurrentIndex.value = 0;
+                            appBArTitle.value = "Setting";
                           });
+                          Navigator.of(context).pop(true);
                         },
                         child: _ListeTile(Icons.settings_outlined,'Settings',8,clickedIndex)),
                     InkWell(
@@ -174,6 +178,17 @@ class _mainDrawerState extends State<mainDrawer> {
                           setState(() {
                             clickedIndex = 11;
                           });
+                          showAboutDialog(
+                            context: context,
+                            applicationIcon: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.black,
+                              backgroundImage: AssetImage("assets/ic_launcher.png"),
+                            ),
+                            applicationName: "YenMusic",
+                            applicationVersion: "Version : 1.0.0",
+                            applicationLegalese: "2021 Copyright©. All right reserved®",
+                          );
                         },
                         child: _ListeTile(Icons.home_work,'About',11,clickedIndex)),
                   ],

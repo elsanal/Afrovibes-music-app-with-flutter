@@ -15,7 +15,7 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/sharedPage/createPlaylist.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/staticValues/constant.dart';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

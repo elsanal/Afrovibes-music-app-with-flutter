@@ -1,5 +1,4 @@
 import 'package:afromuse/services/models.dart';
-import 'package:audio_manager/audio_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 

@@ -1,6 +1,7 @@
 import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
 import 'package:afromuse/display/playerClass/FullMusicPlayer.dart';
 import 'package:afromuse/display/playerClass/MusicPlayer.dart';
+import 'package:afromuse/display/playerClass/PlayerMainScreen.dart';
 import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/drawer/category.dart';
@@ -52,7 +53,7 @@ class _HomepageState extends State<Homepage> {
     Homepagebody(),
     Latest(),
     ShowFavorite(),
-    RecentPlayed(),
+    PlayerMainScreen(),
     Local(),
     Categories(),
     DisplayPlaylistContain(),
@@ -81,7 +82,6 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context){
-    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,]);
     ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height ;
@@ -155,18 +155,18 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ],
                     ),
-                    ValueListenableBuilder(
-                    valueListenable: isTapedToPlay,
-                    builder: (context, value, widget){
-                      if(value == true){
-                        return MusicPlayer();
-                      }else{
-                        return Container();
-                      }
-                    },
-                    ),
+                    // ValueListenableBuilder(
+                    // valueListenable: isTapedToPlay,
+                    // builder: (context, value, widget){
+                    //   if(value == true){
+                    //     return PlayerMainScreen();
+                    //   }else{
+                    //     return Container();
+                    //   }
+                    // },
+                    // ),
                     Positioned(
-                      bottom: -15,
+                      bottom: 0,
                       child: ValueListenableBuilder(
                         valueListenable: isFull,
                         builder: (context, value, widget){
