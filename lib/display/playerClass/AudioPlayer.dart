@@ -47,27 +47,8 @@ MediaControl rewindControl = MediaControl(
 
 class AudioPlayerTask extends BackgroundAudioTask{
 
+  var _queue = <MediaItem>[];
 
-  final _queue = <MediaItem>[
-    MediaItem(
-      id: "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
-      album: "Science Friday",
-      title: "A Salute To Head-Scratching Science",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 5739820),
-      artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    ),
-    MediaItem(
-      id: "https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3",
-      album: "Science Friday",
-      title: "From Cat Rheology To Operatic Incompetence",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 2856950),
-      artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    ),
-  ];
 
   int _queueIndex = -1;
   AudioPlayer _audioPlayer = new AudioPlayer();
@@ -83,9 +64,13 @@ class AudioPlayerTask extends BackgroundAudioTask{
   StreamSubscription<AudioPlaybackEvent> _eventSubscription;
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) {
-    super.onStart(params);
-
+  Future<void> onStart(Map<String, dynamic> params)async{
+    _queue.clear();
+    List mediaItems = params['data'];
+    for (int i = 0; i < mediaItems.length; i++) {
+      MediaItem mediaItem = MediaItem.fromJson(mediaItems[i]);
+      _queue.add(mediaItem);
+    }
     _playerStateSubscription = _audioPlayer.playbackStateStream.where(
             (state) => state == AudioPlaybackState.completed).listen((state) {
               _handlePlayBackComplete();
@@ -105,7 +90,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
             position: event.position,
           );
           break;
-        case AudioPlaybackState.paused:
+        case AudioPlaybackState.connecting:
           _setState(
             processingState: bufferingState?? AudioProcessingState.connecting,
             position: event.position,
@@ -120,7 +105,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onPlay() {
-    if(null == _audioProcessingState){
+    if(_audioProcessingState == null){
       _isPlaying = true;
       _audioPlayer.play();
     }
@@ -147,7 +132,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     if(!(newIndex >= 0 && newIndex < _queue.length)){
       return;
     }
-    if(null == _isPlaying){
+    if( _isPlaying == null){
       _isPlaying = true;
     }else if(_isPlaying){
       _isPlaying = false;
@@ -157,9 +142,9 @@ class AudioPlayerTask extends BackgroundAudioTask{
     _audioProcessingState = offset > 0?
     AudioProcessingState.skippingToNext:AudioProcessingState.skippingToPrevious;
     AudioServiceBackground.setMediaItem(mediaItem);
-    await _audioPlayer.setFilePath(mediaItem.id);
+    await _audioPlayer.setUrl("${mediaItem.id}");
     _audioProcessingState = null;
-    if(_isPlaying){
+    if(_isPlaying == true){
       onPlay();
     }else{
       _setState(processingState: AudioProcessingState.ready);
@@ -230,12 +215,12 @@ class AudioPlayerTask extends BackgroundAudioTask{
     Duration position,
     Duration bufferedPosition,
   })async{
-      if(null == position){
+      if(position == null){
         position = _audioPlayer.playbackEvent.position;
       }
       await AudioServiceBackground.setState(
           controls: getControls(),
-          systemActions: [MediaAction.seekTo],
+          systemActions: [MediaAction.seekTo, MediaAction.skipToPrevious, MediaAction.skipToNext],
           processingState: processingState??AudioServiceBackground.state.processingState,
           playing: _isPlaying,
           position: position,
@@ -248,17 +233,17 @@ class AudioPlayerTask extends BackgroundAudioTask{
   List<MediaControl> getControls(){
     if(_isPlaying){
       return [
-        nextControl,
-        playControl,
+        previousControl,
+        pauseControl,
         stopControl,
-        previousControl
+        nextControl,
       ];
     }else{
       return [
-        nextControl,
-        pauseControl,
+        previousControl,
+        playControl,
         stopControl,
-        previousControl
+        nextControl,
       ];
     }
   }
@@ -269,7 +254,6 @@ class AudioState{
   final List<MediaItem> queue;
   final MediaItem mediaItem;
   final PlaybackState playbackState;
-
   AudioState(this.queue, this.mediaItem, this.playbackState);
 }
 

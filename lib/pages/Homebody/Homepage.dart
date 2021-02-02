@@ -17,6 +17,7 @@ import 'package:afromuse/services/preferences.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -127,62 +128,63 @@ class _HomepageState extends State<Homepage> {
               systemNavigationBarColor: Colors.white,
               systemNavigationBarIconBrightness: Brightness.dark
             ),
-            child: Container(
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(1),
-                ),
-                child: Stack(
-                  children: [
-
-                    ListView(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        _myAppBar(),
-                        Container(
-                          color: Colors.white,
-                          height: height,
-                          padding: EdgeInsets.only(
-                              bottom: 50
+            child: AudioServiceWidget(
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(1),
+                  ),
+                  child: Stack(
+                    children: [
+                      ListView(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          _myAppBar(),
+                          Container(
+                            color: Colors.white,
+                            height: height,
+                            padding: EdgeInsets.only(
+                                bottom: 50
+                            ),
+                            child: ValueListenableBuilder(
+                              valueListenable: HomepageCurrentIndex,
+                              builder: (context, value, widget){
+                                return pageList[value];
+                              },
+                            ),
                           ),
-                          child: ValueListenableBuilder(
-                            valueListenable: HomepageCurrentIndex,
-                            builder: (context, value, widget){
-                              return pageList[value];
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    // ValueListenableBuilder(
-                    // valueListenable: isTapedToPlay,
-                    // builder: (context, value, widget){
-                    //   if(value == true){
-                    //     return PlayerMainScreen();
-                    //   }else{
-                    //     return Container();
-                    //   }
-                    // },
-                    // ),
-                    Positioned(
-                      bottom: 0,
-                      child: ValueListenableBuilder(
-                        valueListenable: isFull,
-                        builder: (context, value, widget){
-                          if(value == false){
-                            _isFull = false;
-                            return _bottomBar(context, HomepageCurrentIndex.value);
-                          }else{
-                            _isFull = true;
-                            return Container();
-                          }
-                        },
+                        ],
                       ),
-                    ),
-                  ],
+                      // ValueListenableBuilder(
+                      // valueListenable: isTapedToPlay,
+                      // builder: (context, value, widget){
+                      //   if(value == true){
+                      //     return PlayerMainScreen();
+                      //   }else{
+                      //     return Container();
+                      //   }
+                      // },
+                      // ),
+                      Positioned(
+                        bottom: 0,
+                        child: ValueListenableBuilder(
+                          valueListenable: isFull,
+                          builder: (context, value, widget){
+                            if(value == false){
+                              _isFull = false;
+                              return _bottomBar(context, HomepageCurrentIndex.value);
+                            }else{
+                              _isFull = true;
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+            ),
           ),
         ),
     );
@@ -210,7 +212,14 @@ class _HomepageState extends State<Homepage> {
                   onPressed:()=>scaffoldKey.currentState.openDrawer()
               ),
               actions: [
-                Icon(Icons.search, color: Colors.black,),
+                IconButton(
+                  icon:Icon(Icons.search, color: Colors.black,),
+                  onPressed: ()=>Navigator.of(context).push(
+                    new MaterialPageRoute(builder: (context){
+                      return PlayerMainScreen();
+                    })
+                  ),
+                ),
                 SizedBox(width: 8,)
               ],
             );
