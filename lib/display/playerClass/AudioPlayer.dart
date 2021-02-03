@@ -75,6 +75,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
             (state) => state == AudioPlaybackState.completed).listen((state) {
               _handlePlayBackComplete();
     });
+
     _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
       final  bufferingState = event.buffering?AudioProcessingState.buffering:null;
       switch(event.state){
@@ -82,19 +83,39 @@ class AudioPlayerTask extends BackgroundAudioTask{
           _setState(
             processingState: bufferingState?? AudioProcessingState.ready,
             position: event.position,
+            bufferedPosition: event.bufferedPosition
           );
           break;
         case AudioPlaybackState.playing:
           _setState(
             processingState: bufferingState?? AudioProcessingState.ready,
             position: event.position,
+              bufferedPosition: event.bufferedPosition
           );
           break;
         case AudioPlaybackState.connecting:
           _setState(
             processingState: bufferingState?? AudioProcessingState.connecting,
             position: event.position,
+              bufferedPosition: event.bufferedPosition
           );
+          break;
+        case AudioPlaybackState.completed:
+          _setState(
+              processingState: bufferingState?? AudioProcessingState.completed,
+              position: Duration(milliseconds: 0),
+              bufferedPosition: Duration(milliseconds: 0)
+          );
+          break;
+        case AudioPlaybackState.stopped:
+          _setState(
+              processingState: bufferingState?? AudioProcessingState.stopped,
+              position: Duration(milliseconds: 0),
+              bufferedPosition: Duration(milliseconds: 0)
+          );
+          break;
+        case AudioPlaybackState.none:
+           onStop();
           break;
         default:
       }
@@ -133,11 +154,12 @@ class AudioPlayerTask extends BackgroundAudioTask{
       return;
     }
     if( _isPlaying == null){
-      _isPlaying = true;
-    }else if(_isPlaying){
       _isPlaying = false;
-      await _audioPlayer.stop();
     }
+    // else if(_isPlaying == true){
+    //   _isPlaying = false;
+    //   await _audioPlayer.stop();
+    // }
     _queueIndex = newIndex;
     _audioProcessingState = offset > 0?
     AudioProcessingState.skippingToNext:AudioProcessingState.skippingToPrevious;
@@ -154,7 +176,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onFastForward()async{
-    await _seekRelative(rewindInterval);
+    await _seekRelative(fastForwardInterval);
   }
 
   @override
@@ -224,8 +246,9 @@ class AudioPlayerTask extends BackgroundAudioTask{
           processingState: processingState??AudioServiceBackground.state.processingState,
           playing: _isPlaying,
           position: position,
-        bufferedPosition: bufferedPosition,
-        speed: _audioPlayer.speed
+          bufferedPosition: bufferedPosition,
+          speed: _audioPlayer.speed,
+
 
       );
   }

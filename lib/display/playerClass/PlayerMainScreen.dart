@@ -112,6 +112,18 @@ class _PlayerMainScreenState extends State<PlayerMainScreen> {
     );
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
   _startAudioPlayerBtn() {
     List<dynamic> list = List();
     currentPlayingList.value.forEach((element){
@@ -137,7 +149,7 @@ class _PlayerMainScreenState extends State<PlayerMainScreen> {
           _loading = true;
         });
         await AudioService.start(
-          backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+          backgroundTaskEntrypoint: _audioPlayerTaskEntryPoint,
           androidNotificationChannelName: 'Audio Player',
           androidNotificationColor: 0xFFFF004,
           androidNotificationIcon: 'mipmap/ic_launcher',
@@ -165,7 +177,7 @@ Stream<AudioState> get _audioStateStream {
   );
 }
 
-void _audioPlayerTaskEntrypoint() async {
+void _audioPlayerTaskEntryPoint() async {
  await  AudioServiceBackground.run(() => AudioPlayerTask());
 }
 
