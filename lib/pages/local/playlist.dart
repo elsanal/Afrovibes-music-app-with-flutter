@@ -1,4 +1,3 @@
-import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/services/downlaodData.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/sharedPage/createPlaylist.dart';

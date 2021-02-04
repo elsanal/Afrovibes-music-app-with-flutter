@@ -1,4 +1,5 @@
 import 'package:afromuse/services/models.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
@@ -16,6 +17,7 @@ class getInternalData{
           albumName: song.album,
           file: song.filePath,
           liked : 0,
+          duration: int.parse(song.duration),
           Ndownload : 0,
           NListened : 0,
           genre : "unknown",
@@ -33,6 +35,7 @@ class getInternalData{
           albumName: song.album,
           file: song.filePath,
           liked : 0,
+          duration: int.parse(song.duration),
           Ndownload : 0,
           NListened : 0,
           genre : "unknown",
@@ -42,7 +45,6 @@ class getInternalData{
         Musics.add(music);
       });
     }
-
     return Musics;
   }
 

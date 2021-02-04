@@ -60,8 +60,8 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   MediaItem get mediaItem => _queue[_queueIndex];
 
-  StreamSubscription<AudioPlaybackState> _playerStateSubscription;
-  StreamSubscription<AudioPlaybackEvent> _eventSubscription;
+  StreamSubscription<PlayerState> _playerStateSubscription;
+  StreamSubscription<PlaybackEvent>  _eventSubscription;
 
   @override
   Future<void> onStart(Map<String, dynamic> params)async{
@@ -71,54 +71,21 @@ class AudioPlayerTask extends BackgroundAudioTask{
       MediaItem mediaItem = MediaItem.fromJson(mediaItems[i]);
       _queue.add(mediaItem);
     }
-    _playerStateSubscription = _audioPlayer.playbackStateStream.where(
-            (state) => state == AudioPlaybackState.completed).listen((state) {
-              _handlePlayBackComplete();
-    });
 
-    _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
-      final  bufferingState = event.buffering?AudioProcessingState.buffering:null;
-      switch(event.state){
-        case AudioPlaybackState.paused:
-          _setState(
-            processingState: bufferingState?? AudioProcessingState.ready,
-            position: event.position,
-            bufferedPosition: event.bufferedPosition
-          );
+    _playerStateSubscription = _audioPlayer.playerStateStream.listen((event) {
+      switch(event.processingState){
+        case ProcessingState.completed:
+          _handlePlayBackComplete();
           break;
-        case AudioPlaybackState.playing:
-          _setState(
-            processingState: bufferingState?? AudioProcessingState.ready,
-            position: event.position,
-              bufferedPosition: event.bufferedPosition
-          );
-          break;
-        case AudioPlaybackState.connecting:
-          _setState(
-            processingState: bufferingState?? AudioProcessingState.connecting,
-            position: event.position,
-              bufferedPosition: event.bufferedPosition
-          );
-          break;
-        case AudioPlaybackState.completed:
-          _setState(
-              processingState: bufferingState?? AudioProcessingState.completed,
-              position: Duration(milliseconds: 0),
-              bufferedPosition: Duration(milliseconds: 0)
-          );
-          break;
-        case AudioPlaybackState.stopped:
-          _setState(
-              processingState: bufferingState?? AudioProcessingState.stopped,
-              position: Duration(milliseconds: 0),
-              bufferedPosition: Duration(milliseconds: 0)
-          );
-          break;
-        case AudioPlaybackState.none:
-           onStop();
+        case ProcessingState.idle:
+          onStop();
           break;
         default:
       }
+    });
+
+    _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
+      _broadcastState();
     });
     AudioServiceBackground.setQueue(_queue);
     onSkipToNext();
@@ -156,10 +123,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
     if( _isPlaying == null){
       _isPlaying = false;
     }
-    // else if(_isPlaying == true){
-    //   _isPlaying = false;
-    //   await _audioPlayer.stop();
-    // }
     _queueIndex = newIndex;
     _audioProcessingState = offset > 0?
     AudioProcessingState.skippingToNext:AudioProcessingState.skippingToPrevious;
@@ -169,7 +132,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     if(_isPlaying == true){
       onPlay();
     }else{
-      _setState(processingState: AudioProcessingState.ready);
+      _broadcastState();
     }
   }
 
@@ -185,20 +148,38 @@ class AudioPlayerTask extends BackgroundAudioTask{
   }
 
   Future<void> _seekRelative(Duration offset)async{
-    var newPosition = _audioPlayer.playbackEvent.position + offset;
+    var newPosition = _audioPlayer.position + offset;
     if(newPosition < Duration.zero){
       newPosition = Duration.zero;
     }
     if(newPosition > mediaItem.duration){
       newPosition = mediaItem.duration;
     }
-    await _audioPlayer.seek(_audioPlayer.playbackEvent.position + offset);
+    await _audioPlayer.seek(_audioPlayer.position + offset);
   }
 
 
   @override
   Future<void> onSeekTo(Duration position) {
     _audioPlayer.seek(position);
+  }
+
+  @override
+  Future<void> onSkipToQueueItem(String mediaId) async{
+    if(_audioPlayer.playing){
+      _audioPlayer.stop();
+    }
+    _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
+      _broadcastState();
+    });
+    _queue.forEach((element) async{
+      if(element.id == mediaId){
+        await AudioServiceBackground.setMediaItem(element);
+        await _audioPlayer.setUrl(mediaId);
+        _audioProcessingState = null;
+        onPlay();
+      }
+    });
   }
 
   @override
@@ -217,7 +198,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onStop() async{
     await _audioPlayer.stop();
-    await _audioPlayer.dispose();
     _eventSubscription.cancel();
     _playerStateSubscription.cancel();
     return await super.onStop();
@@ -232,25 +212,43 @@ class AudioPlayerTask extends BackgroundAudioTask{
     }
   }
 
-  Future<void> _setState({
-    AudioProcessingState processingState,
-    Duration position,
-    Duration bufferedPosition,
-  })async{
-      if(position == null){
-        position = _audioPlayer.playbackEvent.position;
-      }
+  Future<void> _broadcastState()async{
       await AudioServiceBackground.setState(
           controls: getControls(),
           systemActions: [MediaAction.seekTo, MediaAction.skipToPrevious, MediaAction.skipToNext],
-          processingState: processingState??AudioServiceBackground.state.processingState,
-          playing: _isPlaying,
-          position: position,
-          bufferedPosition: bufferedPosition,
+          processingState: _getProcessingState(),
+          playing: _audioPlayer.playing,
+          position: _audioPlayer.position,
+          bufferedPosition: _audioPlayer.bufferedPosition,
           speed: _audioPlayer.speed,
-
-
+          androidCompactActions: [0, 1, 3],
+        
       );
+
+  }
+
+  AudioProcessingState _getProcessingState(){
+    // if(_audioProcessingState!=null) return _audioProcessingState;
+    switch(_audioPlayer.processingState){
+      case ProcessingState.completed:
+        return AudioProcessingState.completed;
+        break;
+      case ProcessingState.buffering:
+        return AudioProcessingState.buffering;
+        break;
+      case ProcessingState.ready:
+        return AudioProcessingState.ready;
+        break;
+      case ProcessingState.idle:
+        return AudioProcessingState.stopped;
+        break;
+      case ProcessingState.loading:
+        return AudioProcessingState.connecting;
+        break;
+      default:
+        throw Exception("Invalid State ${_audioPlayer.processingState}");
+    }
+
   }
 
   List<MediaControl> getControls(){
@@ -277,7 +275,21 @@ class AudioState{
   final List<MediaItem> queue;
   final MediaItem mediaItem;
   final PlaybackState playbackState;
-  AudioState(this.queue, this.mediaItem, this.playbackState);
+  final Duration position;
+  AudioState(this.queue, this.mediaItem, this.playbackState,this.position);
+}
+
+class FullAudioPlayerState{
+  final List<MediaItem> queue;
+  final MediaItem mediaItem;
+  final PlaybackState playbackState;
+  final Duration position;
+  FullAudioPlayerState(this.queue, this.mediaItem, this.playbackState, this.position);
+}
+
+class PlayerPosition {
+  final Duration position;
+  PlayerPosition( this.position);
 }
 
 

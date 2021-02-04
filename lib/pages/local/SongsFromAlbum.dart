@@ -4,6 +4,7 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +14,7 @@ import 'package:afromuse/display/playerClass/playerToggle.dart';
 
 
 class SongsFromAlbum extends StatefulWidget {
-  ValueNotifier<List<SongInfo>> newListOfSongs;
+  List<MediaItem> newListOfSongs;
   SongsFromAlbum({this.newListOfSongs});
   @override
   _SongsFromAlbumState createState() => _SongsFromAlbumState();
@@ -25,6 +26,7 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
   }
 
@@ -63,7 +65,6 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                     itemCount:currentAlbum.value.length,
                     itemBuilder: (context, index) {
                       Music music = currentAlbum.value[index];
-                      var len = currentPlayingList.value.length;
                       if (currentAlbum.value.isEmpty) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {

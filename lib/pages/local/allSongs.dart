@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';

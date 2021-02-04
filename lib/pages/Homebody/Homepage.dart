@@ -1,7 +1,4 @@
-import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
-import 'package:afromuse/display/playerClass/FullMusicPlayer.dart';
 import 'package:afromuse/display/playerClass/MusicPlayer.dart';
-import 'package:afromuse/display/playerClass/PlayerMainScreen.dart';
 import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/drawer/category.dart';
@@ -54,7 +51,7 @@ class _HomepageState extends State<Homepage> {
     Homepagebody(),
     Latest(),
     ShowFavorite(),
-    PlayerMainScreen(),
+    RecentPlayed(),
     Local(),
     Categories(),
     DisplayPlaylistContain(),
@@ -156,26 +153,26 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ],
                       ),
-                      // ValueListenableBuilder(
-                      // valueListenable: isTapedToPlay,
-                      // builder: (context, value, widget){
-                      //   if(value == true){
-                      //     return PlayerMainScreen();
-                      //   }else{
-                      //     return Container();
-                      //   }
-                      // },
-                      // ),
+                      ValueListenableBuilder(
+                      valueListenable: isTapedToPlay,
+                      builder: (context, value, widget){
+                        if(value == true){
+                          return MusicPlayer();
+                        }else{
+                          return Container();
+                        }
+                      },
+                      ),
                       Positioned(
                         bottom: 0,
                         child: ValueListenableBuilder(
                           valueListenable: isFull,
                           builder: (context, value, widget){
-                            if(value == false){
-                              _isFull = false;
+                            if(value == true){
+                              _isFull = true;
                               return _bottomBar(context, HomepageCurrentIndex.value);
                             }else{
-                              _isFull = true;
+                             _isFull = false;
                               return Container();
                             }
                           },
@@ -214,11 +211,7 @@ class _HomepageState extends State<Homepage> {
               actions: [
                 IconButton(
                   icon:Icon(Icons.search, color: Colors.black,),
-                  onPressed: ()=>Navigator.of(context).push(
-                    new MaterialPageRoute(builder: (context){
-                      return PlayerMainScreen();
-                    })
-                  ),
+                  onPressed: (){}
                 ),
                 SizedBox(width: 8,)
               ],
@@ -231,7 +224,12 @@ class _HomepageState extends State<Homepage> {
 
   _bottomBar(context,int _currentIndex) {
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(width: 0.4, color: Colors.grey[300], style: BorderStyle.solid),
+          )
+      ),
       height: ScreenUtil().setHeight(170),
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -293,7 +291,5 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
-
 
 }

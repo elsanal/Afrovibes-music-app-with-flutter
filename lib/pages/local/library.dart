@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-
-import 'package:afromuse/display/playerClass/DragScrollablePlayer.dart';
-import 'package:afromuse/display/playerClass/musicPlayerClass.dart';
 import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/pages/local/allFolders.dart';
 import 'package:afromuse/pages/local/allSongs.dart';
