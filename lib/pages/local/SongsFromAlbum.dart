@@ -1,3 +1,4 @@
+import 'package:afromuse/display/playerClass/AudioPlayer.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
@@ -40,6 +41,7 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    List<MediaItem> musics = currentAlbum.value;
     return Container(
       width: width,
       height: height,
@@ -64,39 +66,35 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                   child: ListView.builder(
                     itemCount:currentAlbum.value.length,
                     itemBuilder: (context, index) {
-                      Music music = currentAlbum.value[index];
+                      MediaItem music = currentAlbum.value[index];
                       if (currentAlbum.value.isEmpty) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
                           onTap: ()async{
-                            bool toggle = false;
-                            setState(() {
-                              currentPlayingList.value = currentAlbum.value;
+                            if(!AudioService.running){
+                              await _startAudioPlayer(musics, index-1);
                               playerToggleNotifier.value = false;
-                              isPlaying.value = false;
-                              currentSongIndex.value = index;
-                              isTapedToPlay.value = true;
-                            });
-                            if(toggle == false){
-                              toggle = await getToggle();
-                              print("toggle");
-                              setState((){
-                                isDragging.value = false;
-                                isPlaying.value = toggle;
-                                playerToggleNotifier.value = toggle;
-                              });
+                              bool toggle = await getToggle();
+                              if(toggle){
+                                setState(() {
+                                  isTapedToPlay.value = true;
+                                  playerToggleNotifier.value = toggle;
+                                });
+                              }
+                            }else {
+                              await AudioService.updateQueue(musics);
+                              await AudioService.skipToQueueItem(music.id);
                             }
                             bool isMatched = false;
                             int _count = 0;
                             if(myRecentPlayed.value.isEmpty){
                               myRecentPlayed.value.add(currentAlbum.value[index]);
-                              print(myRecentPlayed.value[index].musicTitle);
+                              print(myRecentPlayed.value[index].title);
                             }else{
                               for(int i = 0;i<myRecentPlayed.value.length; i++){
-                                print(music.musicTitle.toString());
                                 _count++;
-                                if(music.musicTitle == myRecentPlayed.value[i].musicTitle){
+                                if(music.title == myRecentPlayed.value[i].title){
                                   setState(() {
                                     isMatched = true;
                                   });
@@ -105,8 +103,6 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                             }
                             if((isMatched == false)&(_count == myRecentPlayed.value.length)){
                               myRecentPlayed.value.add(currentAlbum.value[index]);
-                              print("Added sucessfully");
-                              print(myRecentPlayed.value[index].musicTitle);
                             }else{
                               print("Exist already in the list");
                             }
@@ -123,7 +119,7 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                                       child: Container(
                                         height: 40,
                                         width: 250,
-                                        child: Marques(music.musicTitle, Colors.black),)
+                                        child: Marques(music.title, Colors.black),)
                                   ),
                                   Positioned(
                                       right: 15,
@@ -136,7 +132,7 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
                                   Positioned(
                                       bottom: 5,
                                       left: 35,
-                                      child: Container(child: Text(music.albumName.toString()),)
+                                      child: Container(child: Text(music.album.toString()),)
                                   ),
 
                                   Positioned(
@@ -162,5 +158,25 @@ class _SongsFromAlbumState extends State<SongsFromAlbum> {
       ),
     );
   }
+  _startAudioPlayer(List<MediaItem> queue, int queueIndex) async{
+    List<dynamic> list = List();
+    for (int i = 0; i < queue.length; i++) {
+      var m = queue[i].toJson();
+      list.add(m);
+    }
+    var params = {"data": list, "queueIndex": queueIndex};
+    await AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntryPoint,
+      androidNotificationChannelName: 'Audio Player',
+      androidNotificationColor: 0xFFFF004,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      params: params,
+    );
+  }
+}
+
+
+void _audioPlayerTaskEntryPoint() async {
+  await  AudioServiceBackground.run(() => AudioPlayerTask());
 }
 

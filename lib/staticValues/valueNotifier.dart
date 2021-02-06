@@ -1,4 +1,5 @@
 import 'package:afromuse/services/models.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
@@ -17,7 +18,7 @@ ValueNotifier<bool> isShuffle = ValueNotifier(false);
 ValueNotifier<int> HomepageCurrentIndex = ValueNotifier(0) ;
 ValueNotifier<int> libraryCurrentPage = ValueNotifier(0);
 ValueNotifier<String> appBArTitle = ValueNotifier('Home');
-ValueNotifier<bool> isFull = ValueNotifier(false);
+ValueNotifier<bool> isFull = ValueNotifier(true);
 
 // Lists position
 ValueNotifier<int> libraryAllSongsPositionValue = ValueNotifier(0) ;
@@ -29,8 +30,8 @@ ValueNotifier<int> recentPlayedSongsPositionValue = ValueNotifier(0) ;
 //
 
 ValueNotifier<List<Music>> allInternalSongs = ValueNotifier<List<Music>>([]);
-ValueNotifier<List<Music>> myFavorite = ValueNotifier<List<Music>>([]);
-ValueNotifier<List<Music>> myRecentPlayed = ValueNotifier<List<Music>>([]);
-ValueNotifier<List<Music>> myPlaylist = ValueNotifier<List<Music>>([]);
-ValueNotifier<List<Music>> currentPlayingList = ValueNotifier<List<Music>>([]);
-ValueNotifier<List<Music>> currentAlbum = ValueNotifier<List<Music>>([]);
+ValueNotifier<List<MediaItem>> myFavorite = ValueNotifier<List<MediaItem>>([]);
+ValueNotifier<List<MediaItem>> myRecentPlayed = ValueNotifier<List<MediaItem>>([]);
+ValueNotifier<List<MediaItem>> myPlaylist = ValueNotifier<List<MediaItem>>([]);
+ValueNotifier<List<MediaItem>> currentPlayingList = ValueNotifier<List<MediaItem>>([]);
+ValueNotifier<List<MediaItem>> currentAlbum = ValueNotifier<List<MediaItem>>([]);

@@ -1,4 +1,5 @@
 import 'package:afromuse/display/playerClass/MusicPlayer.dart';
+import 'package:afromuse/display/playerClass/PlayerMainScreen.dart';
 import 'package:afromuse/pages/Homebody/Drawer.dart';
 import 'package:afromuse/pages/Homebody/Homepagebody.dart';
 import 'package:afromuse/pages/drawer/category.dart';
@@ -97,8 +98,8 @@ class _HomepageState extends State<Homepage> {
                         child: Text('yes'),
                         onPressed: ()async{
                           releasePlayer.value = true;
-                          List<Music> musicList = new List();
-                          List<Music> recentMusic = new List();
+                          List<MediaItem> musicList = new List();
+                          List<MediaItem> recentMusic = new List();
                           bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
                           currentPlayingList.value.forEach((song){
                             musicList.add(song);
@@ -191,7 +192,7 @@ class _HomepageState extends State<Homepage> {
     return ValueListenableBuilder(
         valueListenable: isFull,
         builder: (context, value, widget){
-          if(value == false){
+          if(value == true){
             return AppBar(
               elevation: 0,
               centerTitle: true,

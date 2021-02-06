@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:afromuse/display/playerClass/AudioPlayer.dart';
+import 'package:afromuse/display/playerClass/StartAudioService.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
@@ -8,6 +10,7 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -60,56 +63,50 @@ class _LocalSongsState extends State<LocalSongs> {
       ),
         color: Colors.white,
         child: FutureBuilder(
-          future: getInternalData().getAllInternalSongs(null),
+          future: GetInternalData().getAllInternalSongs(null),
           builder: (context,snapshot){
             if(!snapshot.hasData){
               return Container();
             }else{
+
               return Container(
                   height: height,
-                // margin: EdgeInsets.only(
-                //   bottom: 40,
-                // ),
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:widget.position!=null?widget.position:0,
                     itemScrollController: _itemScrollController,
                     itemPositionsListener: _itemPositionsListener,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      Music music = snapshot.data[index];
+                      MediaItem music = snapshot.data[index];
                       if (music == null) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         return InkWell(
                           onTap: ()async{
+                            List<MediaItem> mediaItems = snapshot.data;
                             bool toggle = false;
-                            setState(() {
-                              currentPlayingList.value = snapshot.data;
-                              playerToggleNotifier.value = false;
-                              isPlaying.value = false;
-                              currentSongIndex.value = index;
-                              isTapedToPlay.value = true;
-                            });
-                            if(toggle == false){
+                            if(!AudioService.running){
+                              print("AudioService is not running");
+                             await _startAudioPlayer(mediaItems, index-1);
                               toggle = await getToggle();
-                              print("toggle");
-                              setState((){
-                                isDragging.value = false;
-                                isPlaying.value = toggle;
-                                playerToggleNotifier.value = toggle;
-                              });
+                              if(toggle){
+                                setState((){
+                                  isTapedToPlay.value = true;
+                                });
+                              }
+                            }else {
+                             await AudioService.skipToQueueItem(music.id);
                             }
 
                             bool isMatched = false;
                             int _count = 0;
                             if(myRecentPlayed.value.isEmpty){
-                              myRecentPlayed.value.add(snapshot.data[index]);
-                              print(myRecentPlayed.value[index].musicTitle);
+                              myRecentPlayed.value.add(mediaItems[index]);
                             }else{
                               for(int i = 0;i<myRecentPlayed.value.length; i++){
-                                print(music.musicTitle.toString());
+                                print(music.title.toString());
                                 _count++;
-                                if(music.musicTitle == myRecentPlayed.value[i].musicTitle){
+                                if(music.title == myRecentPlayed.value[i].title){
                                   setState(() {
                                     isMatched = true;
                                   });
@@ -117,11 +114,7 @@ class _LocalSongsState extends State<LocalSongs> {
                               }
                             }
                             if((isMatched == false)&(_count == myRecentPlayed.value.length)){
-                              myRecentPlayed.value.add(snapshot.data[index]);
-                              print("Added sucessfully");
-                              print(myRecentPlayed.value[index].musicTitle);
-                            }else{
-                              print("Exist already in the list");
+                              myRecentPlayed.value.add(mediaItems[index]);
                             }
                           },
                           child: Card(
@@ -136,7 +129,7 @@ class _LocalSongsState extends State<LocalSongs> {
                                       child: Container(
                                         height: 40,
                                         width: 250,
-                                        child: Marques(music.musicTitle, Colors.black),)
+                                        child: Marques(music.title, Colors.black),)
                                   ),
                                   Positioned(
                                       right: 15,
@@ -149,7 +142,7 @@ class _LocalSongsState extends State<LocalSongs> {
                                   Positioned(
                                       bottom: 5,
                                       left: 35,
-                                      child: Container(child: Text(music.albumName),)
+                                      child: Container(child: Text(music.album),)
                                   ),
 
                                   Positioned(
@@ -173,7 +166,27 @@ class _LocalSongsState extends State<LocalSongs> {
         )
     );
   }
+
+  _startAudioPlayer(List<MediaItem> queue, int queueIndex) async{
+    List<dynamic> list = List();
+    for (int i = 0; i < queue.length; i++) {
+      var m = queue[i].toJson();
+      list.add(m);
+    }
+    var params = {"data": list, "queueIndex": queueIndex};
+    await AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntryPoint,
+      androidNotificationChannelName: 'Audio Player',
+      androidNotificationColor: 0xFFFF004,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      params: params,
+    );
+  }
+
 }
 
+void _audioPlayerTaskEntryPoint() async {
+  await  AudioServiceBackground.run(() => AudioPlayerTask());
+}
 
 

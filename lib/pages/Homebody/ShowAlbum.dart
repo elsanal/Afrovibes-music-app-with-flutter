@@ -18,7 +18,7 @@ class _AlbumRowState extends State<AlbumRow> {
       width: width,
       height: 240,
       child: FutureBuilder(
-        future: getInternalData().getAllInternalAlbum(),
+        future: GetInternalData().getAllInternalAlbum(),
           builder:(context, snapshot){
             if(!snapshot.hasData){
               return Container();
@@ -43,13 +43,13 @@ class _AlbumRowState extends State<AlbumRow> {
                             width: width*(3/4),
                             height: 200,
                             decoration: BoxDecoration(
-                              color: Colors.blue,
+                              color: Colors.white.withOpacity(0.5),
                               borderRadius: BorderRadius.all(
                                   Radius.circular(10)
                               ),
                               image: DecorationImage(
-                                  image: AssetImage(album.albumArt!=null?album.albumArt:'assets/profile.jpeg'),
-                                  fit: BoxFit.cover
+                                  image: AssetImage(album.albumArt!=null?album.albumArt:'assets/ic_launcher.png'),
+                                  fit: BoxFit.contain
                               ),
                             ),
                             margin: EdgeInsets.all(5),

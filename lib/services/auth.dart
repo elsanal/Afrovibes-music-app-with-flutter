@@ -1,4 +1,4 @@
-import 'package:afromuse/services/userModel.dart';
+import 'package:afromuse/services/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenficationService{

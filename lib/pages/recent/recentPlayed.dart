@@ -1,3 +1,4 @@
+import 'package:afromuse/display/playerClass/AudioPlayer.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
@@ -7,6 +8,7 @@ import 'package:afromuse/services/preferences.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -16,105 +18,6 @@ class RecentPlayed extends StatefulWidget {
   @override
   _RecentPlayedState createState() => _RecentPlayedState();
 }
-
-List myfavSong = [
-  {
-    'artist' : 'Davido',
-    'song_name': 'Chioma',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'davido.jpeg'
-  },
-  {
-    'artist' : 'Maitre gims',
-    'song_name': 'Tout donner',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'maitregims.jpeg'
-  },
-  {
-    'artist' : 'Black M',
-    'song_name': 'Sur ma route',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'blackm.jpeg'
-  },
-  {
-    'artist' : 'Smarty',
-    'song_name': 'Chapeau du chef',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'smarty.jpeg'
-  },
-  {
-    'artist' : 'Fleur',
-    'song_name': 'Posement',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'fleur.jpeg'
-  },
-  {
-    'artist' : 'Imilo Lechanceux',
-    'song_name': 'Au village',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'imilo.jpeg'
-  },
-  {
-    'artist' : 'SANA Bob',
-    'song_name': 'Mon pays',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'sanabob.jpeg'
-  },
-  {
-    'artist' : 'Angelique Kidjo',
-    'song_name': 'Sekere',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'angeliquekidjo.jpeg'
-  },
-];
 
 class _RecentPlayedState extends State<RecentPlayed> {
 
@@ -128,10 +31,6 @@ class _RecentPlayedState extends State<RecentPlayed> {
 
   @override
   void dispose() {
-    // int position = _itemPositionsListener
-    //     .itemPositions.value.first.index;
-    // Preferences().saveScrollPosition('allSongPos', position);
-    // print(position);
     // TODO: implement dispose
     super.dispose();
   }
@@ -154,12 +53,8 @@ class _RecentPlayedState extends State<RecentPlayed> {
             if(!snapshot.hasData){
               return Container(child: Center(child: SpinKitFadingCircle(color: Colors.black87,),),);
             }else{
-              print(myRecentPlayed.value.length);
               return Container(
                   height: height,
-                  // margin: EdgeInsets.only(
-                  //   bottom: 40,
-                  // ),
                   color: Colors.transparent,
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:0,
@@ -168,21 +63,30 @@ class _RecentPlayedState extends State<RecentPlayed> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       Music music = snapshot.data[index];
-                      if (myRecentPlayed.value.isEmpty) {
+                      if (!snapshot.hasData) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
-                        print("Has data1111");
                         return InkWell(
                           onTap: ()async{
-                                 currentPlayingList.value = snapshot.data;
-                                  playerToggleNotifier.value = false;
-                                  bool toggle = await getToggle();
-                            setState(() {
-                                  currentSongIndex.value = index;
-                                  isTapedToPlay.value = true;
-                                  isPlaying.value = true;
-                                   playerToggleNotifier.value = toggle;
-                                   });
+                                 if(!AudioService.running){
+                                   print("AudioService is running");
+                                   List<Music> musics = snapshot.data;
+                                   await _startAudioPlayer(musics, index-1);
+                                   playerToggleNotifier.value = false;
+                                   bool toggle = await getToggle();
+                                   if(toggle){
+                                     setState(() {
+                                       isTapedToPlay.value = true;
+                                       playerToggleNotifier.value = toggle;
+                                     });
+                                   }
+                                 }else {
+                                   if(music.isLocal == true){
+                                     await AudioService.skipToQueueItem(music.filepath);
+                                   }else{
+                                     await AudioService.skipToQueueItem(music.id);
+                                   }
+                                 }
                           },
                           child: Card(
                             color: Colors.white,
@@ -196,7 +100,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                       child: Container(
                                         height: 40,
                                         width: 250,
-                                        child: Marques(music.musicTitle, Colors.black),)),
+                                        child: Marques(music.title, Colors.black),)),
                                   Positioned(
                                     top: 25,
                                     left: 120,
@@ -217,7 +121,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                             Row(
                                               children: [
                                                 Container(child: RatingBar.builder(
-                                                    initialRating: music.rate + 0.0,
+                                                    initialRating: double.parse(music.rating) ,
                                                     minRating: 1,
                                                     direction: Axis.horizontal,
                                                     allowHalfRating: true,
@@ -243,7 +147,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                                   color: Colors.amber,
                                                 ),),
                                                 SizedBox(width: 2,),
-                                                Text(music.NListened.toString()),
+                                                Text(music.listened.toString()),
                                               ],
                                             ),
                                             Row(
@@ -252,7 +156,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                                   Icons.download_outlined,
                                                   color: Colors.red,
                                                 ),),
-                                                Text(music.Ndownload.toString()),
+                                                Text(music.download.toString()),
                                               ],
                                             ),
 
@@ -270,10 +174,7 @@ class _RecentPlayedState extends State<RecentPlayed> {
                                           width: 90,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
-                                                  image: AssetImage( index<myfavSong.length?
-                                                  'assets/artists/'+myfavSong[index]['image']
-                                                      :'assets/artists/'+myfavSong[0]['image']
-                                                  ),
+                                                  image: AssetImage(music.albumArtwork??'assets/ic_launcher.png'),
                                                   fit: BoxFit.cover
                                               )
                                           ),
@@ -291,105 +192,26 @@ class _RecentPlayedState extends State<RecentPlayed> {
         )
     );
   }
+
+  _startAudioPlayer(List<Music> queue, int queueIndex) async{
+    List<dynamic> list = List();
+    for (int i = 0; i < queue.length; i++) {
+      var m = queue[i].toMap();
+      list.add(m);
+    }
+    var params = {"data": list, "queueIndex": queueIndex};
+    await AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntryPoint,
+      androidNotificationChannelName: 'Audio Player',
+      androidNotificationColor: 0xFFFF004,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      params: params,
+    );
+  }
+
 }
 
+void _audioPlayerTaskEntryPoint() async {
+  await  AudioServiceBackground.run(() => AudioPlayerTask());
+}
 
-
-
-// Card(
-// child: Container(
-// child: Stack(
-// children: [
-// Positioned(
-// top: 0,
-// left: 90,
-// child: Container(
-// height: 40,
-// width: 250,
-// child: Marques(music.artistName +
-// ' - ' + music.musicTitle, Colors.black),)),
-// Positioned(
-// top: 25,
-// left: 120,
-// child: Container(child: Text(music.genre)),),
-// Positioned(
-// bottom: 5,
-// right: 5,
-// child: Container(child: Text("--:--"),)),
-// Positioned(
-// bottom: 5,
-// left: 100,
-// child: Container(
-// width: width-150,
-//
-// child: Row(
-// mainAxisAlignment: MainAxisAlignment.spaceAround,
-// children: [
-// Row(
-// children: [
-// Container(child: RatingBar.builder(
-// initialRating: music.rate + 0.0,
-// minRating: 1,
-// direction: Axis.horizontal,
-// allowHalfRating: true,
-// itemCount: 5,
-// itemSize: 13,
-// itemBuilder: (context,_)=>Icon(
-// Icons.star,
-// color: Colors.amber,
-// size: 10,
-// ),
-// onRatingUpdate: (rating){
-// print(rating);
-// })
-// ,),
-// SizedBox(width: 2,),
-// Container(child: Text(music.rate.toString()),)
-// ],
-// ),
-// Row(
-// children: [
-// Container(child: Icon(
-// Icons.hearing_outlined,
-// color: Colors.amber,
-// ),),
-// SizedBox(width: 2,),
-// Text(music.NListened.toString()),
-// ],
-// ),
-// Row(
-// children: [
-// Container(child: Icon(
-// Icons.download_outlined,
-// color: Colors.red,
-// ),),
-// Text(music.Ndownload.toString()),
-// ],
-// ),
-//
-// ],
-// ),)),
-// Positioned(
-// top: 3,
-// right: 5,
-// child: Container(
-// child: Icon(Icons.favorite_rounded,color: Colors.redAccent,),)),
-// Positioned(
-// child: Container(
-// child: Container(
-// height: 90,
-// width: 90,
-// decoration: BoxDecoration(
-// image: DecorationImage(
-// image: AssetImage( index<myfavSong.length?
-// 'assets/artists/'+myfavSong[index]['image']
-//     :'assets/artists/'+myfavSong[0]['image']
-// ),
-// fit: BoxFit.cover
-// )
-// ),
-// ),)),
-// ],
-// ),
-// ),
-// );

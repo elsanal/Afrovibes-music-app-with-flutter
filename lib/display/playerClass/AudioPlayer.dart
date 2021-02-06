@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:afromuse/services/models.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
 
 MediaControl playControl = MediaControl(
@@ -48,8 +50,6 @@ MediaControl rewindControl = MediaControl(
 class AudioPlayerTask extends BackgroundAudioTask{
 
   var _queue = <MediaItem>[];
-
-
   int _queueIndex = -1;
   AudioPlayer _audioPlayer = new AudioPlayer();
   AudioProcessingState _audioProcessingState;
@@ -62,31 +62,36 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   StreamSubscription<PlayerState> _playerStateSubscription;
   StreamSubscription<PlaybackEvent>  _eventSubscription;
+  AudioServiceRepeatMode _repeatMode;
+  AudioServiceShuffleMode _shuffleMode;
+
 
   @override
   Future<void> onStart(Map<String, dynamic> params)async{
     _queue.clear();
+    _isPlaying = true;
+    print("original queue : $_queue");
     List mediaItems = params['data'];
+    _queueIndex = params['queueIndex'];
     for (int i = 0; i < mediaItems.length; i++) {
       MediaItem mediaItem = MediaItem.fromJson(mediaItems[i]);
       _queue.add(mediaItem);
     }
+    _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
+      _broadcastState();
+    });
+
 
     _playerStateSubscription = _audioPlayer.playerStateStream.listen((event) {
       switch(event.processingState){
         case ProcessingState.completed:
           _handlePlayBackComplete();
-          break;
-        case ProcessingState.idle:
-          onStop();
+          _broadcastState();
           break;
         default:
       }
     });
 
-    _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
-      _broadcastState();
-    });
     AudioServiceBackground.setQueue(_queue);
     onSkipToNext();
   }
@@ -98,6 +103,26 @@ class AudioPlayerTask extends BackgroundAudioTask{
       _audioPlayer.play();
     }
   }
+  @override
+  Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode)async{
+    await AudioServiceBackground.setState(
+      repeatMode: repeatMode,
+    );
+    _repeatMode = repeatMode;
+  }
+  @override
+  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode)async{
+    await AudioServiceBackground.setState(
+      shuffleMode: shuffleMode,
+    );
+    _shuffleMode = shuffleMode;
+  }
+
+  @override
+  Future<void> onUpdateQueue(List<MediaItem> queue) async{
+    await AudioServiceBackground.setQueue(queue);
+  }
+
 
   @override
   Future<void> onPause() {
@@ -160,8 +185,8 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
 
   @override
-  Future<void> onSeekTo(Duration position) {
-    _audioPlayer.seek(position);
+  Future<void> onSeekTo(Duration position) async{
+    await _audioPlayer.seek(position);
   }
 
   @override
@@ -198,6 +223,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onStop() async{
     await _audioPlayer.stop();
+    await _audioPlayer.dispose();
     _eventSubscription.cancel();
     _playerStateSubscription.cancel();
     return await super.onStop();
@@ -221,6 +247,8 @@ class AudioPlayerTask extends BackgroundAudioTask{
           position: _audioPlayer.position,
           bufferedPosition: _audioPlayer.bufferedPosition,
           speed: _audioPlayer.speed,
+          repeatMode: _repeatMode??AudioServiceRepeatMode.all,
+          shuffleMode: _shuffleMode??AudioServiceShuffleMode.none,
           androidCompactActions: [0, 1, 3],
         
       );
@@ -228,7 +256,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
   }
 
   AudioProcessingState _getProcessingState(){
-    // if(_audioProcessingState!=null) return _audioProcessingState;
     switch(_audioPlayer.processingState){
       case ProcessingState.completed:
         return AudioProcessingState.completed;
@@ -287,10 +314,7 @@ class FullAudioPlayerState{
   FullAudioPlayerState(this.queue, this.mediaItem, this.playbackState, this.position);
 }
 
-class PlayerPosition {
-  final Duration position;
-  PlayerPosition( this.position);
-}
+
 
 
 

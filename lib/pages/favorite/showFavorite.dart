@@ -1,9 +1,11 @@
+import 'package:afromuse/display/playerClass/AudioPlayer.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -13,106 +15,6 @@ class ShowFavorite extends StatefulWidget {
   @override
   _ShowFavoriteState createState() => _ShowFavoriteState();
 }
-
-List myfavSong = [
-
-  {
-    'artist' : 'Maitre gims',
-    'song_name': 'Tout donner',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'maitregims.jpeg'
-  },
-  {
-    'artist' : 'Awa Boussim',
-    'song_name': 'Koregore',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'awaboussim.jpeg'
-  },
-  {
-    'artist' : 'Smarty',
-    'song_name': 'Chapeau du chef',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'smarty.jpeg'
-  },
-  {
-    'artist' : 'Black M',
-    'song_name': 'Sur ma route',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'blackm.jpeg'
-  },
-  {
-    'artist' : 'Debordo Leekunfa',
-    'song_name': 'Aperitif',
-    'category':'Hip-Hop',
-    'duration' : '3:00',
-    'album_name' : 'Subliminal',
-    'rate' : 1.0,
-    'num_part' :86,
-    'num_view' : 12,
-    'num_dld' : 25,
-    'image' : 'debordoleekunfa.jpeg'
-  },
-  {
-    'artist' : 'Dez Altino',
-    'song_name': 'Kabogde',
-    'category':'Rap',
-    'duration' : '3:30',
-    'album_name' : 'La route',
-    'rate' : 2.5,
-    'num_part' :125,
-    'num_view' : 354,
-    'num_dld' : 75,
-    'image' : 'dezaltino.jpeg'
-  },
-  {
-    'artist' : 'Salif Keita',
-    'song_name': 'Tekere',
-    'category':'Rap',
-    'duration' : '4:10',
-    'album_name' : 'Single',
-    'rate' : 5.0,
-    'num_part' :43,
-    'num_view' : 953,
-    'num_dld' : 3204,
-    'image' : 'salifkeita.jpeg'
-  },
-  {
-    'artist' : 'Davido',
-    'song_name': 'Chioma',
-    'category':'Kora',
-    'duration' : '4:00',
-    'album_name' : 'Philo',
-    'rate' : 4.5,
-    'num_part' :153,
-    'num_view' : 756,
-    'num_dld' : 32,
-    'image' : 'davido.jpeg'
-  },
-];
 
 
 class _ShowFavoriteState extends State<ShowFavorite> {
@@ -144,12 +46,9 @@ class _ShowFavoriteState extends State<ShowFavorite> {
             if(!snapshot.hasData){
               return Container(child: Center(child: SpinKitFadingCircle(color: Colors.black87,),),);
             }else{
-              print(myRecentPlayed.value.length);
+              List<MediaItem> mediaItems = snapshot.data;
               return Container(
                   height: height,
-                  // margin: EdgeInsets.only(
-                  //   bottom: 40,
-                  // ),
                   color: Colors.transparent,
                   child:ScrollablePositionedList.builder(
                     initialScrollIndex:0,
@@ -157,22 +56,45 @@ class _ShowFavoriteState extends State<ShowFavorite> {
                     itemPositionsListener: _itemPositionsListener,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      Music music = snapshot.data[index];
-                      if (myRecentPlayed.value.isEmpty) {
+                      MediaItem music = mediaItems[index];
+                      if (myFavorite.value.isEmpty) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
                         print("Has data1111");
                         return InkWell(
                           onTap: ()async{
-                            currentPlayingList.value = snapshot.data;
-                            playerToggleNotifier.value = false;
-                            bool toggle = await getToggle();
-                            setState(() {
-                              currentSongIndex.value = index;
-                              isTapedToPlay.value = true;
-                              isPlaying.value = true;
-                              playerToggleNotifier.value = toggle;
-                            });
+                            bool toggle = false;
+                            if(!AudioService.running){
+                              print("AudioService is not running");
+                              await _startAudioPlayer(mediaItems, index-1);
+                              toggle = await getToggle();
+                              if(toggle){
+                                setState((){
+                                  isTapedToPlay.value = true;
+                                });
+                              }
+                            }else {
+                              await AudioService.skipToQueueItem(music.id);
+                            }
+
+                            bool isMatched = false;
+                            int _count = 0;
+                            if(myRecentPlayed.value.isEmpty){
+                              myRecentPlayed.value.add(mediaItems[index]);
+                            }else{
+                              for(int i = 0;i<myRecentPlayed.value.length; i++){
+                                print(music.title.toString());
+                                _count++;
+                                if(music.title == myRecentPlayed.value[i].title){
+                                  setState(() {
+                                    isMatched = true;
+                                  });
+                                }
+                              }
+                            }
+                            if((isMatched == false)&(_count == myRecentPlayed.value.length)){
+                              myRecentPlayed.value.add(mediaItems[index]);
+                            }
                           },
                           child: Card(
                             color: Colors.white,
@@ -186,7 +108,7 @@ class _ShowFavoriteState extends State<ShowFavorite> {
                                       child: Container(
                                         height: 40,
                                         width: 250,
-                                        child: Marques(music.musicTitle, Colors.black),)),
+                                        child: Marques(music.title, Colors.black),)),
                                   Positioned(
                                     top: 25,
                                     left: 120,
@@ -195,58 +117,58 @@ class _ShowFavoriteState extends State<ShowFavorite> {
                                       bottom: 5,
                                       right: 5,
                                       child: Container(child: Text(music.duration.toString()),)),
-                                  Positioned(
-                                      bottom: 5,
-                                      left: 100,
-                                      child: Container(
-                                        width: width-150,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Container(child: RatingBar.builder(
-                                                    initialRating: music.rate + 0.0,
-                                                    minRating: 1,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: true,
-                                                    itemCount: 5,
-                                                    itemSize: 13,
-                                                    itemBuilder: (context,_)=>Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
-                                                      size: 10,
-                                                    ),
-                                                    onRatingUpdate: (rating){
-                                                      print(rating);
-                                                    })
-                                                  ,),
-                                                SizedBox(width: 2,),
-                                                Container(child: Text(music.liked.toString()),)
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(child: Icon(
-                                                  Icons.hearing_outlined,
-                                                  color: Colors.amber,
-                                                ),),
-                                                SizedBox(width: 2,),
-                                                Text(music.NListened.toString()),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(child: Icon(
-                                                  Icons.download_outlined,
-                                                  color: Colors.red,
-                                                ),),
-                                                Text(music.Ndownload.toString()),
-                                              ],
-                                            ),
-
-                                          ],
-                                        ),)),
+                                  // Positioned(
+                                  //     bottom: 5,
+                                  //     left: 100,
+                                  //     child: Container(
+                                  //       width: width-150,
+                                  //       child: Row(
+                                  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  //         children: [
+                                  //           Row(
+                                  //             children: [
+                                  //               Container(child: RatingBar.builder(
+                                  //                   initialRating: music.rating ,
+                                  //                   minRating: 1,
+                                  //                   direction: Axis.horizontal,
+                                  //                   allowHalfRating: true,
+                                  //                   itemCount: 5,
+                                  //                   itemSize: 13,
+                                  //                   itemBuilder: (context,_)=>Icon(
+                                  //                     Icons.star,
+                                  //                     color: Colors.amber,
+                                  //                     size: 10,
+                                  //                   ),
+                                  //                   onRatingUpdate: (rating){
+                                  //                     print(rating);
+                                  //                   })
+                                  //                 ,),
+                                  //               SizedBox(width: 2,),
+                                  //               Container(child: Text(music.liked.toString()),)
+                                  //             ],
+                                  //           ),
+                                  //           Row(
+                                  //             children: [
+                                  //               Container(child: Icon(
+                                  //                 Icons.hearing_outlined,
+                                  //                 color: Colors.amber,
+                                  //               ),),
+                                  //               SizedBox(width: 2,),
+                                  //               Text(music.NListened.toString()),
+                                  //             ],
+                                  //           ),
+                                  //           Row(
+                                  //             children: [
+                                  //               Container(child: Icon(
+                                  //                 Icons.download_outlined,
+                                  //                 color: Colors.red,
+                                  //               ),),
+                                  //               Text(music.Ndownload.toString()),
+                                  //             ],
+                                  //           ),
+                                  //
+                                  //         ],
+                                  //       ),)),
                                   Positioned(
                                       top: 3,
                                       right: 5,
@@ -259,10 +181,7 @@ class _ShowFavoriteState extends State<ShowFavorite> {
                                           width: 90,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
-                                                  image: AssetImage( index<myfavSong.length?
-                                                  'assets/artists/'+myfavSong[index]['image']
-                                                      :'assets/artists/'+myfavSong[0]['image']
-                                                  ),
+                                                  image: AssetImage(music.artUri??'assets/ic_launcher.png'),
                                                   fit: BoxFit.cover
                                               )
                                           ),
@@ -280,4 +199,23 @@ class _ShowFavoriteState extends State<ShowFavorite> {
         )
     );
   }
+  _startAudioPlayer(List<MediaItem> queue, int queueIndex) async{
+    List<dynamic> list = List();
+    for (int i = 0; i < queue.length; i++) {
+      var m = queue[i].toJson();
+      list.add(m);
+    }
+    var params = {"data": list, "queueIndex": queueIndex};
+    await AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntryPoint,
+      androidNotificationChannelName: 'Audio Player',
+      androidNotificationColor: 0xFFFF004,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      params: params,
+    );
+  }
+}
+
+void _audioPlayerTaskEntryPoint() async {
+  await  AudioServiceBackground.run(() => AudioPlayerTask());
 }

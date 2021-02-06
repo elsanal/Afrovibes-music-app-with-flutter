@@ -59,18 +59,23 @@ class _CurrentPlayingQueueState extends State<CurrentPlayingQueue> {
                 color: Colors.white,
                 child: Container(
                     width: width,
-                    height: 60,
+                    height: 40,
                     child: Stack(children: [
                       Positioned(
                           top: 3,
                           left: 5,
                           child: Container(
-                            height: 40,
-                            width: 220,
-                            child: Marques(queue[index].title, Colors.black),)
-                      ),
+                            height: 20,
+                            width: width*(3/5),
+                            child: Text(queue[index].title, style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )),
                       Positioned(
-                          right: 15,
+                          left: 15,
                           bottom: 3,
                           child: Container(
                             child: _totalMinute!=null?new Text(
@@ -88,16 +93,12 @@ class _CurrentPlayingQueueState extends State<CurrentPlayingQueue> {
                           )
                       ),
                       Positioned(
-                          bottom: 3,
-                          left: 15,
-                          child: Container(child: Text(queue[index].album.toString()),)
-                      ),
-                      Positioned(
                           top: 0,
-                          right: 5,
-                          child: Container(child: IconButton(
+                          right: 0,
+                          child: IconButton(
                               icon: Icon(Icons.more_vert),
-                              onPressed: (){}),)
+                              iconSize: 20,
+                              onPressed: (){})
                       ),
                     ],)
                 ),

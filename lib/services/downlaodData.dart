@@ -1,51 +1,39 @@
-import 'package:afromuse/services/models.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
-class getInternalData{
+class GetInternalData{
   FlutterAudioQuery _audioQuery = FlutterAudioQuery();
 
-  Future<List<Music>> getAllInternalSongs(List<SongInfo> songs)async{
-    List<Music> Musics = [];
+  Future<List<MediaItem>> getAllInternalSongs(List<SongInfo> songs)async{
+    List<MediaItem> musics = [];
     if(songs == null){
       List<SongInfo> allSongs = await _audioQuery.getSongs(sortType: SongSortType.DEFAULT);
       allSongs.forEach((song) {
-        Music music = Music(
-          artistName: song.artist,
-          musicTitle: song.title,
-          albumName: song.album,
-          file: song.filePath,
-          liked : 0,
-          duration: int.parse(song.duration),
-          Ndownload : 0,
-          NListened : 0,
-          genre : "unknown",
-          artwork: song.albumArtwork,
-          rate: 0,
+        MediaItem music = MediaItem(
+          artist: song.artist,
+          title: song.title,
+          album: song.album,
+          id: song.filePath,
+          duration: Duration(milliseconds: int.parse(song.duration)),
+          artUri: song.albumArtwork,
         );
-        Musics.add(music);
+        musics.add(music);
       });
 
     }else{
       songs.forEach((song) {
-        Music music = Music(
-          artistName: song.artist,
-          musicTitle: song.title,
-          albumName: song.album,
-          file: song.filePath,
-          liked : 0,
-          duration: int.parse(song.duration),
-          Ndownload : 0,
-          NListened : 0,
-          genre : "unknown",
-          artwork: song.albumArtwork,
-          rate: 0,
+        MediaItem music = MediaItem(
+          artist: song.artist,
+          title: song.title,
+          album: song.album,
+          id: song.filePath,
+          duration: Duration(milliseconds: int.parse(song.duration)),
+          artUri: song.albumArtwork,
         );
-        Musics.add(music);
+        musics.add(music);
       });
     }
-    return Musics;
+    return musics;
   }
 
   getAllInternalAlbum()async{

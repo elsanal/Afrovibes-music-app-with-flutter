@@ -40,7 +40,7 @@ class _PlaylistState extends State<Playlist> {
         height: height,
         width: width,
         child: FutureBuilder(
-            future: getInternalData().getAllInternalAlbum(),
+            future: GetInternalData().getAllInternalAlbum(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Container(color: Colors.white, child: Center(
@@ -81,7 +81,7 @@ class _PlaylistState extends State<Playlist> {
                               songs = await audioQuery.getSongsFromAlbum(
                                   albumId: album[index].id);
                               currentAlbum.value =
-                              await getInternalData().getAllInternalSongs(
+                              await GetInternalData().getAllInternalSongs(
                                   songs);
                               setState(() {
                                 HomepageCurrentIndex.value = 6;
@@ -110,9 +110,8 @@ class _PlaylistState extends State<Playlist> {
                                               .width * (4 / 10),
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
-                                                  image: AssetImage(
-                                                      "assets/equilizer.jpeg"),
-                                                  fit: BoxFit.cover
+                                                  image: AssetImage(album[index].albumArt??"assets/ic_launcher.png"),
+                                                  fit: BoxFit.contain
                                               )
                                           ),
                                         )

@@ -26,7 +26,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
         height: height,
         width: width,
         child: FutureBuilder(
-            future: getInternalData().getAllInternalAlbum(),
+            future: GetInternalData().getAllInternalAlbum(),
             builder: (context,snapshot) {
               if (!snapshot.hasData) {
                 return Container(color: Colors.white,child: Center(
@@ -49,7 +49,7 @@ class _LocalAlbumsState extends State<LocalAlbums> {
                             onTap: ()async{
                               List<SongInfo> songs = [];
                               songs = await audioQuery.getSongsFromAlbum(albumId: album[index].id);
-                              currentAlbum.value = await getInternalData().getAllInternalSongs(songs);
+                              currentAlbum.value = await GetInternalData().getAllInternalSongs(songs);
                               setState((){
                                 HomepageCurrentIndex.value = 7;
                               });

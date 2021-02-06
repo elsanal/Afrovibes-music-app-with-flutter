@@ -6,7 +6,6 @@ import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/auth.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/services/settings.dart';
-import 'package:afromuse/services/userModel.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
