@@ -95,7 +95,7 @@ class _LocalState extends State<Local> {
                   top: 45,
                   left: 0,
                   right: 0,
-                  bottom:135,
+                  bottom:0,
                   child: Center(
                     child: new Container(
                         //color: Colors.grey[200],

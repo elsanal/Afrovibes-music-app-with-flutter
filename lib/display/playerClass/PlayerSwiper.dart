@@ -19,11 +19,22 @@ class _PlayerSwipState extends State<PlayerSwip> with TickerProviderStateMixin{
 
   AnimationController _animationController;
 
+  int _index = 0;
   @override
   void initState() {
+    _index = AudioService.queue.indexOf(widget.mediaItem);
     _animationController = AnimationController(vsync: this, duration: Duration(seconds:10))..repeat();
     // TODO: implement initState
     super.initState();
+  }
+
+  Future<void> updateIndex(int index)async{
+   Duration duration = Duration(milliseconds: 1000);
+   return Future.delayed(duration, (){
+     setState(() {
+       _index = index;
+     });
+   });
   }
 
   @override
@@ -35,22 +46,57 @@ class _PlayerSwipState extends State<PlayerSwip> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final heigth = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
     return Container(
-        child: Column(
+      height: width*(2.3/4),
+      width: width*(2.3/4),
+      color: Colors.transparent,
+      child: Swiper(
+          scrollDirection: Axis.horizontal,
+          itemHeight: width*(2/4),
+          itemWidth: width*(2/4),
+          viewportFraction: 0.7,
+          scale: 0.5,
+          fade: 0.1,
+          onTap: (value){
+            print(value);
+          },
+          onIndexChanged: (value)async{
+            if(value < _index){
+              // print("index : $_index");
+              // print("value : $value");
+              // print("Going backward");
+              updateIndex(value);
+              await AudioService.skipToPrevious();
+            }else{
+              // print("index : $_index");
+              // print("value : $value");
+              // print("Going forward");
+              updateIndex(value);
+              await AudioService.skipToNext();
+            }
+          },
+          loop: true,
+          autoplayDisableOnInteraction: true,
+          curve: Curves.easeOutSine,
+          duration: 500,
+          itemCount: widget.queue.length,
+        containerHeight: width*(2/4),
+        containerWidth: width*(2/4),
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AnimatedBuilder(
-                animation:_animationController,
-                builder: (_, child){
-                  return Transform.rotate(
-                    angle: _animationController.value*2*pi,
-                    child: child,
-                  );
-                },
-                child: Draggable(
-                  dragAnchor: DragAnchor.child,
-                  axis: Axis.horizontal,
-                  ignoringFeedbackSemantics: true,
+                  animation:_animationController,
+                  builder: (_, child){
+                    return Transform.rotate(
+                      angle: _animationController.value*2*pi,
+                      child: child,
+                    );
+                  },
                   child: Card(
                     color: Colors.grey[600],
                     shape: RoundedRectangleBorder(
@@ -69,65 +115,17 @@ class _PlayerSwipState extends State<PlayerSwip> with TickerProviderStateMixin{
                         ),
                       ),
                       margin: EdgeInsets.all(5),
-                      padding: EdgeInsets.all(45),
+                      padding: EdgeInsets.all(40),
                       child: CircleAvatar(
                         backgroundImage: AssetImage(widget.mediaItem.artUri??"assets/artists/floby.jpeg"),
                       ),
                     ),
-                  ),
-                  feedback: Card(
-                    color: Colors.grey[600],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(width*(2/4))),
-                    child: Container(
-                      width: width*(2/4),
-                      height: width*(2/4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(width*(2/4))
-                        ),
-                        image: DecorationImage(
-                            image: AssetImage("assets/playerDisk3.png"),
-                            fit: BoxFit.cover
-                        ),
-                      ),
-                      margin: EdgeInsets.all(5),
-                      padding: EdgeInsets.all(45),
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage(widget.mediaItem.artUri??"assets/artists/floby.jpeg"),
-                      ),
-                    ),
-                  ),
-                  childWhenDragging: Card(
-                    color: Colors.grey[600],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(width*(2/4))),
-                    child: Container(
-                      width: width*(2.2/4),
-                      height: width*(2.2/4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[600],
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(width*(2/4))
-                        ),
-                      ),
-
-                    ),
-                  ),
-                  onDragEnd: (drag)async{
-                    if(drag.offset.dx < 100){
-                      await AudioService.skipToNext();
-                    }else if(drag.offset.dy > 170){
-                     await AudioService.skipToPrevious();
-                    }else{
-
-                    }
-                  },
+                  )
                 ),
-              ),
-            ]
-        )
+            ],
+          );
+        }
+      ),
     );
   }
 }

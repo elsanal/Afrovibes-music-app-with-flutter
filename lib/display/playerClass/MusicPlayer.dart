@@ -7,7 +7,6 @@ import 'package:afromuse/display/playerClass/HalfPlayer.dart';
 import 'package:afromuse/display/playerClass/PlayerControlButton.dart';
 import 'package:afromuse/display/playerClass/PlayerSwiper.dart';
 import 'package:afromuse/display/playerClass/PlayerserviceButton.dart';
-import 'package:afromuse/display/playerClass/StartAudioService.dart';
 import 'package:afromuse/pages/local/SongsFromAlbum.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
@@ -33,24 +32,17 @@ class MusicPlayer extends StatefulWidget {
 }
 int count = 0;
 class _MusicPlayerState extends State<MusicPlayer> {
-  double iconSizeDefault = 30;
-  int iconSizePlay = 160;
-  int index = 0;
-  int _currentHour;
-  int _currentMinute;
-  int _currentSecond;
-  int _totalHour;
-  int _totalMinute;
-  int _totalSecond;
-  Duration _duration = new Duration();
-  Duration _position = new Duration();
-
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // // double iconSizeDefault = 30;
+  // // int iconSizePlay = 160;
+  // // int index = 0;
+  // int _currentHour;
+  // int _currentMinute;
+  // int _currentSecond;
+  // int _totalHour;
+  // int _totalMinute;
+  // int _totalSecond;
+  // Duration _duration = new Duration();
+  // Duration _position = new Duration();
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +64,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
               final queue = audioState?.queue;
               final mediaItem = audioState?.mediaItem;
               final playbackState = audioState?.playbackState;
+              Duration _position = new Duration();
+              Duration _duration = new Duration();
               if(!AudioService.running){
-                  return Container(child: Center(child: CircularProgressIndicator(
-                    backgroundColor: Colors.red,
-                  )),);
+                  return Container();
               }  else if (!snapshot.hasData){
-                return Container(child: Center(child: CircularProgressIndicator(
-                  backgroundColor: Colors.amber,
-                )),);
+                return Container();
               } else if (queue == null || mediaItem == null || playbackState == null){
-                return Container(child: Center(child: Text("Data is empty")),);
+                return Container();
               }else {
                 _position = audioState?.position;
                 _duration = mediaItem.duration;

@@ -1,4 +1,4 @@
-import 'package:afromuse/services/downlaodData.dart';
+import 'package:afromuse/services/getLocalSongs.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -48,7 +48,7 @@ class _AlbumRowState extends State<AlbumRow> {
                                   Radius.circular(10)
                               ),
                               image: DecorationImage(
-                                  image: AssetImage(album.albumArt!=null?album.albumArt:'assets/ic_launcher.png'),
+                                  image: AssetImage(album.albumArt??'assets/ic_launcher.png'),
                                   fit: BoxFit.contain
                               ),
                             ),
@@ -65,8 +65,7 @@ class _AlbumRowState extends State<AlbumRow> {
                                   Positioned(
                                       bottom: 60,
                                       left: 10,
-                                      child: new Container(child: Text(
-                                          album.title!=null?album.title:''),)),
+                                      child: new Container(child: Text(album.title??''),)),
                                   Positioned(
                                       bottom: 55,
                                       left: 10,
@@ -74,13 +73,12 @@ class _AlbumRowState extends State<AlbumRow> {
                                   Positioned(
                                       bottom: 30,
                                       left: 60,
-                                      child: new Container(child: Text(
-                                          album.artist!=null?album.artist:''),)),
+                                      child: new Container(child: Text(album.artist??''),)),
                                   Positioned(
                                       bottom: 10,
                                       left: 60,
                                       child: new Container(child: Text(
-                                          (album.numberOfSongs!=null?album.numberOfSongs:'') + " Songs"),)),
+                                          (album.numberOfSongs??'') + " Songs"),)),
                                   Positioned(
                                       bottom: 10,
                                       left: 10,
@@ -105,8 +103,8 @@ class _AlbumRowState extends State<AlbumRow> {
                         builder: new DotSwiperPaginationBuilder(
                             color: Colors.orange,
                             activeColor: Colors.red,
-                            size: 10,
-                            activeSize: 13
+                            size: 8,
+                            activeSize: 11
                         )
                     )
                 ),

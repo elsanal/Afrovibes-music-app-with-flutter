@@ -1,4 +1,4 @@
-import 'package:afromuse/pages/Homebody/Homepage.dart';
+import 'package:afromuse/pages/Homebody/BottomBar.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

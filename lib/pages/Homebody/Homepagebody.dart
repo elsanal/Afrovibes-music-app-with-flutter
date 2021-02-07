@@ -1,5 +1,4 @@
-import 'package:afromuse/pages/Homebody/NewAlbum.dart';
-import 'package:afromuse/pages/Homebody/RecentPlay.dart';
+import 'package:afromuse/pages/Homebody/NearBy.dart';
 import 'package:afromuse/pages/Homebody/ShowAlbum.dart';
 import 'package:afromuse/pages/Homebody/ShowArtist.dart';
 import 'package:afromuse/pages/Homebody/Suggestion.dart';
@@ -41,8 +40,13 @@ class _HomepagebodyState extends State<Homepagebody> {
                 ),
                 Row(
                   children: [
-                  Expanded(child: RecentlyPlayed())
-                ],
+                    Expanded(child: Suggestion())
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: PopularSongs())
+                  ],
                 ),
                 Row(
                   children: [
@@ -51,17 +55,7 @@ class _HomepagebodyState extends State<Homepagebody> {
                 ),
                 Row(
                   children: [
-                    Expanded(child: Suggestion())
-                  ],
-                ),
-                Row(
-                  children: [
-                  Expanded(child: PopularSongs())
-                ],
-                ),
-                Row(
-                  children: [
-                    Expanded(child: NewAlbum())
+                    Expanded(child: NearByUsers()),
                   ],
                 ),
                 new Container(height: 120,)

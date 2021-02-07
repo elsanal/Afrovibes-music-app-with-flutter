@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:afromuse/display/playerClass/AudioPlayer.dart';
-import 'package:afromuse/display/playerClass/StartAudioService.dart';
 import 'package:afromuse/display/playerClass/playerToggle.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/SqlitePersistance.dart';
-import 'package:afromuse/services/downlaodData.dart';
+import 'package:afromuse/services/getLocalSongs.dart';
 import 'package:afromuse/services/models.dart';
 import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:afromuse/staticValues/constant.dart';

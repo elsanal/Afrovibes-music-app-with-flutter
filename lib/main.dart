@@ -9,6 +9,8 @@ import 'package:afromuse/services/settings.dart';
 import 'package:afromuse/staticValues/constant.dart';
 import 'package:afromuse/staticValues/valueNotifier.dart';
 import 'package:afromuse/services/preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -20,6 +22,7 @@ List<SystemUiOverlay> overlays = [SystemUiOverlay.top];
 Future<void> main() async{
   SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,]);
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   bool ready = await restoreValue();
   if(ready){
     runApp(MyApp());

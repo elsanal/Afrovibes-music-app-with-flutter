@@ -5,14 +5,15 @@ class AuthenficationService{
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /////////// create User object from FirebaseUser
-  User _firebaseUser(FirebaseUser user){
-    return user !=null ? User(uid: user.uid):null;
+  ///////// create User object from FirebaseUser
+  User _firebaseUser(User user){
+
+    return user !=null ? user:null;
   }
 
 ///// Check  the changement of state
   Stream<User> get user{
-    return _auth.onAuthStateChanged
+    return _auth.authStateChanges()
         .map(_firebaseUser);
   }
 
@@ -20,8 +21,8 @@ class AuthenficationService{
 ///////// Sign anonymously
   Future signAnonym()async{
     try{
-      AuthResult result =  await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
+      UserCredential userCredential =  await _auth.signInAnonymously();
+      User user = userCredential.user;
       return _firebaseUser(user);
     }catch(e){
       print(e);

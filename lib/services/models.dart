@@ -157,7 +157,7 @@ class Playlist{
 
 ////////////////////////user model ///////////////////////
 
-class User{
+class AppUSer{
   String id;
   String name;
   String email;
@@ -172,13 +172,13 @@ class User{
   String age;
   String sex;
 
-  User({
+  AppUSer({
     this.id, this.country,this.age, this.email, this.isArtist, this.isVIP,
     this.musicStyle, this.name, this.sex, this.telephone,this.profile,
     this.password, this.uid
   });
 
-  factory User.fromJson(Map<String, dynamic> map)=> new User(
+  factory AppUSer.fromJson(Map<String, dynamic> map)=> new AppUSer(
 
     id: map['id'],
     name: map['name'],
@@ -211,5 +211,41 @@ class User{
     'profile': profile,
   };
 }
+
+///////////////////////////////// Artist model ///////////////////////
+
+class Artist{
+  String id;
+  String name;
+  String description;
+  String country;
+  List<String> musicStyle;
+  String age;
+
+
+
+  Artist({
+     this.name, this.description,
+    this.id, this.country, this.musicStyle,
+  });
+
+  factory Artist.fromJson(Map<String, dynamic> map)=> new Artist(
+
+    id: map['id'],
+    name: map['name'],
+    description: map['description'],
+    country: map['country'],
+    musicStyle: map['musicStyle'],
+  );
+
+  Map<String, dynamic>toMap()=>{
+    'id': id,
+    'name': name,
+    'description': description,
+    'country': country,
+    'musicStyle': musicStyle,
+  };
+}
+
 
 
