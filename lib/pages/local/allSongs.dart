@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 
@@ -28,6 +29,10 @@ class _LocalSongsState extends State<LocalSongs> {
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   int position;
+  int _totalHour;
+  int _totalMinute;
+  int _totalSecond;
+  Duration _duration = Duration.zero;
 
    @override
   void initState(){
@@ -80,6 +85,14 @@ class _LocalSongsState extends State<LocalSongs> {
                       if (music == null) {
                         return Container(child: Center(child: Text("No music founded"),),);
                       } else {
+                        if (music != null) {
+                          _duration = music.duration;
+                          if (_duration != null) {
+                            _totalHour = (_duration.inHours).toInt();
+                            _totalMinute = (_duration.inMinutes % 60).toInt();
+                            _totalSecond = (_duration.inSeconds % 60).toInt();
+                          }
+                        }
                         return InkWell(
                           onTap: ()async{
                             List<MediaItem> mediaItems = snapshot.data;
@@ -134,8 +147,25 @@ class _LocalSongsState extends State<LocalSongs> {
                                       right: 15,
                                       bottom: 5,
                                       child: Container(
-                                        child: Text(
-                                            music.duration!=null?music.duration.toString():"-- : --"),
+                                        child: _totalMinute != null ? new Text(
+                                          ((_totalHour <= 0 ? "" : ((_totalHour >
+                                              0) & (_totalHour < 10))
+                                              ? "0$_totalHour : "
+                                              : "$_totalHour : ") +
+                                              (_totalMinute < 10
+                                                  ? "0$_totalMinute"
+                                                  : "$_totalMinute") +
+                                              ' : ' + (_totalSecond < 10
+                                              ? "0$_totalSecond"
+                                              : "$_totalSecond")
+                                          ),
+                                          style: GoogleFonts.lato(
+                                              textStyle: TextStyle(
+                                                  fontWeight: FontWeight.w800,
+                                                  color: Colors.black,
+                                                  fontSize: 13
+                                              )
+                                          ),) : Text("-- : --"),
                                       )
                                   ),
                                   Positioned(

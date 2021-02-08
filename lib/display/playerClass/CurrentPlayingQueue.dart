@@ -56,7 +56,7 @@ class _CurrentPlayingQueueState extends State<CurrentPlayingQueue> {
                    Navigator.of(context).pop(true);
               },
               child: Card(
-                color: Colors.white,
+                color: queue[index].id != AudioService.currentMediaItem.id?Colors.white:Colors.grey[300],
                 child: Container(
                     width: width,
                     height: 40,

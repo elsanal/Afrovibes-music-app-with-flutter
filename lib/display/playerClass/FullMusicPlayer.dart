@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:afromuse/display/playerClass/AudioPlayer.dart';
 import 'package:afromuse/display/playerClass/CurrentPlayingQueue.dart';
 import 'package:afromuse/display/playerClass/MusicPlayer.dart';
@@ -364,4 +366,70 @@ Widget FullMusicPlayer(PlaybackState playbackState, MediaItem mediaItem,
 }
 
 
+class SeekBar extends StatefulWidget {
+  final Duration duration;
+  final Duration position;
+  final ValueChanged<Duration> onChanged;
+  final ValueChanged<Duration> onChangeEnd;
+
+  SeekBar({
+    @required this.duration,
+    @required this.position,
+    this.onChanged,
+    this.onChangeEnd,
+  });
+
+  @override
+  _SeekBarState createState() => _SeekBarState();
+}
+
+class _SeekBarState extends State<SeekBar> {
+  double _dragValue;
+  bool _dragging = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = min(_dragValue ?? widget.position?.inMilliseconds?.toDouble(),
+        widget.duration.inMilliseconds.toDouble());
+    if (_dragValue != null && !_dragging) {
+      _dragValue = null;
+    }
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        activeTrackColor: Colors.redAccent,
+        inactiveTrackColor: Colors.grey[400],
+        trackShape: RectangularSliderTrackShape(),
+        trackHeight: 2.0,
+        thumbColor: Colors.red[700],
+        thumbShape: RoundSliderThumbShape(
+            enabledThumbRadius: 5.0),
+        overlayColor: Colors.red.withAlpha(32),
+        overlayShape: RoundSliderOverlayShape(
+            overlayRadius: 28.0),
+      ),
+      child: Slider(
+        min: 0.0,
+        max: widget.duration.inMilliseconds.toDouble(),
+        value: value,
+        onChanged: (value) {
+          if (!_dragging) {
+            _dragging = true;
+          }
+          setState(() {
+            _dragValue = value;
+          });
+          if (widget.onChanged != null) {
+            widget.onChanged(Duration(milliseconds: value.round()));
+          }
+        },
+        onChangeEnd: (value) {
+          if (widget.onChangeEnd != null) {
+            widget.onChangeEnd(Duration(milliseconds: value.round()));
+          }
+          _dragging = false;
+        },
+      ),
+    );
+  }
+}
 

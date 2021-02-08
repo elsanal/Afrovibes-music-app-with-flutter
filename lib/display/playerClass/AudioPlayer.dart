@@ -69,7 +69,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onStart(Map<String, dynamic> params)async{
     _queue.clear();
-    _isPlaying = true;
+    //_isPlaying = true;
     print("original queue : $_queue");
     List mediaItems = params['data'];
     _queueIndex = params['queueIndex'];
@@ -80,7 +80,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
     _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
       _broadcastState();
     });
-
 
     _playerStateSubscription = _audioPlayer.playerStateStream.listen((event) {
       switch(event.processingState){
@@ -222,6 +221,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onStop() async{
+    isFull.value = true;
     await _audioPlayer.stop();
     await _audioPlayer.dispose();
     _eventSubscription.cancel();
@@ -243,7 +243,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
           controls: getControls(),
           systemActions: [MediaAction.seekTo, MediaAction.skipToPrevious, MediaAction.skipToNext],
           processingState: _getProcessingState(),
-          playing: _audioPlayer.playing,
+          playing: _isPlaying,
           position: _audioPlayer.position,
           bufferedPosition: _audioPlayer.bufferedPosition,
           speed: _audioPlayer.speed,

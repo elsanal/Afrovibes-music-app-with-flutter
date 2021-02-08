@@ -1,46 +1,57 @@
 import 'package:afromuse/services/models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
-Future<AppUSer> getUserInfo(){
-
-  return null;
-}
-
-Future<Music> getFirebaseMusic(){
+Future<AppUSer> getUserInfo(User user)async{
 
   return null;
 }
 
 
-Future<AppUSer> getAlbum(){
+ getFirebaseMusic()async{
 
-  return null;
-}
-
-Future<Music> getArtist(){
-
-  return null;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  QuerySnapshot documents = await  firestore.collection('MusicCollection').get();
+  return documents;
 }
 
 
-Future<AppUSer> getNearBy(){
-
-  return null;
+ getAlbum()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('AlbumCollection').get();
+  return documents;
 }
 
-Future<Music> getSuggested(){
-
-  return null;
+ getArtist()async{
+   FirebaseFirestore firestore = FirebaseFirestore.instance;
+   final documents = await  firestore.collection('ArtistCollection').get();
+   return documents;
 }
 
 
-Future<AppUSer> getPlaylist(){
-
-  return null;
+getNearBy()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('music').get();
+  return documents;
 }
 
-Future<Music> getCategory(){
+getSuggested()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('music').get();
+  return documents;
+}
 
-  return null;
+
+getPlaylist()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('PlaylistCollection').get();
+  return documents;
+}
+
+getCategory()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('CategoryCollection').get();
+  return documents;
 }
 

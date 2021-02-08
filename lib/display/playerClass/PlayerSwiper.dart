@@ -63,15 +63,9 @@ class _PlayerSwipState extends State<PlayerSwip> with TickerProviderStateMixin{
           },
           onIndexChanged: (value)async{
             if(value < _index){
-              // print("index : $_index");
-              // print("value : $value");
-              // print("Going backward");
               updateIndex(value);
               await AudioService.skipToPrevious();
             }else{
-              // print("index : $_index");
-              // print("value : $value");
-              // print("Going forward");
               updateIndex(value);
               await AudioService.skipToNext();
             }
@@ -115,7 +109,7 @@ class _PlayerSwipState extends State<PlayerSwip> with TickerProviderStateMixin{
                         ),
                       ),
                       margin: EdgeInsets.all(5),
-                      padding: EdgeInsets.all(40),
+                      padding: EdgeInsets.all(35),
                       child: CircleAvatar(
                         backgroundImage: AssetImage(widget.mediaItem.artUri??"assets/artists/floby.jpeg"),
                       ),
