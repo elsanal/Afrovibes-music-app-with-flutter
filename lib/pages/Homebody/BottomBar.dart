@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 bottomBar(context,int currentIndex, int iconSize) {
-  ScreenUtil.init(context);
   return Container(
     decoration: BoxDecoration(
         color: Colors.white,
@@ -12,7 +11,7 @@ bottomBar(context,int currentIndex, int iconSize) {
           top: BorderSide(width: 0.4, color: Colors.grey[300], style: BorderStyle.solid),
         )
     ),
-    height: ScreenUtil().setHeight(170),
+    height: ScreenUtil().setHeight(64),
     child: Container(
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
@@ -52,7 +51,7 @@ _bottomItems(IconData icon_outlined, IconData icon_filled, String title, int ind
               children: [
                 value == index?Icon(icon_filled,
                   color: Colors.redAccent,
-                  size: ScreenUtil().setWidth(90),
+                  size: ScreenUtil().setWidth(35),
                 ):Icon(icon_outlined,
                   color: Colors.black,
                   size: ScreenUtil().setWidth(iconSize),

@@ -21,6 +21,7 @@ import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -42,7 +43,7 @@ class _HomepageState extends State<Homepage> {
     DisplayPlaylistContain(),
     DisplayAlbumContain(),
   ];
-  int iconSizeDefault = 70;
+  int iconSize = 30;
   int iconSizePlay = 160;
   bool _isFull = false;
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -65,110 +66,115 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context){
-    ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height ;
-    return Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Colors.black.withOpacity(0.9),
-        drawer: mainDrawer(),
-        body: WillPopScope(
-          onWillPop: (){
-            return showDialog(
-                context: context,
-                builder: (context) =>
-                    AlertDialog(title: Text('Are you leaving YenMusic?'), actions: <Widget>[
-                      RaisedButton(
-                        child: Text('yes'),
-                        onPressed: ()async{
-                          releasePlayer.value = true;
-                          List<MediaItem> musicList = new List();
-                          List<MediaItem> recentMusic = new List();
-                          bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
-                          currentPlayingList.value.forEach((song){
-                            musicList.add(song);
-                          });
-                          myRecentPlayed.value.forEach((song) {
-                            recentMusic.add(song);
-                          });
-                          bool sqliteSaved = await Sqlite(dataBaseName: CURRENT_PLAYING_DB,
-                              tableName: CURRENT_PLAYING_TABLE).saveSqliteDB(musicList);
-                          bool sqliteRecent = await Sqlite(dataBaseName: RECENT_PLAYED_DB, tableName: RECENT_PLAYED_TABLE)
-                              .saveSqliteDB(recentMusic);
-                          if(prefsSaved && sqliteSaved & sqliteRecent){
-                            Navigator.of(context).pop(true);
-                          }
-                        },),
-                      RaisedButton(
-                          child: Text('cancel'),
-                          onPressed: () => Navigator.of(context).pop(false)),
-                    ]));
-          },
-          child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.dark.copyWith(
-                statusBarColor: Colors.white.withOpacity(0),
-              systemNavigationBarColor: Colors.white,
-              systemNavigationBarIconBrightness: Brightness.dark
-            ),
-            child: AudioServiceWidget(
-              child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(1),
-                  ),
-                  child: Stack(
-                    children: [
-                      ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+    return ScreenUtilInit(
+        designSize: Size(width, height),
+        allowFontScaling: true,
+      builder: () {
+        return Scaffold(
+            key: scaffoldKey,
+            backgroundColor: Colors.black.withOpacity(0.9),
+            drawer: mainDrawer(),
+            body: WillPopScope(
+              onWillPop: (){
+                return showDialog(
+                    context: context,
+                    builder: (context) =>
+                        AlertDialog(title: Text('Are you leaving YenMusic?'), actions: <Widget>[
+                          RaisedButton(
+                            child: Text('yes'),
+                            onPressed: ()async{
+                              releasePlayer.value = true;
+                              List<MediaItem> musicList = new List();
+                              List<MediaItem> recentMusic = new List();
+                              bool prefsSaved = await Preferences().autoSavePlayerCurrentInfo();
+                              currentPlayingList.value.forEach((song){
+                                musicList.add(song);
+                              });
+                              myRecentPlayed.value.forEach((song) {
+                                recentMusic.add(song);
+                              });
+                              bool sqliteSaved = await Sqlite(dataBaseName: CURRENT_PLAYING_DB,
+                                  tableName: CURRENT_PLAYING_TABLE).saveSqliteDB(musicList);
+                              bool sqliteRecent = await Sqlite(dataBaseName: RECENT_PLAYED_DB, tableName: RECENT_PLAYED_TABLE)
+                                  .saveSqliteDB(recentMusic);
+                              if(prefsSaved && sqliteSaved & sqliteRecent){
+                                Navigator.of(context).pop(true);
+                              }
+                            },),
+                          RaisedButton(
+                              child: Text('cancel'),
+                              onPressed: () => Navigator.of(context).pop(false)),
+                        ]));
+              },
+              child: AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle.dark.copyWith(
+                    statusBarColor: Colors.white.withOpacity(0),
+                  systemNavigationBarColor: Colors.white,
+                  systemNavigationBarIconBrightness: Brightness.dark
+                ),
+                child: AudioServiceWidget(
+                  child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(1),
+                      ),
+                      child: Stack(
                         children: [
-                          _myAppBar(),
-                          Container(
-                            color: Colors.white,
-                            height: height,
-                            padding: EdgeInsets.only(
-                                bottom: 50
-                            ),
+                          ListView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              _myAppBar(),
+                              Container(
+                                color: Colors.white,
+                                height: height,
+                                padding: EdgeInsets.only(
+                                    bottom: 50
+                                ),
+                                child: ValueListenableBuilder(
+                                  valueListenable: HomepageCurrentIndex,
+                                  builder: (context, value, widget){
+                                    return pageList[value];
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          ValueListenableBuilder(
+                          valueListenable: isTapedToPlay,
+                          builder: (context, value, widget){
+                            if(value == true){
+                              return MusicPlayer();
+                            }else{
+                              return Container();
+                            }
+                          },
+                          ),
+                          Positioned(
+                            bottom: 0,
                             child: ValueListenableBuilder(
-                              valueListenable: HomepageCurrentIndex,
+                              valueListenable: isFull,
                               builder: (context, value, widget){
-                                return pageList[value];
+                                if(value == true){
+                                  _isFull = true;
+                                  return bottomBar(context, HomepageCurrentIndex.value, iconSize);
+                                }else{
+                                 _isFull = false;
+                                  return Container();
+                                }
                               },
                             ),
                           ),
                         ],
                       ),
-                      ValueListenableBuilder(
-                      valueListenable: isTapedToPlay,
-                      builder: (context, value, widget){
-                        if(value == true){
-                          return MusicPlayer();
-                        }else{
-                          return Container();
-                        }
-                      },
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: ValueListenableBuilder(
-                          valueListenable: isFull,
-                          builder: (context, value, widget){
-                            if(value == true){
-                              _isFull = true;
-                              return bottomBar(context, HomepageCurrentIndex.value, iconSizeDefault);
-                            }else{
-                             _isFull = false;
-                              return Container();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
                 ),
+              ),
             ),
-          ),
-        ),
+        );
+      }
     );
   }
   Widget _myAppBar(){

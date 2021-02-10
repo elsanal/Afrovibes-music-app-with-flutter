@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/screen_util.dart';
 
 var decorationSearchBar = InputDecoration(
   enabledBorder: OutlineInputBorder(

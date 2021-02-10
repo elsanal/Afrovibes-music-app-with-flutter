@@ -4,6 +4,8 @@ import 'package:afromuse/sharedPage/bodyView.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 
@@ -21,98 +23,104 @@ Widget HalfPlayer(MediaItem mediaItem, PlaybackState playbackState,
       .height;
   SystemChrome.setEnabledSystemUIOverlays(
       [SystemUiOverlay.bottom, SystemUiOverlay.top,]);
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Container(
-        height: 121,
-        width: width,
-        margin: EdgeInsets.only(
-            //top: height * (13.50 / 16),
-            left: 1,
-            right: 1
-        ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              top: BorderSide(
-                  width: 0.4, color: Colors.grey[700], style: BorderStyle.solid),
-            )
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 5,
-              //top: 10,
-              right: 100,
-              bottom: 10,
-              child: Center(
-                child: Container(
-                  // color: Colors.black,
-                    width: width,
-                    height: 100,
-                    child: Marques(mediaItem.artist +
-                        ' - ' + mediaItem.title, Colors.black)
-                ),
-              ),
+  return ScreenUtilInit(
+      designSize: Size(width, height),
+      allowFontScaling: true,
+    builder: () {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            height: ScreenUtil().setHeight(116),
+            width: width,
+            margin: EdgeInsets.only(
+                //top: height * (13.50 / 16),
+                left: 1,
+                right: 1
             ),
-            Positioned(
-              //top: 0.0,
-              right: 0,
-              bottom: 70,
-              child: Center(
-                child: Container(
-                  width: width * (1.6 / 6),
-                  // color: Colors.black,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if (playbackState.playing) {
-                            await AudioService.pause();
-                          } else {
-                            await AudioService.play();
-                          }
-                        },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              child: SeekBar(
-                                duration: mediaItem?.duration ?? Duration.zero,
-                                position: position ?? Duration.zero,
-                                onChangeEnd: (newPosition) {
-                                  AudioService.seekTo(newPosition);
-                                },
-                              ),
-                            ),
-                            bottomItems(playbackState.playing == true ? Icons
-                                .pause_circle_filled_rounded :
-                            Icons.play_circle_fill_rounded, 50, Colors.grey[500]),
-
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                          onTap: () async {
-                            if (mediaItem == queue.last) {
-                              return;
-                            }
-                            await AudioService.skipToNext();
-                          },
-                          child: bottomItems(
-                              Icons.skip_next_rounded, 50, Colors.grey[500])
-                          )
-                    ],
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                      width: 0.4, color: Colors.grey[400], style: BorderStyle.solid),
+                )
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 5,
+                  //top: 10,
+                  right: 100,
+                  bottom: 10,
+                  child: Center(
+                    child: Container(
+                      // color: Colors.black,
+                        width: width,
+                        height: 100,
+                        child: Marques(mediaItem.artist +
+                            ' - ' + mediaItem.title, Colors.black)
+                    ),
                   ),
                 ),
-              ),
+                Positioned(
+                  //top: 0.0,
+                  right: 0,
+                  bottom: 65,
+                  child: Center(
+                    child: Container(
+                      width: width * (1.6 / 6),
+                      // color: Colors.black,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if (playbackState.playing) {
+                                await AudioService.pause();
+                              } else {
+                                await AudioService.play();
+                              }
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  child: SeekBar(
+                                    duration: mediaItem?.duration ?? Duration.zero,
+                                    position: position ?? Duration.zero,
+                                    onChangeEnd: (newPosition) {
+                                      AudioService.seekTo(newPosition);
+                                    },
+                                  ),
+                                ),
+                                bottomItems(playbackState.playing == true ? Icons
+                                    .pause_circle_filled_rounded :
+                                Icons.play_circle_fill_rounded, 50, Colors.grey[500]),
+
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap: () async {
+                                if (mediaItem == queue.last) {
+                                  return;
+                                }
+                                await AudioService.skipToNext();
+                              },
+                              child: bottomItems(
+                                  Icons.skip_next_rounded, 50, Colors.grey[500])
+                              )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ],
+          ),
+        ],
+      );
+    }
   );
 }
 

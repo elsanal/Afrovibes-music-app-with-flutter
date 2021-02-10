@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Categories extends StatefulWidget {
@@ -81,56 +82,61 @@ List catList = [
 class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
     final orientation =  MediaQuery.of(context).orientation;
     final height = MediaQuery.of(context).size.height;
     final width= MediaQuery.of(context).size.width;
-    return Container(
-      height: height,
-      width: width,
-      padding: EdgeInsets.only(
-        bottom: 50
-      ),
-      child: Scaffold(
-        body: Card(
-          child: Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(
-                color: Colors.grey[270]
-            ),
-            margin:EdgeInsets.only(
-              top: 3
-            ),
-            child: GridView.builder(
-                itemCount: catList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: ScreenUtil().setSp(10),
-                    childAspectRatio: 0.7,
-                    crossAxisCount:(orientation == Orientation.portrait)?3:4),
-                itemBuilder:(context, index){
-                  return Container(
-                    child: Column(
-                      children: [
-                        new CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.green,
-                          backgroundImage: AssetImage('assets/category/'+catList[index]['image']),
-                        ),
-                        Container(
-                            padding: EdgeInsets.all(10),
-                            child: new Text(catList[index]['categorie'],style: GoogleFonts.roboto(textStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600
-                            )),))
-                      ],
-                    ),
-                  );
-                }
-            ),
+    return ScreenUtilInit(
+        designSize: Size(width, height),
+        allowFontScaling: true,
+      builder: () {
+        return Container(
+          height: height,
+          width: width,
+          padding: EdgeInsets.only(
+            bottom: 50
           ),
-        ),
-      )
+          child: Scaffold(
+            body: Card(
+              child: Container(
+                height: height,
+                width: width,
+                decoration: BoxDecoration(
+                    color: Colors.grey[270]
+                ),
+                margin:EdgeInsets.only(
+                  top: 3
+                ),
+                child: GridView.builder(
+                    itemCount: catList.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: ScreenUtil().setSp(10),
+                        childAspectRatio: 0.7,
+                        crossAxisCount:(orientation == Orientation.portrait)?3:4),
+                    itemBuilder:(context, index){
+                      return Container(
+                        child: Column(
+                          children: [
+                            new CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.green,
+                              backgroundImage: AssetImage('assets/category/'+catList[index]['image']),
+                            ),
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(catList[index]['categorie'],style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600
+                                )),))
+                          ],
+                        ),
+                      );
+                    }
+                ),
+              ),
+            ),
+          )
+        );
+      }
     );
   }
 }

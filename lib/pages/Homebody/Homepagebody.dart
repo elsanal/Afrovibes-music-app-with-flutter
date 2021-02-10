@@ -5,6 +5,7 @@ import 'package:afromuse/pages/Homebody/Suggestion.dart';
 import 'package:afromuse/sharedPage/gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 
 import 'PopularSong.dart';
 
@@ -18,51 +19,56 @@ class _HomepagebodyState extends State<Homepagebody> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return Container(
-      child: Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[270]
-            ),
-            width: width,
-            height: height,
-            child: ListView(
-              shrinkWrap: true,
-              //physics: ClampingScrollPhysics(),
-              children: <Widget>[
-                Row(
-                  children: [
-                    Expanded(child: AlbumRow()),
+    return ScreenUtilInit(
+        designSize: Size(width, height),
+        allowFontScaling: true,
+      builder: () {
+        return Container(
+          child: Scaffold(
+              body: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[270]
+                ),
+                width: width,
+                height: height,
+                child: ListView(
+                  shrinkWrap: true,
+                  //physics: ClampingScrollPhysics(),
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Expanded(child: AlbumRow()),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: Suggestion())
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: PopularSongs())
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: Artist()),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: NearByUsers()),
+                      ],
+                    ),
+                    new Container(height: 120,)
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(child: Suggestion())
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(child: PopularSongs())
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(child: Artist()),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(child: NearByUsers()),
-                  ],
-                ),
-                new Container(height: 120,)
-              ],
-            ),
-          )
-      ),
+              )
+          ),
+        );
+      }
     );
   }
 }
