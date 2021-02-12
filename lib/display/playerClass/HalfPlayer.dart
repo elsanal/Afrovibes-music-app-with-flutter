@@ -95,7 +95,7 @@ Widget HalfPlayer(MediaItem mediaItem, PlaybackState playbackState,
                                 ),
                                 bottomItems(playbackState.playing == true ? Icons
                                     .pause_circle_filled_rounded :
-                                Icons.play_circle_fill_rounded, 50, Colors.grey[500]),
+                                Icons.play_circle_fill_rounded, 40, Colors.grey[500]),
 
                               ],
                             ),
@@ -162,7 +162,7 @@ class _SeekBarState extends State<SeekBar> {
       max: widget.duration.inMilliseconds.toDouble(),
       initialValue: value,
       appearance: CircularSliderAppearance(
-        size: 46,
+        size: 38,
         angleRange: 360,
         customColors: CustomSliderColors(
           trackColor: Colors.grey,

@@ -5,21 +5,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// User info
  getUserInfo(User user)async{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  QuerySnapshot documents = await  firestore.collection('MusicCollection').get();
-  return documents;
-}
-
-/// All the musics from the database
- getFirebaseMusic()async{
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  QuerySnapshot documents = await  firestore.collection('MusicCollection').get();
+  QuerySnapshot documents = await  firestore.collection('UserCollection').get();
   return documents;
 }
 
 /// All the albums in the database
  getAlbum()async{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final documents = await  firestore.collection('AlbumCollection').get();
+  final documents = await  firestore.collection('AlbumCollection').doc("AlbumName")
+                            .collection("MusicCollection").doc("MusicTitle").get();
+  return documents;
+}
+
+/// All the Singles in the database
+getSingle()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final documents = await  firestore.collection('SingleCollection').doc("SingleTitle").get();
   return documents;
 }
 
@@ -30,12 +31,6 @@ import 'package:firebase_auth/firebase_auth.dart';
    return documents;
 }
 
-/// All the nearby users
-getNearBy()async{
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final documents = await  firestore.collection('music').get();
-  return documents;
-}
 
 /// users playlists
 getPlaylist()async{
@@ -48,20 +43,20 @@ getPlaylist()async{
 /// query according to key word
 musicQuery(String keyword)async{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final documents = await  firestore.collection('MusicCollection').get();
+  final documents = await  firestore.collection('MusicCollection').where('title', isEqualTo: keyword).get();
   return documents;
 }
 
 /// query according to key word
 artistQuery(String keyword)async{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final documents = await  firestore.collection('ArtistCollection').get();
+  final documents = await  firestore.collection('ArtistCollection').where('name', isEqualTo: keyword).get();
   return documents;
 }
 
 /// query according to key word
 albumQuery(String keyword)async{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final documents = await  firestore.collection('AlbumCollection').get();
+  final documents = await  firestore.collection('AlbumCollection').where('title', isEqualTo: keyword).get();
   return documents;
 }

@@ -69,8 +69,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onStart(Map<String, dynamic> params)async{
     _queue.clear();
-    //_isPlaying = true;
-    print("original queue : $_queue");
+    _isPlaying = true;
     List mediaItems = params['data'];
     _queueIndex = params['queueIndex'];
     for (int i = 0; i < mediaItems.length; i++) {
