@@ -1,6 +1,7 @@
 import 'package:afromuse/pages/Homebody/Homepage.dart';
 import 'package:afromuse/services/auth.dart';
-import 'package:afromuse/services/userModel.dart';
+import 'package:afromuse/services/models.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,20 +1,45 @@
 import 'package:afromuse/authentification/authentify.dart';
 import 'package:afromuse/pages/Homebody/Homepage.dart';
-import 'package:afromuse/pages/music/Music.dart';
-import 'package:afromuse/pages/myInfo/Mepage.dart';
-import 'package:afromuse/pages/myInfo/MyPosts.dart';
-import 'package:afromuse/pages/radio/Radio.dart';
-import 'package:afromuse/pages/streaming/InLive.dart';
-import 'package:afromuse/pages/video/Video.dart';
+import 'package:afromuse/pages/drawer/category.dart';
+import 'package:afromuse/pages/local/playlist.dart';
+import 'package:afromuse/services/SqlitePersistance.dart';
 import 'package:afromuse/services/auth.dart';
+import 'package:afromuse/services/models.dart';
 import 'package:afromuse/services/settings.dart';
-import 'package:afromuse/services/userModel.dart';
-import 'package:afromuse/uploadFile/filePicker.dart';
+import 'package:afromuse/staticValues/constant.dart';
+import 'package:afromuse/staticValues/valueNotifier.dart';
+import 'package:afromuse/services/preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
+
+List<SystemUiOverlay> overlays = [SystemUiOverlay.top];
+
+Future<void> main() async{
+  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,]);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  bool ready = await restoreValue();
+  if(ready){
+    runApp(MyApp());
+  }
+}
+
+Future<bool> restoreValue()async{
+  await Preferences().readDataPrefs();
+  currentPlayingList.value = await Sqlite(dataBaseName: CURRENT_PLAYING_DB,
+      tableName: CURRENT_PLAYING_TABLE).retrieveMusic();
+  myRecentPlayed.value = await Sqlite(dataBaseName: RECENT_PLAYED_DB,
+      tableName: RECENT_PLAYED_TABLE).retrieveMusic();
+  myFavorite.value = await Sqlite(dataBaseName: FAVORITE_DB,
+      tableName: FAVORITE_TABLE).retrieveMusic();
+  myPlaylist.value = await Sqlite(dataBaseName: PLAYLIST_DB,
+      tableName: PLAYLIST_TABLE).retrieveMusic();
+  return true;
 }
 
 class MyApp extends StatelessWidget {
@@ -29,19 +54,14 @@ class MyApp extends StatelessWidget {
         home: Authentify(),
         routes: {
           '/home' : (context)=>Homepage(),
-          '/music' : (context)=>Music(),
-          '/video' : (context)=>Video(),
-          '/direct' : (context)=>LiveStream(),
-          '/radio' : (context)=>RadioFm(),
-          '/account' : (context)=>Mepage(),
+          '/music' : (context)=>Categories(),
           '/setting' : (context)=>Settings(),
-          '/myPost' : (context)=>MyPosts(),
-          '/pickFile':(context)=>PickFile()
         },
       ),
     );
   }
 }
+
 
 
 

@@ -48,7 +48,7 @@ Widget articleBottom(DocumentSnapshot document, double width){
     child: Column(children: [
        Container(
          height: ScreenUtil().setWidth(100),
-           child: Marques(document['title'])),
+           child: Marques(document['title'], Colors.black)),
       new Container(color: Colors.black,height: 1,width: width,),
       new Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,8 +84,9 @@ Widget articleBottom(DocumentSnapshot document, double width){
   );
 }
 
-Widget Marques(String filename){
-  return new Container(
+Widget Marques(String filename, Color textColor){
+  final fileLegth = filename.length;
+  return fileLegth >=23? new Container(
     padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
     child: Marquee(
       text: filename!=null?filename:'',
@@ -93,11 +94,11 @@ Widget Marques(String filename){
           textStyle: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 16,
-              color: Colors.black
+              color: textColor
           )
       ),
       blankSpace: 10,
-      velocity: 20,
+      velocity: 18,
       pauseAfterRound: Duration(seconds: 1),
       scrollAxis: Axis.horizontal,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +109,20 @@ Widget Marques(String filename){
       accelerationCurve: Curves.linear,
       accelerationDuration: Duration(seconds: 1),
       decelerationDuration: Duration(milliseconds: 500),
-      decelerationCurve: Curves.easeOut,
+      decelerationCurve: Curves.bounceInOut,
+    ),
+  ):Container(
+    margin: EdgeInsets.only(
+      left: 10
+    ),
+    child: Text(filename,style: GoogleFonts.lexendExa(
+        textStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: textColor
+          ),
+        ),
+
     ),
   );
 }
